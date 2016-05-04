@@ -1,18 +1,20 @@
-﻿using SmartHotEditPluginHost;
+﻿using System;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
+using SmartHotEditPluginHost;
 
-namespace SmartHotEdit.Controller
+namespace SmartHotEdit.Controller.Plugin
 {
-    public class PluginController
+    class DefaultPluginController
     {
 
         [ImportMany(typeof(APlugin))]
         private APlugin[] plugins = null;
 
-        public PluginController()
+        public DefaultPluginController()
         {
             this.loadPlugins();
+            System.Diagnostics.Debug.WriteLine("Default Plugins found: " + this.plugins.Length);
         }
 
         private void loadPlugins()

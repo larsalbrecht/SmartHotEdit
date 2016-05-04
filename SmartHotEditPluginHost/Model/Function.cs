@@ -21,7 +21,6 @@ namespace SmartHotEditPluginHost.Model
 			this.Description = description;
 			this.transform = transform;
             this.arguments = arguments;
-			
 		}
 		
 		public override string ToString(){

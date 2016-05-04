@@ -5,7 +5,7 @@ using SmartHotEditPluginHost.Model;
 
 namespace SmartHotEditPluginHost
 {
-    abstract public class APlugin
+    abstract public class APlugin : IPlugin
     {
 
     	protected List<Function> functionList = new List<Function>();
@@ -38,6 +38,5 @@ namespace SmartHotEditPluginHost
 
             return collection;
         }
-
     }
 }

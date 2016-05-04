@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{F9A175E9-1871-4C71-83DF-985F4E447996}</ProjectGuid>
+    <ProjectGuid>{B46E932B-E19B-49B7-B2F7-714144E73EBF}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SmartHotEditPluginHost</RootNamespace>
-    <AssemblyName>SmartHotEditPluginHost</AssemblyName>
+    <RootNamespace>SmartHotEditLuaPlugins</RootNamespace>
+    <AssemblyName>SmartHotEditLuaPlugins</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -30,13 +30,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="MoonSharp.Interpreter, Version=1.5.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\MoonSharp.1.5.0.1\lib\net40-client\MoonSharp.Interpreter.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -44,16 +39,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="APlugin.cs" />
-    <Compile Include="IPlugin.cs" />
-    <Compile Include="Model\Argument.cs" />
-    <Compile Include="Model\Function.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <WCFMetadata Include="Service References\" />
+    <None Include="Lua\Modules\baseplugin.lua" />
+    <None Include="Lua\Modules\class.lua" />
+    <None Include="Lua\Modules\inspect.lua" />
+    <None Include="Lua\Modules\pluginhelper.lua" />
+    <None Include="Lua\Plugins\Examples\case_plugin.lua" />
+    <None Include="Lua\Plugins\Examples\string_plugin.lua" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

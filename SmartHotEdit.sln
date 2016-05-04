@@ -16,6 +16,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartHotEditBasePlugins", "
 		{F9A175E9-1871-4C71-83DF-985F4E447996} = {F9A175E9-1871-4C71-83DF-985F4E447996}
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartHotEditLuaPlugins", "SmartHotEditLuaPlugins\SmartHotEditLuaPlugins.csproj", "{B46E932B-E19B-49B7-B2F7-714144E73EBF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -34,13 +36,12 @@ Global
 		{0E4ACF29-6D40-47E2-864D-ABDB6A89F231}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0E4ACF29-6D40-47E2-864D-ABDB6A89F231}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0E4ACF29-6D40-47E2-864D-ABDB6A89F231}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B46E932B-E19B-49B7-B2F7-714144E73EBF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B46E932B-E19B-49B7-B2F7-714144E73EBF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B46E932B-E19B-49B7-B2F7-714144E73EBF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B46E932B-E19B-49B7-B2F7-714144E73EBF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{3F876DBE-B304-4453-AC24-A8077191EF4C} = {26A6E1E5-CF49-4034-B313-329709C01844}
-		{F9A175E9-1871-4C71-83DF-985F4E447996} = {26A6E1E5-CF49-4034-B313-329709C01844}
-		{0E4ACF29-6D40-47E2-864D-ABDB6A89F231} = {26A6E1E5-CF49-4034-B313-329709C01844}
 	EndGlobalSection
 EndGlobal

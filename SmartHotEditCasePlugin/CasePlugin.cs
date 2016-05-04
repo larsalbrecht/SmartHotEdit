@@ -6,7 +6,7 @@ using System.Text;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 
-namespace SmartHotEditCasePlugin
+namespace SmartHotEditBasePlugins
 {
     /// <summary>
     /// Description of CasePlugin.

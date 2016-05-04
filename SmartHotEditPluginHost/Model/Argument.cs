@@ -1,7 +1,10 @@
 ﻿using System;
 
+using MoonSharp.Interpreter;
+
 namespace SmartHotEditPluginHost.Model
 {
+    [MoonSharpUserData]
     public class Argument
     {
 
@@ -14,8 +17,5 @@ namespace SmartHotEditPluginHost.Model
         	this.key = key;
         	this.description = description;
         }
-
-
-
     }
 }
