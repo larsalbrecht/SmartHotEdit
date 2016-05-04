@@ -4,7 +4,7 @@ Edit text from clipboard with smart functions.
 
 ## Plugins
 SmartHotEdit can handle plugins to add support for custom functionality.
-### C#
+### C*#*
 You can write plugins in C#. For this, there is a small project (SmartHotEditPluginHost) with the needed classes.
 #### Example Plugins
 There are some examples in the project "SmartHotEditBasePlugins":
