@@ -11,7 +11,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartHotEdit", "SmartHotEdi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartHotEditPluginHost", "SmartHotEditPluginHost\SmartHotEditPluginHost.csproj", "{F9A175E9-1871-4C71-83DF-985F4E447996}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartHotEditBasePlugins", "SmartHotEditCasePlugin\SmartHotEditBasePlugins.csproj", "{0E4ACF29-6D40-47E2-864D-ABDB6A89F231}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartHotEditBasePlugins", "SmartHotEditBasePlugins\SmartHotEditBasePlugins.csproj", "{0E4ACF29-6D40-47E2-864D-ABDB6A89F231}"
 	ProjectSection(ProjectDependencies) = postProject
 		{F9A175E9-1871-4C71-83DF-985F4E447996} = {F9A175E9-1871-4C71-83DF-985F4E447996}
 	EndProjectSection

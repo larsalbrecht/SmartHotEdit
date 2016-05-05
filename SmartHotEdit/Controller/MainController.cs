@@ -4,6 +4,7 @@ using SmartHotEdit.Controller.Plugin;
 
 namespace SmartHotEdit.Controller
 {
+    // Add log (simple and advanced)
     public class MainController
     {
         private NotificationController notificationController;

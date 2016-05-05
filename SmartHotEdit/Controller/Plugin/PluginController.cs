@@ -4,6 +4,7 @@ using System;
 
 namespace SmartHotEdit.Controller.Plugin
 {
+    // TODO let the user disable different plugin loader
     public class PluginController
     {
         private DefaultPluginController defaultPluginController;

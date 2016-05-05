@@ -55,11 +55,14 @@ namespace SmartHotEdit.View
 		void PluginListKeyDown(object sender, KeyEventArgs e)
 		{
 			if (e.KeyData == (Keys.Enter)) {
-				if(clipboardTextBox.Text != null){
+				if(clipboardTextBox.Text != null && clipboardTextBox.Text.Length > 0)
+                {
+                    MessageBox.Show(clipboardTextBox.Text);
 					Clipboard.SetText(clipboardTextBox.Text);
 				}
-				this.Close();
-			} else if (e.KeyData == (Keys.Control | Keys.Space)) {
+                this.Close();
+                e.SuppressKeyPress = true;
+            } else if (e.KeyData == (Keys.Control | Keys.Space)) {
 				if (pluginList.SelectedItems.Count > 0) {
 					var selectedItem = pluginList.SelectedItems[0];
 					functionListUpDown.Items.Clear();
@@ -74,7 +77,6 @@ namespace SmartHotEdit.View
 					functionListUpDown.Visible = true;
 					functionListUpDown.Focus();
 				}
-				
 				e.SuppressKeyPress = true;
 			}
 		}
@@ -107,7 +109,8 @@ namespace SmartHotEdit.View
 					}
 					this.functionListUpDown.Visible = false;
 				}
-			} else if (e.KeyData == (Keys.Control | Keys.Space)) {
+                e.SuppressKeyPress = true;
+            } else if (e.KeyData == (Keys.Control | Keys.Space)) {
 				if(this._currentPopupState == (int)POPUP_STATE.Small){
 					this._currentPopupState = (int)POPUP_STATE.Big;
 					this.functionListUpDown.Height = this.functionListUpDown.PreferredHeight;
@@ -115,7 +118,8 @@ namespace SmartHotEdit.View
 					this._currentPopupState = (int)POPUP_STATE.Small;
 					this.functionListUpDown.Height = this.functionListUpDown.ItemHeight;
 				}
-			}
+                e.SuppressKeyPress = true;
+            }
 		}
 		
 		void FunctionArgumentInputKeyDown(object sender, KeyEventArgs e)
@@ -132,9 +136,11 @@ namespace SmartHotEdit.View
 					_argumentsToFill = null;
 					_currentPlugin = null;
 				}
-			} else if(e.KeyCode == Keys.Escape){
+                e.SuppressKeyPress = true;
+            } else if(e.KeyCode == Keys.Escape){
 				functionArgumentInput.Visible = false;
-			}
+                e.SuppressKeyPress = true;
+            }
 		}
 	}
 }

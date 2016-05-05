@@ -26,6 +26,8 @@ namespace SmartHotEdit.Controller.Plugin
         {
             Script script = new Script();
 
+
+            // TODO Check if directories exists and disable plugin if not
             // set script loader to load modules
             script.Options.ScriptLoader = new ReplInterpreterScriptLoader();
             var originalModulePaths = ((ScriptLoaderBase)script.Options.ScriptLoader).ModulePaths;
