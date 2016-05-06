@@ -12,6 +12,7 @@ namespace SmartHotEdit.View
 
         private HotKeyController hotKeyController;
 
+        // TODO init hotkey in hotkey control to show the user the used key
         public SettingsView(HotKeyController hotKeyController)
         {
             InitializeComponent();
