@@ -28,18 +28,18 @@ namespace SmartHotEdit.Controller.Plugin
         public void loadPlugins()
         {
             logger.Trace("Get Plugins from *PluginController");
-            logger.Trace("Use plugins: " + Properties.Settings.Default.UsePlugins);
-            if (Properties.Settings.Default.UsePlugins)
+            logger.Trace("Use plugins: " + Properties.Settings.Default.EnablePlugins);
+            if (Properties.Settings.Default.EnablePlugins)
             {
-                logger.Trace("Use Default plugins: " + Properties.Settings.Default.UseDefaultPlugins);
-                logger.Trace("Use Lua plugins: " + Properties.Settings.Default.UseLuaPlugins);
+                logger.Trace("Use Default plugins: " + Properties.Settings.Default.EnableDefaultPlugins);
+                logger.Trace("Use Lua plugins: " + Properties.Settings.Default.EnableLuaPlugins);
 
-                if (Properties.Settings.Default.UseDefaultPlugins)
+                if (Properties.Settings.Default.EnableDefaultPlugins)
                 {
                     this.defaultPluginController = new DefaultPluginController(this);
                     this.plugins = this.arrayMerge(this.plugins, this.defaultPluginController.getPlugins());
                 }
-                if (Properties.Settings.Default.UseLuaPlugins)
+                if (Properties.Settings.Default.EnableLuaPlugins)
                 {
                     this.luaPluginController = new LuaPluginController(this);
                     this.plugins = this.arrayMerge(this.plugins, this.luaPluginController.getPlugins());

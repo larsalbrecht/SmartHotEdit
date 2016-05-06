@@ -66,12 +66,12 @@ namespace SmartHotEdit.Controller
 
         private void onHotKeyCouldNotRegistered()
         {
-            this.mainController.getNotificationController().createBalloonTip(ToolTipIcon.Warning, "Hot Key", "Hot key could not be set!", 5000);
+            this.mainController.getNotificationController().createBalloonTip(ToolTipIcon.Warning, "Hot Key", "Hot key could not be set!", 1000);
         }
 
         private void onHotKeyIsRegistered()
         {
-            this.mainController.getNotificationController().createBalloonTip(ToolTipIcon.Info, "Hot Key", "Hot key registered", 1000);
+            //this.mainController.getNotificationController().createBalloonTip(ToolTipIcon.Info, "Hot Key", "Hot key registered", 1000);
         }
 
         public void onClose()

@@ -62,7 +62,7 @@ namespace SmartHotEdit.View
 
         private void IconDoubleClick(object sender, EventArgs e)
         {
-            MessageBox.Show("The icon was double clicked");
+            //MessageBox.Show("The icon was double clicked");
         }
         #endregion
 

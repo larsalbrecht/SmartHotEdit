@@ -25,49 +25,49 @@ namespace SmartHotEdit.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string OpenEditForm {
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool EnableDefaultPlugins {
             get {
-                return ((string)(this["OpenEditForm"]));
+                return ((bool)(this["EnableDefaultPlugins"]));
             }
             set {
-                this["OpenEditForm"] = value;
+                this["EnableDefaultPlugins"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool UseDefaultPlugins {
+        public bool EnableLuaPlugins {
             get {
-                return ((bool)(this["UseDefaultPlugins"]));
+                return ((bool)(this["EnableLuaPlugins"]));
             }
             set {
-                this["UseDefaultPlugins"] = value;
+                this["EnableLuaPlugins"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool UseLuaPlugins {
+        public bool EnablePlugins {
             get {
-                return ((bool)(this["UseLuaPlugins"]));
+                return ((bool)(this["EnablePlugins"]));
             }
             set {
-                this["UseLuaPlugins"] = value;
+                this["EnablePlugins"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool UsePlugins {
+        public bool EnableLogging {
             get {
-                return ((bool)(this["UsePlugins"]));
+                return ((bool)(this["EnableLogging"]));
             }
             set {
-                this["UsePlugins"] = value;
+                this["EnableLogging"] = value;
             }
         }
     }

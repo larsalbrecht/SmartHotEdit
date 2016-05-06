@@ -15,6 +15,11 @@ namespace SmartHotEdit.Controller
 
         public MainController()
         {
+            if(Properties.Settings.Default.EnableLogging == false)
+            {
+                System.Diagnostics.Debug.WriteLine("Disable logger");
+                LogManager.DisableLogging();
+            }
             logger.Info("Program started");
             bool isFirstInstance;
             // Please use a unique name for the mutex to prevent conflicts with other programs
