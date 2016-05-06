@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 
 namespace SmartHotEdit.Helper
 {
-    public class Hotkey : IMessageFilter
+    public class HotkeyHandler : IMessageFilter
 	{
 		#region Interop
 
@@ -45,12 +45,12 @@ namespace SmartHotEdit.Helper
 
 		public event HandledEventHandler Pressed;
 
-		public Hotkey() : this(Keys.None, false, false, false, false)
+		public HotkeyHandler() : this(Keys.None, false, false, false, false)
 		{
 			// No work done here!
 		}
 		
-		public Hotkey(Keys keyCode, bool shift, bool control, bool alt, bool windows)
+		public HotkeyHandler(Keys keyCode, bool shift, bool control, bool alt, bool windows)
 		{
 			// Assign properties
 			this.KeyCode = keyCode;
@@ -63,17 +63,17 @@ namespace SmartHotEdit.Helper
 			Application.AddMessageFilter(this);
 		}
 
-		~Hotkey()
+		~HotkeyHandler()
 		{
 			// Unregister the hotkey if necessary
 			if (this.Registered)
 			{ this.Unregister(); }
 		}
 
-		public Hotkey Clone()
+		public HotkeyHandler Clone()
 		{
 			// Clone the whole object
-			return new Hotkey(this.keyCode, this.shift, this.control, this.alt, this.windows);
+			return new HotkeyHandler(this.keyCode, this.shift, this.control, this.alt, this.windows);
 		}
 
 		public bool GetCanRegister(Control windowControl)
@@ -106,15 +106,15 @@ namespace SmartHotEdit.Helper
 			{ throw new NotSupportedException("You cannot register an empty hotkey"); }
 
 			// Get an ID for the hotkey and increase current ID
-			this.id = Hotkey.currentID;
-			Hotkey.currentID = Hotkey.currentID + 1 % Hotkey.maximumID;
+			this.id = HotkeyHandler.currentID;
+			HotkeyHandler.currentID = HotkeyHandler.currentID + 1 % HotkeyHandler.maximumID;
 
 			// Translate modifier keys into unmanaged version
-			uint modifiers = (this.Alt ? Hotkey.MOD_ALT : 0) | (this.Control ? Hotkey.MOD_CONTROL : 0) |
-							(this.Shift ? Hotkey.MOD_SHIFT : 0) | (this.Windows ? Hotkey.MOD_WIN : 0);
+			uint modifiers = (this.Alt ? HotkeyHandler.MOD_ALT : 0) | (this.Control ? HotkeyHandler.MOD_CONTROL : 0) |
+							(this.Shift ? HotkeyHandler.MOD_SHIFT : 0) | (this.Windows ? HotkeyHandler.MOD_WIN : 0);
 
 			// Register the hotkey
-			if (Hotkey.RegisterHotKey(windowControl.Handle, this.id, modifiers, keyCode) == 0)
+			if (HotkeyHandler.RegisterHotKey(windowControl.Handle, this.id, modifiers, keyCode) == 0)
 			{ 
 				// Is the error that the hotkey is registered?
 				if (Marshal.GetLastWin32Error() == ERROR_HOTKEY_ALREADY_REGISTERED)
@@ -141,7 +141,7 @@ namespace SmartHotEdit.Helper
 			if (!this.windowControl.IsDisposed)
 			{
 				// Clean up after ourselves
-				if (Hotkey.UnregisterHotKey(this.windowControl.Handle, this.id) == 0)
+				if (HotkeyHandler.UnregisterHotKey(this.windowControl.Handle, this.id) == 0)
 				{ throw new Win32Exception(); }
 			}
 
@@ -167,7 +167,7 @@ namespace SmartHotEdit.Helper
 		public bool PreFilterMessage(ref Message message)
 		{
 			// Only process WM_HOTKEY messages
-			if (message.Msg != Hotkey.WM_HOTKEY)
+			if (message.Msg != HotkeyHandler.WM_HOTKEY)
 			{ return false; }
 
 			// Check that the ID is our key and we are registerd

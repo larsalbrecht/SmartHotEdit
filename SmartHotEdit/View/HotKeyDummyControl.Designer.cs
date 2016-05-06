@@ -8,7 +8,7 @@
  */
 namespace SmartHotEdit.View
 {
-	partial class HotKeyControl
+	partial class HotKeyDummyControl
 	{
 		/// <summary>
 		/// Designer variable used to keep track of non-visual components.
@@ -40,7 +40,7 @@ namespace SmartHotEdit.View
 			// HotKeyControl
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.Name = "HotKeyControl";
+			this.Name = "HotKeyDummyControl";
 		}
 	}
 }

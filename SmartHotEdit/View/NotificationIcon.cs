@@ -42,7 +42,7 @@ namespace SmartHotEdit.View
         {
             if(settingsView == null)
             {
-                settingsView = new SettingsView();
+                settingsView = new SettingsView(this.mainController.getHotKeyController());
             }
             if(settingsView.Visible == false)
             {

@@ -70,5 +70,16 @@ namespace SmartHotEdit.Properties {
                 this["EnableLogging"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::SmartHotEdit.Model.HotKey HotKey {
+            get {
+                return ((global::SmartHotEdit.Model.HotKey)(this["HotKey"]));
+            }
+            set {
+                this["HotKey"] = value;
+            }
+        }
     }
 }

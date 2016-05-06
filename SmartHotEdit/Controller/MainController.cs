@@ -19,6 +19,9 @@ namespace SmartHotEdit.Controller
             {
                 System.Diagnostics.Debug.WriteLine("Disable logger");
                 LogManager.DisableLogging();
+            } else
+            {
+                LogManager.EnableLogging();
             }
             logger.Info("Program started");
             bool isFirstInstance;
@@ -69,6 +72,7 @@ namespace SmartHotEdit.Controller
 
         private void onClose()
         {
+            Properties.Settings.Default.Save();
             logger.Trace("onClose");
             this.notificationController.onClose();
         }
@@ -81,6 +85,11 @@ namespace SmartHotEdit.Controller
         public PluginController getPluginController()
         {
             return this.pluginController;
+        }
+
+        public HotKeyController getHotKeyController()
+        {
+            return this.hotKeyController;
         }
 
     }

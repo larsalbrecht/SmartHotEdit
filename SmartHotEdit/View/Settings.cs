@@ -1,11 +1,7 @@
 ﻿using NLog;
+using SmartHotEdit.Controller;
+using SmartHotEdit.Model;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 
 namespace SmartHotEdit.View
@@ -14,9 +10,12 @@ namespace SmartHotEdit.View
     {
         private static Logger logger = LogManager.GetCurrentClassLogger();
 
-        public SettingsView()
+        private HotKeyController hotKeyController;
+
+        public SettingsView(HotKeyController hotKeyController)
         {
             InitializeComponent();
+            this.hotKeyController = hotKeyController;
         }
 
         private void enablePluginsCheckBox_CheckStateChanged(object sender, EventArgs e)
@@ -48,6 +47,31 @@ namespace SmartHotEdit.View
             }
             LogManager.ReconfigExistingLoggers();
             System.Diagnostics.Debug.WriteLine("Change logger state. Level?: " + LogManager.GlobalThreshold + "; Enabled?: " + LogManager.IsLoggingEnabled());
+        }
+
+        private void changeHotKeyButton_Click(object sender, EventArgs e)
+        {
+
+            bool isShiftControl = this.hotKeyTextBox.Modifiers == (Keys.Shift | Keys.Control);
+            bool isAltControl = this.hotKeyTextBox.Modifiers == (Keys.Alt | Keys.Control);
+            bool isShiftAltControl = this.hotKeyTextBox.Modifiers == (Keys.Shift | Keys.Alt | Keys.Control);
+            bool isShiftAlt = this.hotKeyTextBox.Modifiers == (Keys.Shift | Keys.Alt);
+
+            bool isShift = isShiftControl || isShiftAlt || isShiftAltControl || this.hotKeyTextBox.Modifiers == Keys.Shift;
+            bool isAlt = isAltControl || isShiftAlt || isShiftAltControl || this.hotKeyTextBox.Modifiers == Keys.Alt;
+            bool isControl = isShiftControl || isAltControl || isShiftAltControl || this.hotKeyTextBox.Modifiers == Keys.Control;
+            bool isWin = this.hotKeyTextBox.WinModifier;
+
+            if (this.hotKeyController.registerCustomHotKey(this.hotKeyTextBox.Hotkey, isShift, isControl, isAlt, isWin)) {
+                Console.WriteLine("Key changed");
+                HotKey hotKey = new HotKey(this.hotKeyTextBox.Hotkey, isShift, isControl, isAlt, isWin);
+                Properties.Settings.Default.HotKey = hotKey;
+            }
+        }
+
+        private void SettingsView_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            Properties.Settings.Default.Save();
         }
     }
 }
