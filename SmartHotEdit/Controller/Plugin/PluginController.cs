@@ -1,4 +1,5 @@
-﻿using SmartHotEditPluginHost;
+﻿using NLog;
+using SmartHotEditPluginHost;
 using System;
 
 
@@ -7,6 +8,9 @@ namespace SmartHotEdit.Controller.Plugin
     // TODO let the user disable different plugin loader
     public class PluginController
     {
+
+        private static Logger logger = LogManager.GetCurrentClassLogger();
+
         private DefaultPluginController defaultPluginController;
         private LuaPluginController luaPluginController;
 
@@ -14,24 +18,38 @@ namespace SmartHotEdit.Controller.Plugin
 
         public PluginController()
         {
-            this.defaultPluginController = new DefaultPluginController();
-            this.luaPluginController = new LuaPluginController();
+            logger.Trace("Construct PluginController");
             this.plugins = new APlugin[0];
 
             this.loadPlugins();
-            System.Diagnostics.Debug.WriteLine("Plugins found: " + this.plugins.Length);
+            logger.Debug("Plugins found: " + this.plugins.Length);
         }
 
         public void loadPlugins()
         {
-            this.plugins = this.arrayMerge(this.plugins, this.defaultPluginController.getPlugins());
-            this.plugins = this.arrayMerge(this.plugins, this.luaPluginController.getPlugins());
+            logger.Trace("Get Plugins from *PluginController");
+            logger.Trace("Use plugins: " + Properties.Settings.Default.UsePlugins);
+            if (Properties.Settings.Default.UsePlugins)
+            {
+                logger.Trace("Use Default plugins: " + Properties.Settings.Default.UseDefaultPlugins);
+                logger.Trace("Use Lua plugins: " + Properties.Settings.Default.UseLuaPlugins);
+
+                if (Properties.Settings.Default.UseDefaultPlugins)
+                {
+                    this.defaultPluginController = new DefaultPluginController(this);
+                    this.plugins = this.arrayMerge(this.plugins, this.defaultPluginController.getPlugins());
+                }
+                if (Properties.Settings.Default.UseLuaPlugins)
+                {
+                    this.luaPluginController = new LuaPluginController(this);
+                    this.plugins = this.arrayMerge(this.plugins, this.luaPluginController.getPlugins());
+                }
+            }
         }
 
         private APlugin[] arrayMerge(APlugin[] baseArray, APlugin[] arrayToMerge)
         {
             int originalLength = baseArray.Length;
-            APlugin[] luaPlugins = luaPluginController.getPlugins();
             Array.Resize(ref baseArray, originalLength + arrayToMerge.Length);
             Array.Copy(arrayToMerge, 0, baseArray, originalLength, arrayToMerge.Length);
 

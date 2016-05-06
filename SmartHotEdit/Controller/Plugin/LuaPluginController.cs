@@ -8,52 +8,77 @@ using System.IO;
 using MoonSharp.Interpreter.REPL;
 using SmartHotEdit.Model.Lua;
 using SmartHotEditPluginHost;
+using NLog;
+using System.Text;
 
 namespace SmartHotEdit.Controller.Plugin
 {
     class LuaPluginController
     {
-        private List<APlugin> plugins = null;
+        private static Logger logger = LogManager.GetCurrentClassLogger();
 
-        public LuaPluginController()
+        private List<APlugin> plugins = new List<APlugin>();
+
+        private PluginController pluginController;
+
+        public LuaPluginController(PluginController pluginController)
         {
-            this.plugins = new List<APlugin>();
+            logger.Trace("Construct LuaPluginController");
+            this.pluginController = pluginController;
             this.loadPlugins();
-            System.Diagnostics.Debug.WriteLine("Lua Plugins found: " + this.plugins.Count());
+            logger.Debug("Lua Plugins found: " + this.plugins.Count());
         }
 
-        private void loadPlugins()
+        private Script getConfiguredScript()
         {
             Script script = new Script();
-
 
             // TODO Check if directories exists and disable plugin if not
             // set script loader to load modules
             script.Options.ScriptLoader = new ReplInterpreterScriptLoader();
             var originalModulePaths = ((ScriptLoaderBase)script.Options.ScriptLoader).ModulePaths;
-            var customModulePaths = new string[] { "Lua/Modules/?.lua", "Lua/Plugins/?.lua" };
+            var customModulePaths = new string[] { "Lua/Modules/?", "Lua/Modules/?.lua", "Lua/Plugins/?", "Lua/Plugins/?.lua" };
+            logger.Trace("Custom module paths added: " + string.Join("; ", customModulePaths));
             var mergedModulePaths = new string[customModulePaths.Length + originalModulePaths.Length];
             originalModulePaths.CopyTo(mergedModulePaths, 0);
             customModulePaths.CopyTo(mergedModulePaths, originalModulePaths.Length);
+            logger.Debug("Merged module paths: " + string.Join("; ", mergedModulePaths));
             ((ScriptLoaderBase)script.Options.ScriptLoader).ModulePaths = mergedModulePaths;
 
-            // default modules
-            script.RequireModule("pluginhelper");
-            script.RequireModule("inspect");
 
+            string[] neededModules = new string[] { "class", "baseplugin", "pluginhelper", "inspect" };
+
+            logger.Debug("Require needed modules: " + string.Join("; ", neededModules));
+            foreach (string moduleName in neededModules)
+            {
+                script.RequireModule(moduleName);
+            }
+            return script;
+        }
+
+        private void loadPlugins()
+        {
+            Script script = this.getConfiguredScript();
+
+            logger.Trace("Register UserData types");
             // register types
             UserData.RegisterType<SmartHotEditPluginHost.Model.Function>();
             UserData.RegisterType<Argument>();
             UserData.RegisterType<List<Argument>>();
 
+            String pluginPath = "Lua\\Plugins\\";
+            String pluginSearchPattern = "*_plugin.lua";
+            logger.Trace("Find plugins in path: " + pluginPath + "; with search pattern: " + pluginSearchPattern);
             // find plugins
-            string[] filePaths = Directory.GetFiles("Lua\\Plugins\\", "*_plugin.lua");
+            string[] filePaths = Directory.GetFiles(pluginPath, pluginSearchPattern);
             foreach (string path in filePaths)
             {
+                logger.Trace("Script found at: " + path);
                 APlugin plugin = this.getPluginFromScript(script, path);
                 if(plugin != null)
                 {
                     this.plugins.Add(plugin);
+                    logger.Debug("Plugin found: " + plugin.getName());
                 }
             }
             
@@ -61,6 +86,7 @@ namespace SmartHotEdit.Controller.Plugin
 
         private APlugin getPluginFromScript(Script script, String scriptPath)
         {
+            logger.Trace("Try to get plugin from script");
             script.DoFile(scriptPath);
             DynValue res = script.Globals.Get("plugin");
 

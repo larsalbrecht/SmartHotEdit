@@ -34,5 +34,41 @@ namespace SmartHotEdit.Properties {
                 this["OpenEditForm"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool UseDefaultPlugins {
+            get {
+                return ((bool)(this["UseDefaultPlugins"]));
+            }
+            set {
+                this["UseDefaultPlugins"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool UseLuaPlugins {
+            get {
+                return ((bool)(this["UseLuaPlugins"]));
+            }
+            set {
+                this["UseLuaPlugins"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool UsePlugins {
+            get {
+                return ((bool)(this["UsePlugins"]));
+            }
+            set {
+                this["UsePlugins"] = value;
+            }
+        }
     }
 }

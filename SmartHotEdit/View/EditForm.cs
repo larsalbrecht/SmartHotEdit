@@ -5,6 +5,7 @@ using SmartHotEdit.Controller.Plugin;
 using System.Collections.Generic;
 using System.Linq;
 using SmartHotEditPluginHost;
+using NLog;
 
 namespace SmartHotEdit.View
 {
@@ -13,7 +14,10 @@ namespace SmartHotEdit.View
 	/// </summary>
 	public partial class EditForm : Form
 	{
-		enum POPUP_STATE {Small, Big};
+
+        private static Logger logger = LogManager.GetCurrentClassLogger();
+
+        enum POPUP_STATE {Small, Big};
 
         private PluginController pluginController;
 		
@@ -25,15 +29,18 @@ namespace SmartHotEdit.View
 
         public EditForm(PluginController pluginController)
 		{
-			InitializeComponent();
+            logger.Trace("Init EditForm now");
+
+            InitializeComponent();
 
             this.pluginController = pluginController;
             this._currentPopupState = (int)POPUP_STATE.Small;
 		}
 		void EditFormLoad(object sender, EventArgs e)
 		{
-			// init textbox with clipboard text
-			if (Clipboard.ContainsText()) {
+            // init textbox with clipboard text
+            logger.Trace("Clipboard contains text?: " + Clipboard.ContainsText());
+            if (Clipboard.ContainsText()) {
 				this.clipboardTextBox.Text = Clipboard.GetText();
 			}
 			
@@ -41,13 +48,16 @@ namespace SmartHotEdit.View
 			pluginList.Columns.Add("Plugin", -2, HorizontalAlignment.Left);
 			pluginList.Columns.Add("Description", -2, HorizontalAlignment.Left);
 
-			foreach(APlugin plugin in this.pluginController.getPlugins())
+            logger.Debug("Add plugins to view");
+
+            foreach (APlugin plugin in this.pluginController.getPlugins())
 			{
 				var tmpPluginEntry = new ListViewItem();
 				tmpPluginEntry.Tag = plugin;
 				tmpPluginEntry.Text = plugin.getName();
 				pluginList.Items.Add(tmpPluginEntry);
-			}
+                logger.Info("Plugin added to view: " + plugin.getName());
+            }
 
 			pluginList.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
 		}
@@ -55,7 +65,8 @@ namespace SmartHotEdit.View
 		void PluginListKeyDown(object sender, KeyEventArgs e)
 		{
 			if (e.KeyData == (Keys.Enter)) {
-				if(clipboardTextBox.Text != null && clipboardTextBox.Text.Length > 0)
+                logger.Trace("PluginListKeyDown > Enter");
+                if (clipboardTextBox.Text != null && clipboardTextBox.Text.Length > 0)
                 {
                     MessageBox.Show(clipboardTextBox.Text);
 					Clipboard.SetText(clipboardTextBox.Text);
@@ -63,7 +74,8 @@ namespace SmartHotEdit.View
                 this.Close();
                 e.SuppressKeyPress = true;
             } else if (e.KeyData == (Keys.Control | Keys.Space)) {
-				if (pluginList.SelectedItems.Count > 0) {
+                logger.Trace("PluginListKeyDown > Control + Space");
+                if (pluginList.SelectedItems.Count > 0) {
 					var selectedItem = pluginList.SelectedItems[0];
 					functionListUpDown.Items.Clear();
 					var plugin = (APlugin)selectedItem.Tag;
@@ -84,7 +96,8 @@ namespace SmartHotEdit.View
 		void FunctionListUpDownKeyDown(object sender, KeyEventArgs e)
 		{
 			if (e.KeyData == (Keys.Enter)) {
-				var myFunction = functionListUpDown.SelectedItem as Function;
+                logger.Trace("FunctionListUpDownKeyDown > Enter");
+                var myFunction = functionListUpDown.SelectedItem as Function;
 				var plugin = (APlugin)pluginList.SelectedItems[0].Tag;
 				if(myFunction != null && plugin != null){
 					System.Diagnostics.Debug.WriteLine("Call function " + myFunction.Name + " of plugin " + plugin.getName());
@@ -111,7 +124,8 @@ namespace SmartHotEdit.View
 				}
                 e.SuppressKeyPress = true;
             } else if (e.KeyData == (Keys.Control | Keys.Space)) {
-				if(this._currentPopupState == (int)POPUP_STATE.Small){
+                logger.Trace("FunctionListUpDownKeyDown > Control + Space");
+                if (this._currentPopupState == (int)POPUP_STATE.Small){
 					this._currentPopupState = (int)POPUP_STATE.Big;
 					this.functionListUpDown.Height = this.functionListUpDown.PreferredHeight;
 				} else {
@@ -125,7 +139,8 @@ namespace SmartHotEdit.View
 		void FunctionArgumentInputKeyDown(object sender, KeyEventArgs e)
 		{
 			if (e.KeyCode == Keys.Enter){
-				var textBox = this.functionArgumentInput;
+                logger.Trace("FunctionArgumentInputKeyDown > Enter");
+                var textBox = this.functionArgumentInput;
 				this._argumentsToFill[_listIndex++].value = textBox.Text;
 				textBox.Text = "";
 				if (_listIndex >= _argumentsToFill.Count())
@@ -138,7 +153,8 @@ namespace SmartHotEdit.View
 				}
                 e.SuppressKeyPress = true;
             } else if(e.KeyCode == Keys.Escape){
-				functionArgumentInput.Visible = false;
+                logger.Trace("FunctionArgumentInputKeyDown > Escape");
+                functionArgumentInput.Visible = false;
                 e.SuppressKeyPress = true;
             }
 		}
