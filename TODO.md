@@ -1,1 +1,25 @@
-IyBTbWFydEhvdEVkaXQgVG9Eb3MKCiMjIEZlYXR1cmVzCk5ldyBmZWF0dXJlcwojIyMgSmF2YVNjcmlwdCBQbHVnaW4KKiBBZGQgdGhlIHBvc3NpYmlsaXR5IHRvIGFkZCBwbHVnaW5zIGJhc2VkIG9uIEphdmFTY3JpcHQKCiMjIyBHZW5lcmFsIFBsdWdpbmJlaGF2aW9yCiogQmV0dGVyIGVycm9yIGRldGVjdGlvbiB3aXRoIGRpc2FibGluZyB0aGUgKlBsdWdpbkNvbnRyb2xsZXIgT1IgdGhlIGZ1bmN0aW9uIG9ubHkKKiBMZXQgdGhlIHVzZXIgZW5hYmxlIG9yIGRpc2FibGUgbG9hZGVkIHBsdWdpbnMKKiBMZXQgdGhlIHVzZXIgZW5hYmxlIG9yIGRpc2FibGUgZnVuY3Rpb25zIG9mIGxvYWRlZCBwbHVnaW5zCgojIyBCdWdzCkFsbCBrbm93biBpc3N1ZXMKIyMjIFNldHRpbmdzCiogSG90S2V5LUZpZWxkIGlzICJOb25lIiwgbXVzdCBiZSBmaWxsZWQgd2l0aCAiY3VycmVudCIgSG90S2V5LgoKIyMjIEZvcm0KKiBEZXNjcmlwdGlvbiBpcyBub3QgdmlzaWJsZQoqIEFyZ3VtZW50cyBhcmUgdW50aXRsZWQgKHNvbWV0aGluZyBsaWtlIHBsYWNlaG9sZGVyPykKCiMjIFJlZmFjdG9yaW5nCkFsbCB0aGluZ3MgdGhhdCBtdXN0IGJlIHJlZmFjdG9yZWQKIyMjIFBsdWdpbkNvbnRyb2xsZXIKKiBBbGwgKlBsdWdpbkNvbnRyb2xsZXIgY2FuIGhhdmUgYW4gSW50ZXJmYWNlLg==
+# SmartHotEdit ToDos
+
+## Features
+New features
+### JavaScript Plugin
+* Add the possibility to add plugins based on JavaScript
+
+### General Pluginbehavior
+* Better error detection with disabling the *PluginController OR the function only
+* Let the user enable or disable loaded plugins
+* Let the user enable or disable functions of loaded plugins
+
+## Bugs
+All known issues
+### Settings
+* HotKey-Field is "None", must be filled with "current" HotKey.
+
+### Form
+* Description is not visible
+* Arguments are untitled (something like placeholder?)
+
+## Refactoring
+All things that must be refactored
+### PluginController
+* All *PluginController can have an Interface.
