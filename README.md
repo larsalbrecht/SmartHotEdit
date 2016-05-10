@@ -1,6 +1,5 @@
 # SmartHotEdit
-Edit text from clipboard with smart functions. 
-
+Edit text from clipboard with smart functions. It is expandable with C# (compiled *.dll-files), Lua (Moonsharp) and Python (IronPython / uses Python 2.7).
 
 ## Plugins
 SmartHotEdit can handle plugins to add support for custom functionality.
@@ -72,7 +71,7 @@ namespace SmartHotEditBasePlugins {
 ### LUA
 You can write plugins with LUA. For this, there is a helper library you need to require to your script.
 #### Example Plugins
-There are some example in the directory ``Lua\Plugins\Examples`` in the project "SmartHotEditLuaPlugins":
+There are some examples in the directory ``Lua\Plugins\Examples`` in the project "SmartHotEditLuaPlugins":
 * case_plugin.lua
 * string_plugin.lua
  
@@ -111,4 +110,54 @@ end
 
 plugin = LuaStringPlugin()
 return plugin
+```
+
+### Python
+You can write plugins with Python. For this, there is a helper module you need to import to your script.
+#### Example Plugins
+There are some examples in the directory ``Python\Plugins\Examples`` in the project "SmartHotEditPythonPlugins":
+* case_plugin.py
+* string_plugin.py
+ 
+#### Short implementation description
+You need to create a class that extends from APlugin. For this, you must import all classes from baseplugin.
+In your class you must call ``super`` with the both parameters ``name`` and ``description``.
+After that, you can add your functions to the base class with ``self:add_function(Function function)``.
+The script must set a variable called plugin with a new instance of your plugin:
+`` plugin = MyPlugin() ``.
+
+Your scripts must saved in the directory ``Python\Plugins`` and must end with ``_plugin.py``: ``example_plugin.py``
+
+#### Example Code
+```Python
+from baseplugin import *
+
+
+class PythonStringPlugin(Plugin.APlugin):
+    
+    def __init__(self):
+        super(PythonStringPlugin, self).__init__("PythonString", "Some function to modify a string")
+        replace_string_func = Models.Function(
+			"Replace", 
+			"Replaces a string in a string",
+			PythonStringPlugin.replace_string,
+			[
+				Models.Argument("oldString", "old string"),
+				Models.Argument("newString", "new string")
+			]
+		)
+        self.add_function(replace_string_func)
+
+    @staticmethod
+    def replace_string(value, arguments):
+        if isinstance(value, basestring):
+            print arguments
+            if type(arguments) is dict and len(arguments) == 2:
+                return value.replace(arguments["oldString"], arguments["newString"])
+            else:
+                print "Wrong arguments (must be a dictionary with 2 elements)"
+        else:
+            print "Wrong value (must string) given"
+
+plugin = PythonStringPlugin()
 ```
