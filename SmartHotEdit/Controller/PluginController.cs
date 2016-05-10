@@ -1,9 +1,10 @@
 ﻿using NLog;
 using SmartHotEditPluginHost;
 using System;
+using SmartHotEdit.Controller.Plugin;
 
 
-namespace SmartHotEdit.Controller.Plugin
+namespace SmartHotEdit.Controller
 {
     // TODO let the user disable different plugin loader
     public class PluginController
@@ -13,6 +14,7 @@ namespace SmartHotEdit.Controller.Plugin
 
         private DefaultPluginController defaultPluginController;
         private LuaPluginController luaPluginController;
+        private PythonPluginController pythonPluginController;
 
         private APlugin[] plugins = null;
 
@@ -43,6 +45,11 @@ namespace SmartHotEdit.Controller.Plugin
                 {
                     this.luaPluginController = new LuaPluginController(this);
                     this.plugins = this.arrayMerge(this.plugins, this.luaPluginController.getPlugins());
+                }
+                if (Properties.Settings.Default.EnablePythonPlugins)
+                {
+                    this.pythonPluginController = new PythonPluginController(this);
+                    this.plugins = this.arrayMerge(this.plugins, this.pythonPluginController.getPlugins());
                 }
             }
         }

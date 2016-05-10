@@ -13,8 +13,7 @@ namespace SmartHotEditPluginHost.Model
         public List<Argument> arguments;
         public delegate String Transform (String s, List<Argument> arguments = null);
 		public Transform transform;
-		
-		
+
 		public Function(String name, String description, Transform transform, List<Argument> arguments = null)
 		{
 			this.Name = name;

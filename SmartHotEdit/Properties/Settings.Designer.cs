@@ -81,5 +81,17 @@ namespace SmartHotEdit.Properties {
                 this["HotKey"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool EnablePythonPlugins {
+            get {
+                return ((bool)(this["EnablePythonPlugins"]));
+            }
+            set {
+                this["EnablePythonPlugins"] = value;
+            }
+        }
     }
 }

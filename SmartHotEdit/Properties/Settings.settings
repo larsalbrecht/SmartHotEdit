@@ -17,5 +17,8 @@
     <Setting Name="HotKey" Type="SmartHotEdit.Model.HotKey" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
+    <Setting Name="EnablePythonPlugins" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

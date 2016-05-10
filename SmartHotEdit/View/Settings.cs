@@ -64,7 +64,6 @@ namespace SmartHotEdit.View
             bool isWin = this.hotKeyTextBox.WinModifier;
 
             if (this.hotKeyController.registerCustomHotKey(this.hotKeyTextBox.Hotkey, isShift, isControl, isAlt, isWin)) {
-                Console.WriteLine("Key changed");
                 HotKey hotKey = new HotKey(this.hotKeyTextBox.Hotkey, isShift, isControl, isAlt, isWin);
                 Properties.Settings.Default.HotKey = hotKey;
             }

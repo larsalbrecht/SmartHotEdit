@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 using SmartHotEditPluginHost.Model;
-using SmartHotEdit.Controller.Plugin;
+using SmartHotEdit.Controller;
 using System.Collections.Generic;
 using System.Linq;
 using SmartHotEditPluginHost;

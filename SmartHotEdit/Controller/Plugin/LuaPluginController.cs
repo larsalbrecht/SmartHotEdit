@@ -66,7 +66,7 @@ namespace SmartHotEdit.Controller.Plugin
             UserData.RegisterType<Argument>();
             UserData.RegisterType<List<Argument>>();
 
-            String pluginPath = "Lua\\Plugins\\";
+            String pluginPath = Path.GetFullPath(@"Lua\Plugins\");
             String pluginSearchPattern = "*_plugin.lua";
             logger.Trace("Find plugins in path: " + pluginPath + "; with search pattern: " + pluginSearchPattern);
             // find plugins
@@ -81,7 +81,6 @@ namespace SmartHotEdit.Controller.Plugin
                     logger.Debug("Plugin found: " + plugin.getName());
                 }
             }
-            
         }
 
         private APlugin getPluginFromScript(Script script, String scriptPath)
@@ -170,7 +169,6 @@ namespace SmartHotEdit.Controller.Plugin
             List<Argument> arguments = null;
             if (dynValue.Type == DataType.Table)
             {
-                Console.WriteLine(dynValue.Table);
                 foreach (DynValue dynArgument in dynValue.Table.Keys)
                 {
                     String key = null;
