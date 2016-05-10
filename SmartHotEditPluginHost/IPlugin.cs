@@ -13,7 +13,7 @@ namespace SmartHotEditPluginHost
         String getName();
         String getDescription();
         String getResultFromFunction(Function function, String value, List<Argument> arguments = null);
-        ListBox.ObjectCollection getFunctionsAsCollection(ListBox lb);
+        Function[] getFunctionsAsArray();
 
 
     }

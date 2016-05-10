@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 using SmartHotEditPluginHost.Model;
+using System.Linq;
 
 namespace SmartHotEditPluginHost
 {
@@ -27,16 +28,9 @@ namespace SmartHotEditPluginHost
             return result;
         }
 
-        public ListBox.ObjectCollection getFunctionsAsCollection(ListBox lb)
+        public Function[] getFunctionsAsArray()
         {
-            var collection = new ListBox.ObjectCollection(lb);
-
-            foreach (Function myFunction in this.functionList)
-            {
-                collection.Add(myFunction);
-            }
-
-            return collection;
+            return this.functionList.Cast<Function>().ToArray();
         }
     }
 }

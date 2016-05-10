@@ -75,20 +75,21 @@ namespace SmartHotEdit.View
                 e.SuppressKeyPress = true;
             } else if (e.KeyData == (Keys.Control | Keys.Space)) {
                 logger.Trace("PluginListKeyDown > Control + Space");
-                if (pluginList.SelectedItems.Count > 0) {
+                if (this.pluginList.SelectedItems.Count > 0) {
 					var selectedItem = pluginList.SelectedItems[0];
-					functionListUpDown.Items.Clear();
-					var plugin = (APlugin)selectedItem.Tag;
+                    this.functionListUpDown.Items.Clear();
+
+                    var plugin = (APlugin)selectedItem.Tag;
                     logger.Debug("Selected plugin: " + plugin.getName());
 
-                    functionListUpDown.Items.AddRange(plugin.getFunctionsAsCollection(functionListUpDown));
+                    this.functionListUpDown.Items.AddRange(plugin.getFunctionsAsArray());
 
                     _currentPopupState = (int)POPUP_STATE.Small;
-					
-					functionListUpDown.Left = (selectedItem.ListView.Columns[0].Width);
-					functionListUpDown.Top = selectedItem.Bounds.Top;
-					functionListUpDown.Visible = true;
-					functionListUpDown.Focus();
+
+                    this.functionListUpDown.Left = (selectedItem.ListView.Columns[0].Width);
+                    this.functionListUpDown.Top = selectedItem.Bounds.Top;
+                    this.functionListUpDown.Visible = true;
+                    this.functionListUpDown.Focus();
                 }
 				e.SuppressKeyPress = true;
 			}
@@ -98,8 +99,8 @@ namespace SmartHotEdit.View
 		{
 			if (e.KeyData == (Keys.Enter)) {
                 logger.Trace("FunctionListUpDownKeyDown > Enter");
-                var myFunction = functionListUpDown.SelectedItem as Function;
-				var plugin = (APlugin)pluginList.SelectedItems[0].Tag;
+                var myFunction = this.functionListUpDown.SelectedItem as Function;
+				var plugin = (APlugin)this.pluginList.SelectedItems[0].Tag;
 				if(myFunction != null && plugin != null){
                     logger.Debug("Selected function (plugin: " + plugin.getName() + ") to execute: " + myFunction.Name);
                     logger.Debug("Function has: " + (myFunction.arguments == null || myFunction.arguments.Count == 0 ? 0 : myFunction.arguments.Count) + " arguments");
@@ -108,13 +109,14 @@ namespace SmartHotEdit.View
 							return;
                         logger.Trace("Open argument inputs");
 
+                        this._currentPopupState = (int)POPUP_STATE.Small;
                         this._argumentsToFill = myFunction.arguments;
 						this._currentFunction = myFunction;
 						this._currentPlugin = plugin;
 						this._listIndex = 0;
 
                         // get selected item to calculate position of input
-                        var selectedItem = pluginList.SelectedItems[0];
+                        var selectedItem = this.pluginList.SelectedItems[0];
                         functionArgumentInput.Text = "";
                         functionArgumentInput.Left = (selectedItem.ListView.Columns[0].Width);
                         functionArgumentInput.Top = selectedItem.Bounds.Top;
@@ -138,7 +140,13 @@ namespace SmartHotEdit.View
 				}
                 e.SuppressKeyPress = true;
             }
-		}
+            else if (e.KeyCode == Keys.Escape)
+            {
+                logger.Trace("FunctionListUpDownKeyDown > Escape");
+                this.functionListUpDown.Visible = false;
+                e.SuppressKeyPress = true;
+            }
+        }
 		
 		void FunctionArgumentInputKeyDown(object sender, KeyEventArgs e)
 		{
@@ -160,7 +168,7 @@ namespace SmartHotEdit.View
                 e.SuppressKeyPress = true;
             } else if(e.KeyCode == Keys.Escape){
                 logger.Trace("FunctionArgumentInputKeyDown > Escape");
-                functionArgumentInput.Visible = false;
+                this.functionArgumentInput.Visible = false;
                 e.SuppressKeyPress = true;
             }
 		}

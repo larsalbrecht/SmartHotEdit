@@ -75,6 +75,7 @@ namespace SmartHotEdit.Controller
             {
                 ef.Show();
             }
+            ef.BringToFront();
         }
 
         private void onHotKeyCouldNotRegistered(Boolean alreadyRegistered = false)
