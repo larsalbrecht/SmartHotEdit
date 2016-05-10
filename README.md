@@ -1,5 +1,27 @@
 # SmartHotEdit
-Edit text from clipboard with smart functions. It is expandable with C# (compiled *.dll-files), Lua (Moonsharp) and Python (IronPython / uses Python 2.7).
+Edit text from clipboard with smart functions. It is expandable with C# (compiled *.dll-files), Lua ([Moonsharp](//www.moonsharp.org)) and Python ([IronPython](//ironpython.net) / uses Python 2.7).
+
+## Control
+
+### Settings
+You find the settings in the system tray by right clicking the icon and choose "Settings".
+The settings will be saved in the directory (Win):
+
+``C:\Users\<username>\AppData\Local\SmartHotEdit``
+
+### HotKey
+#### Default
+The default HotKey to open SmartHotEdit is ``[CTRL]`` + ``[WIN]`` + ``[Y]``
+
+#### Change
+You can change the HotKey in the settings. Click into the Hot Key field and press your Hot Key. Then click "Change Hot Key".
+
+### En/Disable Plugins
+You can enable or disable the use of plugins (general and for each type).
+
+### Logging
+In the app directory, there is a log-directory, to save the logs. You can disable the logging in the settings.
+
 
 ## Plugins
 SmartHotEdit can handle plugins to add support for custom functionality.

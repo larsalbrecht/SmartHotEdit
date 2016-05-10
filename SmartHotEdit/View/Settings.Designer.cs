@@ -39,6 +39,7 @@ namespace SmartHotEdit.View
             this.hotKeySettingGroupBox = new System.Windows.Forms.GroupBox();
             this.changeHotKeyButton = new System.Windows.Forms.Button();
             this.hotKeyTextBox = new SmartHotEdit.View.Controls.HotKeyControl();
+            this.enablePythonPluginsCheckBox = new System.Windows.Forms.CheckBox();
             this.pluginSettingsGroupBox.SuspendLayout();
             this.loggerSettingsGroupBox.SuspendLayout();
             this.hotKeySettingGroupBox.SuspendLayout();
@@ -48,12 +49,13 @@ namespace SmartHotEdit.View
             // 
             this.pluginSettingsGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.pluginSettingsGroupBox.Controls.Add(this.enablePythonPluginsCheckBox);
             this.pluginSettingsGroupBox.Controls.Add(this.enableLuaPluginsCheckBox);
             this.pluginSettingsGroupBox.Controls.Add(this.enableDefaultPluginsCheckBox);
             this.pluginSettingsGroupBox.Controls.Add(this.enablePluginsCheckBox);
             this.pluginSettingsGroupBox.Location = new System.Drawing.Point(12, 97);
             this.pluginSettingsGroupBox.Name = "pluginSettingsGroupBox";
-            this.pluginSettingsGroupBox.Size = new System.Drawing.Size(203, 102);
+            this.pluginSettingsGroupBox.Size = new System.Drawing.Size(203, 122);
             this.pluginSettingsGroupBox.TabIndex = 0;
             this.pluginSettingsGroupBox.TabStop = false;
             this.pluginSettingsGroupBox.Text = "Plugin Settings";
@@ -103,7 +105,7 @@ namespace SmartHotEdit.View
             this.loggerSettingsGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.loggerSettingsGroupBox.Controls.Add(this.enableLoggingCheckBox);
-            this.loggerSettingsGroupBox.Location = new System.Drawing.Point(12, 205);
+            this.loggerSettingsGroupBox.Location = new System.Drawing.Point(12, 225);
             this.loggerSettingsGroupBox.Name = "loggerSettingsGroupBox";
             this.loggerSettingsGroupBox.Size = new System.Drawing.Size(203, 49);
             this.loggerSettingsGroupBox.TabIndex = 1;
@@ -161,6 +163,19 @@ namespace SmartHotEdit.View
             this.hotKeyTextBox.Text = "None";
             this.hotKeyTextBox.WinModifier = false;
             // 
+            // enablePythonPluginsCheckBox
+            // 
+            this.enablePythonPluginsCheckBox.AutoSize = true;
+            this.enablePythonPluginsCheckBox.Checked = global::SmartHotEdit.Properties.Settings.Default.EnablePythonPlugins;
+            this.enablePythonPluginsCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.enablePythonPluginsCheckBox.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::SmartHotEdit.Properties.Settings.Default, "EnablePythonPlugins", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.enablePythonPluginsCheckBox.Location = new System.Drawing.Point(6, 89);
+            this.enablePythonPluginsCheckBox.Name = "enablePythonPluginsCheckBox";
+            this.enablePythonPluginsCheckBox.Size = new System.Drawing.Size(132, 17);
+            this.enablePythonPluginsCheckBox.TabIndex = 3;
+            this.enablePythonPluginsCheckBox.Text = "Enable Python Plugins";
+            this.enablePythonPluginsCheckBox.UseVisualStyleBackColor = true;
+            // 
             // SettingsView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -195,5 +210,6 @@ namespace SmartHotEdit.View
         private System.Windows.Forms.GroupBox hotKeySettingGroupBox;
         private HotKeyControl hotKeyTextBox;
         private System.Windows.Forms.Button changeHotKeyButton;
+        private System.Windows.Forms.CheckBox enablePythonPluginsCheckBox;
     }
 }
