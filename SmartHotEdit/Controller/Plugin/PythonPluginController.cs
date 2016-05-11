@@ -9,28 +9,25 @@ using Microsoft.Scripting.Hosting;
 using System.IO;
 using SmartHotEdit.Model.Python;
 using SmartHotEditPluginHost.Model;
+using SmartHotEdit.Abstracts;
 
 namespace SmartHotEdit.Controller.Plugin
 {
 
-    class PythonPluginController
+    class PythonPluginController : APluginController
     {
-        private static Logger logger = LogManager.GetCurrentClassLogger();
         private List<APlugin> plugins = new List<APlugin>();
-        private PluginController pluginController;
 
         private ScriptEngine engine;
         private ScriptScope scope;
 
-        public PythonPluginController(PluginController pluginController)
+        public PythonPluginController(PluginController pluginController) : base(pluginController)
         {
             logger.Trace("Construct JavascriptPluginController");
-            this.pluginController = pluginController;
-            this.loadPlugins();
-            logger.Debug("Javascript Plugins found: " + this.plugins.Count());
+            this.Type = "Python";
         }
 
-        private void loadPlugins()
+        public override void loadPlugins()
         {
             this.engine = Python.CreateEngine();
             this.scope = engine.CreateScope();
@@ -94,9 +91,14 @@ namespace SmartHotEdit.Controller.Plugin
             return pythonPlugin;
         }
 
-        public APlugin[] getPlugins()
+        protected override APlugin[] getPlugins()
         {
             return this.plugins.ToArray();
+        }
+
+        public override bool isEnabled()
+        {
+            return Properties.Settings.Default.EnablePythonPlugins;
         }
     }
 }

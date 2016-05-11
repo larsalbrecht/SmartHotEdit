@@ -1,7 +1,21 @@
 # SmartHotEdit
 Edit text from clipboard with smart functions. It is expandable with C# (compiled *.dll-files), Lua ([Moonsharp](//www.moonsharp.org)) and Python ([IronPython](//ironpython.net) / uses Python 2.7).
 
+
 ## Control
+Start the EditForm by pressing the HotKey (see: Control -> HotKey).
+Now you see a list of plugins on the left side, and the content of your clipboard on the right side.
+
+Choose the plugin you want with the arrow keys and press ``[CTRL]`` + ``[SPACE]`` to open the list of functions inside the plugin.
+If you press ``[CTRL]`` + ``[SPACE]`` again, the list will be expanded to a bigger view.
+
+Choose here the function you want and press ``[ENTER]``.
+If the selected function has arguments, you now see an input for every argument the function needs. Confirm all arguments with ``[ENTER]``.
+On the right side, you see the edited text.
+Close the EditForm by pressing ``[ENTER]`` again, the new content will be copied to your clipboard.
+
+You can close the function or argument inputs with a press on ``[ESC]``.
+
 
 ### Settings
 You find the settings in the system tray by right clicking the icon and choose "Settings".
@@ -17,7 +31,7 @@ The default HotKey to open SmartHotEdit is ``[CTRL]`` + ``[WIN]`` + ``[Y]``
 You can change the HotKey in the settings. Click into the Hot Key field and press your Hot Key. Then click "Change Hot Key".
 
 ### En/Disable Plugins
-You can enable or disable the use of plugins (general and for each type).
+You can enable or disable the use of plugins (general and for each type). You also can enable or disable single plugins.
 
 ### Logging
 In the app directory, there is a log-directory, to save the logs. You can disable the logging in the settings.

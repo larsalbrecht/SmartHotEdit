@@ -19,7 +19,7 @@ namespace SmartHotEdit.View
 
         enum POPUP_STATE {Small, Big};
 
-        private PluginController pluginController;
+        private MainController mainController;
 		
 		private int _currentPopupState;
         private int _listIndex = -1;
@@ -27,16 +27,17 @@ namespace SmartHotEdit.View
         private APlugin _currentPlugin = null;
         private Function _currentFunction = null;
 
-        public EditForm(PluginController pluginController)
+        public EditForm(MainController mainController)
 		{
             logger.Trace("Init EditForm now");
 
             InitializeComponent();
 
-            this.pluginController = pluginController;
+            this.mainController = mainController;
             this._currentPopupState = (int)POPUP_STATE.Small;
 		}
-		void EditFormLoad(object sender, EventArgs e)
+
+		private void EditFormLoad(object sender, EventArgs e)
 		{
             // init textbox with clipboard text
             logger.Trace("Clipboard contains text?: " + Clipboard.ContainsText());
@@ -50,7 +51,7 @@ namespace SmartHotEdit.View
 
             logger.Debug("Add plugins to view");
 
-            foreach (APlugin plugin in this.pluginController.getPlugins())
+            foreach (APlugin plugin in this.mainController.getPluginController().EnabledPlugins)
 			{
 				var tmpPluginEntry = new ListViewItem();
 				tmpPluginEntry.Tag = plugin;

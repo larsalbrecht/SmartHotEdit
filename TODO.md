@@ -7,7 +7,6 @@ New features
 
 ### General Pluginbehavior
 * Better error detection with disabling the *PluginController OR the function only
-* Let the user enable or disable loaded plugins (see: [How to: Group Items in a Windows Forms ListView Control](https://msdn.microsoft.com/en-us/library/ezh1batz.aspx))
 * Let the user enable or disable functions of loaded plugins
 
 ## Bugs
@@ -21,5 +20,4 @@ All known issues
 
 ## Refactoring
 All things that must be refactored
-### PluginController
-* All *PluginController can have an Interface.
+### ... coming soon ...

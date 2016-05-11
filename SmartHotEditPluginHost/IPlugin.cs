@@ -9,7 +9,6 @@ namespace SmartHotEditPluginHost
 {
     public interface IPlugin
     {
-
         String getName();
         String getDescription();
         String getResultFromFunction(Function function, String value, List<Argument> arguments = null);

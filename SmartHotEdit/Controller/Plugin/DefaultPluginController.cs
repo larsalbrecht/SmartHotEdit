@@ -3,27 +3,23 @@ using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using SmartHotEditPluginHost;
 using NLog;
+using SmartHotEdit.Abstracts;
 
 namespace SmartHotEdit.Controller.Plugin
 {
-    class DefaultPluginController
+    class DefaultPluginController : APluginController
     {
-        private static Logger logger = LogManager.GetCurrentClassLogger();
 
         [ImportMany(typeof(APlugin))]
         private APlugin[] plugins = null;
 
-        private PluginController pluginController;
-
-        public DefaultPluginController(PluginController pluginController)
+        public DefaultPluginController(PluginController pluginController) : base(pluginController)
         {
             logger.Trace("Construct DefaultPluginController");
-            this.pluginController = pluginController;
-            this.loadPlugins();
-            logger.Debug("Default Plugins found: " + this.plugins.Length);
+            this.Type = "Default";
         }
 
-        private void loadPlugins()
+        public override void loadPlugins()
         {
             logger.Trace("Load DefaultPlugins using CompositionContainer");
             var pluginCatalog = new DirectoryCatalog(".");
@@ -32,10 +28,14 @@ namespace SmartHotEdit.Controller.Plugin
             logger.Trace("Load DefaultPlugins finished");
         }
 
-        public APlugin[] getPlugins()
+        protected override APlugin[] getPlugins()
         {
             return this.plugins;
         }
 
+        public override bool isEnabled()
+        {
+            return Properties.Settings.Default.EnableDefaultPlugins;
+        }
     }
 }

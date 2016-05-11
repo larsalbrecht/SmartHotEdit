@@ -10,23 +10,18 @@ using SmartHotEdit.Model.Lua;
 using SmartHotEditPluginHost;
 using NLog;
 using System.Text;
+using SmartHotEdit.Abstracts;
 
 namespace SmartHotEdit.Controller.Plugin
 {
-    class LuaPluginController
+    class LuaPluginController : APluginController
     {
-        private static Logger logger = LogManager.GetCurrentClassLogger();
-
         private List<APlugin> plugins = new List<APlugin>();
 
-        private PluginController pluginController;
-
-        public LuaPluginController(PluginController pluginController)
+        public LuaPluginController(PluginController pluginController) : base(pluginController)
         {
             logger.Trace("Construct LuaPluginController");
-            this.pluginController = pluginController;
-            this.loadPlugins();
-            logger.Debug("Lua Plugins found: " + this.plugins.Count());
+            this.Type = "Lua";
         }
 
         private Script getConfiguredScript()
@@ -56,7 +51,7 @@ namespace SmartHotEdit.Controller.Plugin
             return script;
         }
 
-        private void loadPlugins()
+        public override void loadPlugins()
         {
             Script script = this.getConfiguredScript();
 
@@ -199,10 +194,14 @@ namespace SmartHotEdit.Controller.Plugin
             return arguments;
         }
 
-        public APlugin[] getPlugins()
+        protected override APlugin[] getPlugins()
         {
             return this.plugins.ToArray();
         }
 
+        public override bool isEnabled()
+        {
+            return Properties.Settings.Default.EnableLuaPlugins;
+        }
     }
 }

@@ -2,7 +2,9 @@
 using SmartHotEditPluginHost;
 using System;
 using SmartHotEdit.Controller.Plugin;
-
+using System.Collections.Generic;
+using SmartHotEdit.Abstracts;
+using System.Linq;
 
 namespace SmartHotEdit.Controller
 {
@@ -12,60 +14,84 @@ namespace SmartHotEdit.Controller
 
         private static Logger logger = LogManager.GetCurrentClassLogger();
 
-        private DefaultPluginController defaultPluginController;
-        private LuaPluginController luaPluginController;
-        private PythonPluginController pythonPluginController;
+        public List<APlugin> LoadedPlugins = new List<APlugin>();
+        public List<APlugin> EnabledPlugins = new List<APlugin>();
+        public List<APlugin> DisabledPlugins = new List<APlugin>();
 
-        private APlugin[] plugins = null;
+        private IList<APluginController> pluginControllerList;
 
         public PluginController()
         {
             logger.Trace("Construct PluginController");
-            this.plugins = new APlugin[0];
+
+            this.pluginControllerList = new List<APluginController>();
+            this.pluginControllerList.Add(new DefaultPluginController(this));
+            this.pluginControllerList.Add(new LuaPluginController(this));
+            this.pluginControllerList.Add(new PythonPluginController(this));
 
             this.loadPlugins();
-            logger.Debug("Plugins found: " + this.plugins.Length);
         }
 
         public void loadPlugins()
         {
+            this.LoadedPlugins.Clear();
+            this.EnabledPlugins.Clear();
+            this.DisabledPlugins.Clear();
             logger.Trace("Get Plugins from *PluginController");
             logger.Trace("Use plugins: " + Properties.Settings.Default.EnablePlugins);
             if (Properties.Settings.Default.EnablePlugins)
             {
-                logger.Trace("Use Default plugins: " + Properties.Settings.Default.EnableDefaultPlugins);
-                logger.Trace("Use Lua plugins: " + Properties.Settings.Default.EnableLuaPlugins);
+                foreach(APluginController concretePluginControlelr in this.pluginControllerList)
+                {
+                    if (concretePluginControlelr.isFullyImplemented())
+                    {
+                        logger.Trace(concretePluginControlelr.Type + " is fully implemented");
+                        if (concretePluginControlelr.isEnabled())
+                        {
+                            logger.Trace(concretePluginControlelr.Type + " is enabled");
+                            concretePluginControlelr.preLoadPlugins();
+                            concretePluginControlelr.loadPlugins();
+                            concretePluginControlelr.postLoadPlugins();
 
-                if (Properties.Settings.Default.EnableDefaultPlugins)
-                {
-                    this.defaultPluginController = new DefaultPluginController(this);
-                    this.plugins = this.arrayMerge(this.plugins, this.defaultPluginController.getPlugins());
-                }
-                if (Properties.Settings.Default.EnableLuaPlugins)
-                {
-                    this.luaPluginController = new LuaPluginController(this);
-                    this.plugins = this.arrayMerge(this.plugins, this.luaPluginController.getPlugins());
-                }
-                if (Properties.Settings.Default.EnablePythonPlugins)
-                {
-                    this.pythonPluginController = new PythonPluginController(this);
-                    this.plugins = this.arrayMerge(this.plugins, this.pythonPluginController.getPlugins());
+                            this.LoadedPlugins.AddRange(concretePluginControlelr.LoadedPlugins);
+                            this.EnabledPlugins.AddRange(concretePluginControlelr.EnabledPlugins);
+                            this.DisabledPlugins.AddRange(concretePluginControlelr.DisabledPlugins);
+                        }
+                        else
+                        {
+                            logger.Debug(concretePluginControlelr.Type + " is disabled");
+                        }
+                    } else
+                    {
+                        throw new NotImplementedException("The Controller for the " + concretePluginControlelr.Type + " Plugins is not fully implemented!");
+                    }
                 }
             }
+            logger.Debug("Plugins found: " + this.LoadedPlugins.Count);
+            logger.Debug("Plugins enabled: " + this.EnabledPlugins.Count);
+            logger.Debug("Plugins disabled: " + this.DisabledPlugins.Count);
         }
 
         private APlugin[] arrayMerge(APlugin[] baseArray, APlugin[] arrayToMerge)
         {
+            if(baseArray == null)
+            {
+                baseArray = new APlugin[0];
+            }
+            if(arrayToMerge == null)
+            {
+                arrayToMerge = new APlugin[0];
+            }
             int originalLength = baseArray.Length;
             Array.Resize(ref baseArray, originalLength + arrayToMerge.Length);
             Array.Copy(arrayToMerge, 0, baseArray, originalLength, arrayToMerge.Length);
 
             return baseArray;
         }
-        
-        public APlugin[] getPlugins()
+
+        public IList<APluginController> getPluginControllerList()
         {
-            return this.plugins;
+            return this.pluginControllerList;
         }
 
     }
