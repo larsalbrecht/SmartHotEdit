@@ -115,6 +115,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -126,6 +127,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Abstracts\APluginController.cs" />
     <Compile Include="Controller\Plugin\DefaultPluginController.cs" />
     <Compile Include="Controller\Plugin\PythonPluginController.cs" />
     <Compile Include="Controller\Plugin\LuaPluginController.cs" />
@@ -134,6 +136,7 @@
     <Compile Include="Controller\NotificationController.cs" />
     <Compile Include="Controller\PluginController.cs" />
     <Compile Include="Helper\HotkeyHandler.cs" />
+    <Compile Include="Helper\PropertyHelper.cs" />
     <Compile Include="Model\HotKey.cs" />
     <Compile Include="Model\Python\PythonFunction.cs" />
     <Compile Include="Model\Python\Plugin.cs" />

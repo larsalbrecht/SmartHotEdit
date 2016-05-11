@@ -30,7 +30,10 @@ namespace SmartHotEdit.View
         /// </summary>
         private void InitializeComponent()
         {
+            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
+            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.pluginSettingsGroupBox = new System.Windows.Forms.GroupBox();
+            this.enablePythonPluginsCheckBox = new System.Windows.Forms.CheckBox();
             this.enableLuaPluginsCheckBox = new System.Windows.Forms.CheckBox();
             this.enableDefaultPluginsCheckBox = new System.Windows.Forms.CheckBox();
             this.enablePluginsCheckBox = new System.Windows.Forms.CheckBox();
@@ -39,26 +42,74 @@ namespace SmartHotEdit.View
             this.hotKeySettingGroupBox = new System.Windows.Forms.GroupBox();
             this.changeHotKeyButton = new System.Windows.Forms.Button();
             this.hotKeyTextBox = new SmartHotEdit.View.Controls.HotKeyControl();
-            this.enablePythonPluginsCheckBox = new System.Windows.Forms.CheckBox();
+            this.enableDisablePluginsGroup = new System.Windows.Forms.GroupBox();
+            this.enableDisablePluginListView = new System.Windows.Forms.ListView();
+            this.tableLayoutPanel1.SuspendLayout();
             this.pluginSettingsGroupBox.SuspendLayout();
             this.loggerSettingsGroupBox.SuspendLayout();
             this.hotKeySettingGroupBox.SuspendLayout();
+            this.enableDisablePluginsGroup.SuspendLayout();
             this.SuspendLayout();
+            // 
+            // flowLayoutPanel1
+            // 
+            this.flowLayoutPanel1.AutoSize = true;
+            this.flowLayoutPanel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 0);
+            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(0, 0);
+            this.flowLayoutPanel1.TabIndex = 3;
+            // 
+            // tableLayoutPanel1
+            // 
+            this.tableLayoutPanel1.AutoSize = true;
+            this.tableLayoutPanel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.tableLayoutPanel1.ColumnCount = 1;
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel1.Controls.Add(this.pluginSettingsGroupBox, 0, 1);
+            this.tableLayoutPanel1.Controls.Add(this.loggerSettingsGroupBox, 0, 3);
+            this.tableLayoutPanel1.Controls.Add(this.hotKeySettingGroupBox, 0, 0);
+            this.tableLayoutPanel1.Controls.Add(this.enableDisablePluginsGroup, 0, 2);
+            this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
+            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+            this.tableLayoutPanel1.RowCount = 4;
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(231, 382);
+            this.tableLayoutPanel1.TabIndex = 4;
             // 
             // pluginSettingsGroupBox
             // 
-            this.pluginSettingsGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.pluginSettingsGroupBox.AutoSize = true;
+            this.pluginSettingsGroupBox.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.pluginSettingsGroupBox.Controls.Add(this.enablePythonPluginsCheckBox);
             this.pluginSettingsGroupBox.Controls.Add(this.enableLuaPluginsCheckBox);
             this.pluginSettingsGroupBox.Controls.Add(this.enableDefaultPluginsCheckBox);
             this.pluginSettingsGroupBox.Controls.Add(this.enablePluginsCheckBox);
-            this.pluginSettingsGroupBox.Location = new System.Drawing.Point(12, 97);
+            this.pluginSettingsGroupBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pluginSettingsGroupBox.Location = new System.Drawing.Point(3, 96);
             this.pluginSettingsGroupBox.Name = "pluginSettingsGroupBox";
-            this.pluginSettingsGroupBox.Size = new System.Drawing.Size(203, 122);
-            this.pluginSettingsGroupBox.TabIndex = 0;
+            this.pluginSettingsGroupBox.Size = new System.Drawing.Size(225, 124);
+            this.pluginSettingsGroupBox.TabIndex = 12;
             this.pluginSettingsGroupBox.TabStop = false;
             this.pluginSettingsGroupBox.Text = "Plugin Settings";
+            // 
+            // enablePythonPluginsCheckBox
+            // 
+            this.enablePythonPluginsCheckBox.AutoSize = true;
+            this.enablePythonPluginsCheckBox.Checked = global::SmartHotEdit.Properties.Settings.Default.EnablePythonPlugins;
+            this.enablePythonPluginsCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.enablePythonPluginsCheckBox.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::SmartHotEdit.Properties.Settings.Default, "EnablePythonPlugins", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.enablePythonPluginsCheckBox.Location = new System.Drawing.Point(9, 88);
+            this.enablePythonPluginsCheckBox.Name = "enablePythonPluginsCheckBox";
+            this.enablePythonPluginsCheckBox.Size = new System.Drawing.Size(132, 17);
+            this.enablePythonPluginsCheckBox.TabIndex = 13;
+            this.enablePythonPluginsCheckBox.Text = "Enable Python Plugins";
+            this.enablePythonPluginsCheckBox.UseVisualStyleBackColor = true;
             // 
             // enableLuaPluginsCheckBox
             // 
@@ -66,10 +117,10 @@ namespace SmartHotEdit.View
             this.enableLuaPluginsCheckBox.Checked = global::SmartHotEdit.Properties.Settings.Default.EnableLuaPlugins;
             this.enableLuaPluginsCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
             this.enableLuaPluginsCheckBox.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::SmartHotEdit.Properties.Settings.Default, "EnableLuaPlugins", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
-            this.enableLuaPluginsCheckBox.Location = new System.Drawing.Point(7, 66);
+            this.enableLuaPluginsCheckBox.Location = new System.Drawing.Point(9, 65);
             this.enableLuaPluginsCheckBox.Name = "enableLuaPluginsCheckBox";
             this.enableLuaPluginsCheckBox.Size = new System.Drawing.Size(117, 17);
-            this.enableLuaPluginsCheckBox.TabIndex = 2;
+            this.enableLuaPluginsCheckBox.TabIndex = 12;
             this.enableLuaPluginsCheckBox.Text = "Enable Lua Plugins";
             this.enableLuaPluginsCheckBox.UseVisualStyleBackColor = true;
             // 
@@ -79,10 +130,10 @@ namespace SmartHotEdit.View
             this.enableDefaultPluginsCheckBox.Checked = global::SmartHotEdit.Properties.Settings.Default.EnableDefaultPlugins;
             this.enableDefaultPluginsCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
             this.enableDefaultPluginsCheckBox.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::SmartHotEdit.Properties.Settings.Default, "EnableDefaultPlugins", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
-            this.enableDefaultPluginsCheckBox.Location = new System.Drawing.Point(7, 43);
+            this.enableDefaultPluginsCheckBox.Location = new System.Drawing.Point(9, 42);
             this.enableDefaultPluginsCheckBox.Name = "enableDefaultPluginsCheckBox";
             this.enableDefaultPluginsCheckBox.Size = new System.Drawing.Size(133, 17);
-            this.enableDefaultPluginsCheckBox.TabIndex = 1;
+            this.enableDefaultPluginsCheckBox.TabIndex = 11;
             this.enableDefaultPluginsCheckBox.Text = "Enable Default Plugins";
             this.enableDefaultPluginsCheckBox.UseVisualStyleBackColor = true;
             // 
@@ -92,23 +143,23 @@ namespace SmartHotEdit.View
             this.enablePluginsCheckBox.Checked = global::SmartHotEdit.Properties.Settings.Default.EnablePlugins;
             this.enablePluginsCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
             this.enablePluginsCheckBox.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::SmartHotEdit.Properties.Settings.Default, "EnablePlugins", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
-            this.enablePluginsCheckBox.Location = new System.Drawing.Point(7, 20);
+            this.enablePluginsCheckBox.Location = new System.Drawing.Point(9, 19);
             this.enablePluginsCheckBox.Name = "enablePluginsCheckBox";
             this.enablePluginsCheckBox.Size = new System.Drawing.Size(96, 17);
-            this.enablePluginsCheckBox.TabIndex = 0;
+            this.enablePluginsCheckBox.TabIndex = 10;
             this.enablePluginsCheckBox.Text = "Enable Plugins";
             this.enablePluginsCheckBox.UseVisualStyleBackColor = true;
-            this.enablePluginsCheckBox.CheckStateChanged += new System.EventHandler(this.enablePluginsCheckBox_CheckStateChanged);
             // 
             // loggerSettingsGroupBox
             // 
-            this.loggerSettingsGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.loggerSettingsGroupBox.AutoSize = true;
+            this.loggerSettingsGroupBox.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.loggerSettingsGroupBox.Controls.Add(this.enableLoggingCheckBox);
-            this.loggerSettingsGroupBox.Location = new System.Drawing.Point(12, 225);
+            this.loggerSettingsGroupBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.loggerSettingsGroupBox.Location = new System.Drawing.Point(3, 332);
             this.loggerSettingsGroupBox.Name = "loggerSettingsGroupBox";
-            this.loggerSettingsGroupBox.Size = new System.Drawing.Size(203, 49);
-            this.loggerSettingsGroupBox.TabIndex = 1;
+            this.loggerSettingsGroupBox.Size = new System.Drawing.Size(225, 56);
+            this.loggerSettingsGroupBox.TabIndex = 11;
             this.loggerSettingsGroupBox.TabStop = false;
             this.loggerSettingsGroupBox.Text = "Logging";
             // 
@@ -124,18 +175,18 @@ namespace SmartHotEdit.View
             this.enableLoggingCheckBox.TabIndex = 0;
             this.enableLoggingCheckBox.Text = "Enable Logging";
             this.enableLoggingCheckBox.UseVisualStyleBackColor = true;
-            this.enableLoggingCheckBox.CheckStateChanged += new System.EventHandler(this.enableLoggingCheckBox_CheckStateChanged);
             // 
             // hotKeySettingGroupBox
             // 
-            this.hotKeySettingGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.hotKeySettingGroupBox.AutoSize = true;
+            this.hotKeySettingGroupBox.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.hotKeySettingGroupBox.Controls.Add(this.changeHotKeyButton);
             this.hotKeySettingGroupBox.Controls.Add(this.hotKeyTextBox);
-            this.hotKeySettingGroupBox.Location = new System.Drawing.Point(12, 12);
+            this.hotKeySettingGroupBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.hotKeySettingGroupBox.Location = new System.Drawing.Point(3, 3);
             this.hotKeySettingGroupBox.Name = "hotKeySettingGroupBox";
-            this.hotKeySettingGroupBox.Size = new System.Drawing.Size(203, 79);
-            this.hotKeySettingGroupBox.TabIndex = 2;
+            this.hotKeySettingGroupBox.Size = new System.Drawing.Size(225, 87);
+            this.hotKeySettingGroupBox.TabIndex = 4;
             this.hotKeySettingGroupBox.TabStop = false;
             this.hotKeySettingGroupBox.Text = "Hot Key";
             // 
@@ -147,7 +198,6 @@ namespace SmartHotEdit.View
             this.changeHotKeyButton.TabIndex = 1;
             this.changeHotKeyButton.Text = "Change Hot Key";
             this.changeHotKeyButton.UseVisualStyleBackColor = true;
-            this.changeHotKeyButton.Click += new System.EventHandler(this.changeHotKeyButton_Click);
             // 
             // hotKeyTextBox
             // 
@@ -163,53 +213,77 @@ namespace SmartHotEdit.View
             this.hotKeyTextBox.Text = "None";
             this.hotKeyTextBox.WinModifier = false;
             // 
-            // enablePythonPluginsCheckBox
+            // enableDisablePluginsGroup
             // 
-            this.enablePythonPluginsCheckBox.AutoSize = true;
-            this.enablePythonPluginsCheckBox.Checked = global::SmartHotEdit.Properties.Settings.Default.EnablePythonPlugins;
-            this.enablePythonPluginsCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.enablePythonPluginsCheckBox.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::SmartHotEdit.Properties.Settings.Default, "EnablePythonPlugins", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
-            this.enablePythonPluginsCheckBox.Location = new System.Drawing.Point(6, 89);
-            this.enablePythonPluginsCheckBox.Name = "enablePythonPluginsCheckBox";
-            this.enablePythonPluginsCheckBox.Size = new System.Drawing.Size(132, 17);
-            this.enablePythonPluginsCheckBox.TabIndex = 3;
-            this.enablePythonPluginsCheckBox.Text = "Enable Python Plugins";
-            this.enablePythonPluginsCheckBox.UseVisualStyleBackColor = true;
+            this.enableDisablePluginsGroup.AutoSize = true;
+            this.enableDisablePluginsGroup.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.enableDisablePluginsGroup.Controls.Add(this.enableDisablePluginListView);
+            this.enableDisablePluginsGroup.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.enableDisablePluginsGroup.Location = new System.Drawing.Point(3, 226);
+            this.enableDisablePluginsGroup.MinimumSize = new System.Drawing.Size(0, 100);
+            this.enableDisablePluginsGroup.Name = "enableDisablePluginsGroup";
+            this.enableDisablePluginsGroup.Size = new System.Drawing.Size(225, 100);
+            this.enableDisablePluginsGroup.TabIndex = 10;
+            this.enableDisablePluginsGroup.TabStop = false;
+            this.enableDisablePluginsGroup.Text = "Enable / Disable single Plugins";
+            // 
+            // enableDisablePluginListView
+            // 
+            this.enableDisablePluginListView.CheckBoxes = true;
+            this.enableDisablePluginListView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.enableDisablePluginListView.FullRowSelect = true;
+            this.enableDisablePluginListView.GridLines = true;
+            this.enableDisablePluginListView.Location = new System.Drawing.Point(3, 16);
+            this.enableDisablePluginListView.Name = "enableDisablePluginListView";
+            this.enableDisablePluginListView.Size = new System.Drawing.Size(219, 81);
+            this.enableDisablePluginListView.TabIndex = 5;
+            this.enableDisablePluginListView.UseCompatibleStateImageBehavior = false;
+            this.enableDisablePluginListView.View = System.Windows.Forms.View.SmallIcon;
+            this.enableDisablePluginListView.ItemChecked += new System.Windows.Forms.ItemCheckedEventHandler(this.enableDisablePluginListView_ItemChecked);
             // 
             // SettingsView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(227, 293);
-            this.Controls.Add(this.hotKeySettingGroupBox);
-            this.Controls.Add(this.loggerSettingsGroupBox);
-            this.Controls.Add(this.pluginSettingsGroupBox);
+            this.AutoSize = true;
+            this.ClientSize = new System.Drawing.Size(231, 382);
+            this.Controls.Add(this.tableLayoutPanel1);
+            this.Controls.Add(this.flowLayoutPanel1);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "SettingsView";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Settings";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.SettingsView_FormClosing);
+            this.Shown += new System.EventHandler(this.SettingsView_Shown);
+            this.tableLayoutPanel1.ResumeLayout(false);
+            this.tableLayoutPanel1.PerformLayout();
             this.pluginSettingsGroupBox.ResumeLayout(false);
             this.pluginSettingsGroupBox.PerformLayout();
             this.loggerSettingsGroupBox.ResumeLayout(false);
             this.loggerSettingsGroupBox.PerformLayout();
             this.hotKeySettingGroupBox.ResumeLayout(false);
+            this.enableDisablePluginsGroup.ResumeLayout(false);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
         #endregion
 
+        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.GroupBox pluginSettingsGroupBox;
-        private System.Windows.Forms.CheckBox enableLuaPluginsCheckBox;
-        private System.Windows.Forms.CheckBox enableDefaultPluginsCheckBox;
-        private System.Windows.Forms.CheckBox enablePluginsCheckBox;
         private System.Windows.Forms.GroupBox loggerSettingsGroupBox;
         private System.Windows.Forms.CheckBox enableLoggingCheckBox;
         private System.Windows.Forms.GroupBox hotKeySettingGroupBox;
-        private HotKeyControl hotKeyTextBox;
         private System.Windows.Forms.Button changeHotKeyButton;
+        private HotKeyControl hotKeyTextBox;
+        private System.Windows.Forms.GroupBox enableDisablePluginsGroup;
+        private System.Windows.Forms.ListView enableDisablePluginListView;
         private System.Windows.Forms.CheckBox enablePythonPluginsCheckBox;
+        private System.Windows.Forms.CheckBox enableLuaPluginsCheckBox;
+        private System.Windows.Forms.CheckBox enableDefaultPluginsCheckBox;
+        private System.Windows.Forms.CheckBox enablePluginsCheckBox;
     }
 }

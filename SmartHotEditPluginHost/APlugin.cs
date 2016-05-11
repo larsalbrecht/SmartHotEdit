@@ -11,6 +11,9 @@ namespace SmartHotEditPluginHost
 
     	protected List<Function> functionList = new List<Function>();
 
+        public bool Enabled = true;
+        public string Type = null;
+
         public abstract String getName();
         public abstract String getDescription();
         
@@ -31,6 +34,11 @@ namespace SmartHotEditPluginHost
         public Function[] getFunctionsAsArray()
         {
             return this.functionList.Cast<Function>().ToArray();
+        }
+
+        public String getPropertynameForEnablePlugin()
+        {
+            return "Plugin" + this.Type + this.getName() + "Enabled";
         }
     }
 }

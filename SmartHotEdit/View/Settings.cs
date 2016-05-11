@@ -1,7 +1,12 @@
 ﻿using NLog;
+using SmartHotEdit.Abstracts;
 using SmartHotEdit.Controller;
+using SmartHotEdit.Helper;
 using SmartHotEdit.Model;
+using SmartHotEditPluginHost;
 using System;
+using System.Collections.Generic;
+using System.Configuration;
 using System.Windows.Forms;
 
 namespace SmartHotEdit.View
@@ -10,13 +15,13 @@ namespace SmartHotEdit.View
     {
         private static Logger logger = LogManager.GetCurrentClassLogger();
 
-        private HotKeyController hotKeyController;
+        private MainController mainController;
 
         // TODO init hotkey in hotkey control to show the user the used key
-        public SettingsView(HotKeyController hotKeyController)
+        public SettingsView(MainController mainController)
         {
             InitializeComponent();
-            this.hotKeyController = hotKeyController;
+            this.mainController = mainController;
         }
 
         private void enablePluginsCheckBox_CheckStateChanged(object sender, EventArgs e)
@@ -63,7 +68,7 @@ namespace SmartHotEdit.View
             bool isControl = isShiftControl || isAltControl || isShiftAltControl || this.hotKeyTextBox.Modifiers == Keys.Control;
             bool isWin = this.hotKeyTextBox.WinModifier;
 
-            if (this.hotKeyController.registerCustomHotKey(this.hotKeyTextBox.Hotkey, isShift, isControl, isAlt, isWin)) {
+            if (this.mainController.getHotKeyController().registerCustomHotKey(this.hotKeyTextBox.Hotkey, isShift, isControl, isAlt, isWin)) {
                 HotKey hotKey = new HotKey(this.hotKeyTextBox.Hotkey, isShift, isControl, isAlt, isWin);
                 Properties.Settings.Default.HotKey = hotKey;
             }
@@ -72,6 +77,49 @@ namespace SmartHotEdit.View
         private void SettingsView_FormClosing(object sender, FormClosingEventArgs e)
         {
             Properties.Settings.Default.Save();
+        }
+
+        private void SettingsView_Shown(object sender, EventArgs e)
+        {
+            this.enableDisablePluginListView.Items.Clear();
+            this.enableDisablePluginListView.Groups.Clear();
+            foreach (APluginController concretePluginController in this.mainController.getPluginController().getPluginControllerList())
+            {
+                var tempListViewGroup = new ListViewGroup(concretePluginController.Type, System.Windows.Forms.HorizontalAlignment.Left);
+                tempListViewGroup.Header = concretePluginController.Type;
+                tempListViewGroup.Name = concretePluginController.Type + "Group";
+                tempListViewGroup.Tag = concretePluginController;
+
+                this.enableDisablePluginListView.Groups.Add(tempListViewGroup);
+
+                if (concretePluginController.LoadedPlugins.Count > 0)
+                {
+                    foreach(APlugin plugin in concretePluginController.LoadedPlugins)
+                    {
+                        var tempListViewItem = new ListViewItem(plugin.getName());
+                        tempListViewItem.Group = tempListViewGroup;
+                        tempListViewItem.StateImageIndex = 0;
+                        tempListViewItem.Tag = plugin;
+                        tempListViewItem.Checked = plugin.Enabled;
+                        this.enableDisablePluginListView.Items.Add(tempListViewItem);
+                    }
+                }
+            }
+        }
+
+        private void enableDisablePluginListView_ItemChecked(object sender, ItemCheckedEventArgs e)
+        {
+            if (this.enableDisablePluginListView.Focused)
+            {
+            ListViewItem item = e.Item as ListViewItem;
+            APlugin plugin = (APlugin)item.Tag;
+            plugin.Enabled = item.Checked;
+
+            logger.Debug("Plugin " + plugin.getName() + " changed state. Is it enabled? " + plugin.Enabled);
+            
+            Properties.Settings.Default[plugin.getPropertynameForEnablePlugin()] = plugin.Enabled;
+            Properties.Settings.Default.Save();
+            }
         }
     }
 }

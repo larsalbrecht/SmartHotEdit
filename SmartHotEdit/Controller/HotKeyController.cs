@@ -69,7 +69,8 @@ namespace SmartHotEdit.Controller
             if (ef == null || ef.IsDisposed)
             {
                 logger.Trace("Create EditForm, it is null (" + ef == null + " ) or disposed (" + (ef != null && ef.IsDisposed) + ")");
-                ef = new EditForm(this.mainController.getPluginController());
+                this.mainController.getPluginController().loadPlugins();
+                ef = new EditForm(this.mainController);
             }
             if (!ef.Visible)
             {
