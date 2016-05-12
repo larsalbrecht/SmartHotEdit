@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Xml.Serialization;
 using System.Runtime.InteropServices;
 
-namespace SmartHotEdit.Helper
+namespace SmartHotEdit.Handler
 {
     public class HotkeyHandler : IMessageFilter
 	{

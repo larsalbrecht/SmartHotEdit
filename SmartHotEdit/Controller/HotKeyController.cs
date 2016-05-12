@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using SmartHotEdit.Helper;
+using SmartHotEdit.Handler;
 using SmartHotEdit.Model;
 using System.Windows.Forms;
 using SmartHotEdit.View;

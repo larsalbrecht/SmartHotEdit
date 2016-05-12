@@ -3,7 +3,7 @@
 ## Features
 New features
 ### JavaScript Plugin
-* Add the possibility to add plugins based on JavaScript
+* Add the possibility to add plugins based on JavaScript [new branch created for tests]
 
 ### General
 * Add method to set if the function will be called on every line (currently) or for the whole text.
@@ -17,10 +17,6 @@ New features
 All known issues
 ### Settings
 * HotKey-Field is "None", must be filled with "current" HotKey.
-
-### Form
-* Description is not visible
-* Arguments are untitled (something like placeholder?)
 
 ## Refactoring
 All things that must be refactored

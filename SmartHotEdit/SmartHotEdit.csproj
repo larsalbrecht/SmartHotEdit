@@ -135,7 +135,7 @@
     <Compile Include="Controller\MainController.cs" />
     <Compile Include="Controller\NotificationController.cs" />
     <Compile Include="Controller\PluginController.cs" />
-    <Compile Include="Helper\HotkeyHandler.cs" />
+    <Compile Include="Handler\HotkeyHandler.cs" />
     <Compile Include="Helper\PropertyHelper.cs" />
     <Compile Include="Model\HotKey.cs" />
     <Compile Include="Model\Python\PythonFunction.cs" />
