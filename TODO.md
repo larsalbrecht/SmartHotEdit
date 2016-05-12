@@ -5,9 +5,13 @@ New features
 ### JavaScript Plugin
 * Add the possibility to add plugins based on JavaScript
 
+### General
+* Add option to call functions for every line instead of calling it for the whole text
+
 ### General Pluginbehavior
 * Better error detection with disabling the *PluginController OR the function only
 * Let the user enable or disable functions of loaded plugins
+* Show errormessages if script is invalid (like indent errors in python)
 
 ## Bugs
 All known issues

@@ -29,6 +29,7 @@ namespace SmartHotEdit.Controller.Plugin
 
         public override void loadPlugins()
         {
+            this.plugins.Clear();
             this.engine = Python.CreateEngine();
             this.scope = engine.CreateScope();
 
@@ -49,6 +50,9 @@ namespace SmartHotEdit.Controller.Plugin
                 {
                     this.plugins.Add(plugin);
                     logger.Debug("Plugin found: " + plugin.getName());
+                } else
+                {
+                    logger.Warn("Plugin not found in script: " + path);
                 }
             }
         }
@@ -56,10 +60,17 @@ namespace SmartHotEdit.Controller.Plugin
         private APlugin getPluginFromPython(String pythonPath)
         {
             logger.Trace("Try to get plugin from python script");
-            this.scope = this.engine.ExecuteFile(pythonPath);
-            var plugin = scope.GetVariable("plugin");
+            try
+            {
+                this.scope = this.engine.ExecuteFile(pythonPath);
+                var plugin = scope.GetVariable("plugin");
 
-            return this.buildPythonPlugin(plugin);
+                return this.buildPythonPlugin(plugin);
+            } catch(Microsoft.Scripting.SyntaxErrorException e)
+            {
+                logger.Error("Error occured on execute file: " + pythonPath + " > (Line Number: " + e.Line + ") [" + e.Message + "] {Errorline: '" + e.GetCodeLine() + "'}");
+            }
+            return null;
         }
 
         private APlugin buildPythonPlugin(dynamic plugin)

@@ -53,6 +53,7 @@ namespace SmartHotEdit.Controller.Plugin
 
         public override void loadPlugins()
         {
+            this.plugins.Clear();
             Script script = this.getConfiguredScript();
 
             logger.Trace("Register UserData types");
@@ -70,10 +71,13 @@ namespace SmartHotEdit.Controller.Plugin
             {
                 logger.Trace("Script found at: " + path);
                 APlugin plugin = this.getPluginFromScript(script, path);
-                if(plugin != null)
+                if (plugin != null)
                 {
                     this.plugins.Add(plugin);
                     logger.Debug("Plugin found: " + plugin.getName());
+                } else
+                {
+                    logger.Warn("Plugin not found in script: " + path);
                 }
             }
         }
@@ -81,10 +85,18 @@ namespace SmartHotEdit.Controller.Plugin
         private APlugin getPluginFromScript(Script script, String scriptPath)
         {
             logger.Trace("Try to get plugin from script");
-            script.DoFile(scriptPath);
-            DynValue res = script.Globals.Get("plugin");
+            try
+            {
+                script.DoFile(scriptPath);
+                DynValue res = script.Globals.Get("plugin");
 
-            return buildLuaPlugin(res);
+                return this.buildLuaPlugin(res);
+            }
+            catch (Microsoft.Scripting.SyntaxErrorException e)
+            {
+                logger.Error("Error occured on execute file: " + scriptPath + " > (Line Number: " + e.Line + ") [" + e.Message + "] {Errorline: '" + e.GetCodeLine() + "'}");
+            }
+            return null;
         }
 
         private APlugin buildLuaPlugin(DynValue dynValue)
@@ -145,7 +157,8 @@ namespace SmartHotEdit.Controller.Plugin
                     else if (dyn.String == "calledFunction")
                     {
                         closure = dynValue.Table.Get(dyn).Function;
-                    } else if(dyn.String == "arguments")
+                    }
+                    else if (dyn.String == "arguments")
                     {
                         arguments = this.buildArguments(dynValue.Table.Get(dyn));
                     }
@@ -173,16 +186,16 @@ namespace SmartHotEdit.Controller.Plugin
                         if (dyn.String == "key")
                         {
                             key = dynValue.Table.Get(dynArgument).Table.Get(dyn).String;
-                            
+
                         }
                         else if (dyn.String == "description")
                         {
                             description = dynValue.Table.Get(dynArgument).Table.Get(dyn).String;
                         }
                     }
-                    if(key != null && description != null)
+                    if (key != null && description != null)
                     {
-                        if(arguments == null)
+                        if (arguments == null)
                         {
                             arguments = new List<Argument>();
                         }
