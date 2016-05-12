@@ -6,7 +6,7 @@ New features
 * Add the possibility to add plugins based on JavaScript
 
 ### General
-* Add option to call functions for every line instead of calling it for the whole text
+* Add method to set if the function will be called on every line (currently) or for the whole text.
 
 ### General Pluginbehavior
 * Better error detection with disabling the *PluginController OR the function only

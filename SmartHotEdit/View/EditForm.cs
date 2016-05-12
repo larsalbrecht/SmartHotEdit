@@ -124,7 +124,7 @@ namespace SmartHotEdit.View
                         functionArgumentInput.Visible = true;
 						functionArgumentInput.Focus();
 					} else {
-						this.clipboardTextBox.Text = plugin.getResultFromFunction(myFunction, this.clipboardTextBox.Text);
+                        this.clipboardTextBox.Text = this.executeFunctionOfPlugin(this.clipboardTextBox.Text, plugin, myFunction);
 					}
                     this.functionListUpDown.Visible = false;
 				}
@@ -148,8 +148,8 @@ namespace SmartHotEdit.View
                 e.SuppressKeyPress = true;
             }
         }
-		
-		void FunctionArgumentInputKeyDown(object sender, KeyEventArgs e)
+
+        void FunctionArgumentInputKeyDown(object sender, KeyEventArgs e)
 		{
 			if (e.KeyCode == Keys.Enter){
                 logger.Trace("FunctionArgumentInputKeyDown > Enter");
@@ -162,7 +162,7 @@ namespace SmartHotEdit.View
                     logger.Trace("No further arguments");
                     textBox.Visible = false;
 					_listIndex = -1;
-					this.clipboardTextBox.Text = this._currentPlugin.getResultFromFunction(_currentFunction, this.clipboardTextBox.Text, this._argumentsToFill);
+					this.clipboardTextBox.Text = this.executeFunctionOfPlugin(this.clipboardTextBox.Text, this._currentPlugin, this._currentFunction, true, this._argumentsToFill);
 					_argumentsToFill = null;
 					_currentPlugin = null;
 				}
@@ -173,5 +173,34 @@ namespace SmartHotEdit.View
                 e.SuppressKeyPress = true;
             }
 		}
-	}
+
+        /// <summary>
+        /// Execute the function of the given plugin on the text and returned it. Can be executed for each line or for the whole text.
+        /// </summary>
+        /// <param name="text"></param>
+        /// <param name="plugin"></param>
+        /// <param name="function"></param>
+        /// <param name="forEachLine"></param>
+        /// <param name="arguments"></param>
+        /// <returns></returns>
+        private String executeFunctionOfPlugin(String text, APlugin plugin, Function function, Boolean forEachLine = true,  List<Argument> arguments = null)
+        {
+            String result = "";
+            if (text != null)
+            {
+                if (forEachLine == true)
+                {
+                    String[] lines = text.Split('\n');
+                    foreach (String line in lines)
+                    {
+                        result += plugin.getResultFromFunction(function, line) + Environment.NewLine;
+                    }
+                } else
+                {
+                    result = plugin.getResultFromFunction(function, text);
+                }
+            }
+            return result;
+        }
+    }
 }
