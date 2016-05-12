@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Windows.Forms;
+using Microsoft.Win32;
 
 namespace SmartHotEdit.View
 {
@@ -45,7 +46,8 @@ namespace SmartHotEdit.View
                     }
                 }
                 logger.Debug("Enabled logger");
-            } else
+            }
+            else
             {
                 logger.Debug("Disable logger now");
                 System.Diagnostics.Debug.WriteLine("Disable logger now");
@@ -68,7 +70,8 @@ namespace SmartHotEdit.View
             bool isControl = isShiftControl || isAltControl || isShiftAltControl || this.hotKeyTextBox.Modifiers == Keys.Control;
             bool isWin = this.hotKeyTextBox.WinModifier;
 
-            if (this.mainController.getHotKeyController().registerCustomHotKey(this.hotKeyTextBox.Hotkey, isShift, isControl, isAlt, isWin)) {
+            if (this.mainController.getHotKeyController().registerCustomHotKey(this.hotKeyTextBox.Hotkey, isShift, isControl, isAlt, isWin))
+            {
                 HotKey hotKey = new HotKey(this.hotKeyTextBox.Hotkey, isShift, isControl, isAlt, isWin);
                 Properties.Settings.Default.HotKey = hotKey;
             }
@@ -94,7 +97,7 @@ namespace SmartHotEdit.View
 
                 if (concretePluginController.LoadedPlugins.Count > 0)
                 {
-                    foreach(APlugin plugin in concretePluginController.LoadedPlugins)
+                    foreach (APlugin plugin in concretePluginController.LoadedPlugins)
                     {
                         var tempListViewItem = new ListViewItem(plugin.getName());
                         tempListViewItem.Group = tempListViewGroup;
@@ -105,20 +108,43 @@ namespace SmartHotEdit.View
                     }
                 }
             }
+
+            RegistryKey rk = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
+            this.startWithSystemCheckBox.Checked = rk.GetValue(Program.AppName) != null;
+            logger.Debug("Start on system startup: " + this.startWithSystemCheckBox.Checked);
         }
 
         private void enableDisablePluginListView_ItemChecked(object sender, ItemCheckedEventArgs e)
         {
             if (this.enableDisablePluginListView.Focused)
             {
-            ListViewItem item = e.Item as ListViewItem;
-            APlugin plugin = (APlugin)item.Tag;
-            plugin.Enabled = item.Checked;
+                ListViewItem item = e.Item as ListViewItem;
+                APlugin plugin = (APlugin)item.Tag;
+                plugin.Enabled = item.Checked;
 
-            logger.Debug("Plugin " + plugin.getName() + " changed state. Is it enabled? " + plugin.Enabled);
-            
-            Properties.Settings.Default[plugin.getPropertynameForEnablePlugin()] = plugin.Enabled;
-            Properties.Settings.Default.Save();
+                logger.Debug("Plugin " + plugin.getName() + " changed state. Is it enabled? " + plugin.Enabled);
+
+                Properties.Settings.Default[plugin.getPropertynameForEnablePlugin()] = plugin.Enabled;
+                Properties.Settings.Default.Save();
+            }
+        }
+
+        private void startWithSystemCheckBox_CheckStateChanged(object sender, EventArgs e)
+        {
+            if (this.startWithSystemCheckBox.Focused)
+            {
+                RegistryKey rk = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
+
+                if (this.startWithSystemCheckBox.Checked)
+                {
+                    rk.SetValue(Program.AppName, Application.ExecutablePath.ToString());
+                    logger.Debug("Starts on system startup now");
+                }
+                else
+                {
+                    rk.DeleteValue(Program.AppName, false);
+                    logger.Debug("Dont starts on system startup now");
+                }
             }
         }
     }

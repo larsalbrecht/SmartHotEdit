@@ -5,8 +5,12 @@ using NLog.Config;
 
 namespace SmartHotEdit
 {
+
     static class Program
     {
+
+        public static String AppName = "SmartHotEdit";
+
         /// <summary>
         /// Main entrypoint to the application
         /// </summary>

@@ -44,11 +44,14 @@ namespace SmartHotEdit.View
             this.hotKeyTextBox = new SmartHotEdit.View.Controls.HotKeyControl();
             this.enableDisablePluginsGroup = new System.Windows.Forms.GroupBox();
             this.enableDisablePluginListView = new System.Windows.Forms.ListView();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.startWithSystemCheckBox = new System.Windows.Forms.CheckBox();
             this.tableLayoutPanel1.SuspendLayout();
             this.pluginSettingsGroupBox.SuspendLayout();
             this.loggerSettingsGroupBox.SuspendLayout();
             this.hotKeySettingGroupBox.SuspendLayout();
             this.enableDisablePluginsGroup.SuspendLayout();
+            this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // flowLayoutPanel1
@@ -71,15 +74,17 @@ namespace SmartHotEdit.View
             this.tableLayoutPanel1.Controls.Add(this.loggerSettingsGroupBox, 0, 3);
             this.tableLayoutPanel1.Controls.Add(this.hotKeySettingGroupBox, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.enableDisablePluginsGroup, 0, 2);
+            this.tableLayoutPanel1.Controls.Add(this.groupBox1, 0, 4);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 4;
+            this.tableLayoutPanel1.RowCount = 5;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(231, 382);
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(231, 444);
             this.tableLayoutPanel1.TabIndex = 4;
             // 
             // pluginSettingsGroupBox
@@ -241,12 +246,36 @@ namespace SmartHotEdit.View
             this.enableDisablePluginListView.View = System.Windows.Forms.View.SmallIcon;
             this.enableDisablePluginListView.ItemChecked += new System.Windows.Forms.ItemCheckedEventHandler(this.enableDisablePluginListView_ItemChecked);
             // 
+            // groupBox1
+            // 
+            this.groupBox1.AutoSize = true;
+            this.groupBox1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.groupBox1.Controls.Add(this.startWithSystemCheckBox);
+            this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.groupBox1.Location = new System.Drawing.Point(3, 394);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(225, 55);
+            this.groupBox1.TabIndex = 13;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Others";
+            // 
+            // startWithSystemCheckBox
+            // 
+            this.startWithSystemCheckBox.AutoSize = true;
+            this.startWithSystemCheckBox.Location = new System.Drawing.Point(6, 19);
+            this.startWithSystemCheckBox.Name = "startWithSystemCheckBox";
+            this.startWithSystemCheckBox.Size = new System.Drawing.Size(133, 17);
+            this.startWithSystemCheckBox.TabIndex = 0;
+            this.startWithSystemCheckBox.Text = "Start on system startup";
+            this.startWithSystemCheckBox.UseVisualStyleBackColor = true;
+            this.startWithSystemCheckBox.CheckStateChanged += new System.EventHandler(this.startWithSystemCheckBox_CheckStateChanged);
+            // 
             // SettingsView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
-            this.ClientSize = new System.Drawing.Size(231, 382);
+            this.ClientSize = new System.Drawing.Size(231, 444);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Controls.Add(this.flowLayoutPanel1);
             this.MaximizeBox = false;
@@ -264,6 +293,8 @@ namespace SmartHotEdit.View
             this.loggerSettingsGroupBox.PerformLayout();
             this.hotKeySettingGroupBox.ResumeLayout(false);
             this.enableDisablePluginsGroup.ResumeLayout(false);
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -285,5 +316,7 @@ namespace SmartHotEdit.View
         private System.Windows.Forms.CheckBox enableLuaPluginsCheckBox;
         private System.Windows.Forms.CheckBox enableDefaultPluginsCheckBox;
         private System.Windows.Forms.CheckBox enablePluginsCheckBox;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.CheckBox startWithSystemCheckBox;
     }
 }
