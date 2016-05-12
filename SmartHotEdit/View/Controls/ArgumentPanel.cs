@@ -11,20 +11,33 @@ namespace SmartHotEdit.View.Controls
 {
     public partial class ArgumentPanel : UserControl
     {
+
+        public event KeyEventHandler InputKeyDown;
+        public String LabelText
+        {
+            get { return this.argumentNameLabel.Text; }
+            set { this.argumentNameLabel.Text = value; }
+        }
+
+        public String InputText
+        {
+            get { return this.functionArgumentInput.Text; }
+            set { this.functionArgumentInput.Text = value; }
+        }
+
+        public new void Focus()
+        {
+            this.functionArgumentInput.Focus();
+        }
+
         public ArgumentPanel()
         {
             InitializeComponent();
         }
 
-        public Label getLabel()
+        private void functionArgumentInput_KeyDown(object sender, KeyEventArgs e)
         {
-            return this.argumentNameLabel;
+            this.InputKeyDown?.Invoke(sender, e);
         }
-
-        public TextBox getInput()
-        {
-            return this.functionArgumentInput;
-        }
-
     }
 }

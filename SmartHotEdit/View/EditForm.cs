@@ -120,12 +120,12 @@ namespace SmartHotEdit.View
                         // get selected item to calculate position of input
                         var selectedItem = this.pluginList.SelectedItems[0];
 
-                        argumentPanel.getLabel().Text = myFunction.arguments[this._listIndex].description;
-                        argumentPanel.getInput().Text = "";
+                        argumentPanel.LabelText = myFunction.arguments[this._listIndex].description;
+                        argumentPanel.InputText = "";
                         argumentPanel.Left = selectedItem.ListView.Columns[0].Width;
                         argumentPanel.Top = selectedItem.Bounds.Top;
                         argumentPanel.Visible = true;
-                        argumentPanel.getInput().Focus();
+                        argumentPanel.Focus();
 					} else {
                         this.clipboardTextBox.Text = this.executeFunctionOfPlugin(this.clipboardTextBox.Text, plugin, myFunction);
 					}
@@ -152,36 +152,38 @@ namespace SmartHotEdit.View
             }
         }
 
-        void FunctionArgumentInputKeyDown(object sender, KeyEventArgs e)
-		{
-			if (e.KeyCode == Keys.Enter){
+        private void argumentPanel_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
                 logger.Trace("FunctionArgumentInputKeyDown > Enter");
-                var textBox = this.argumentPanel.getInput();
-                
 
-                this._argumentsToFill[_listIndex++].value = textBox.Text;
-                logger.Trace("Argument '" + (_listIndex-1)  + "' filled with: " + textBox.Text);
+                this._argumentsToFill[_listIndex++].value = this.argumentPanel.InputText;
+                logger.Trace("Argument '" + (_listIndex - 1) + "' filled with: " + this.argumentPanel.InputText);
                 if (_listIndex >= _argumentsToFill.Count())
-				{
+                {
                     logger.Trace("No further arguments");
                     this.argumentPanel.Visible = false;
-					_listIndex = -1;
-					this.clipboardTextBox.Text = this.executeFunctionOfPlugin(this.clipboardTextBox.Text, this._currentPlugin, this._currentFunction, true, this._argumentsToFill);
-					_argumentsToFill = null;
-					_currentPlugin = null;
-				} else
+                    _listIndex = -1;
+                    this.clipboardTextBox.Text = this.executeFunctionOfPlugin(this.clipboardTextBox.Text, this._currentPlugin, this._currentFunction, true, this._argumentsToFill);
+                    _argumentsToFill = null;
+                    _currentPlugin = null;
+                }
+                else
                 {
                     // refill with new data
-                    textBox.Text = "";
-                    argumentPanel.getLabel().Text = this._currentFunction.arguments[this._listIndex].description;
+                    this.argumentPanel.InputText = "";
+                    this.argumentPanel.LabelText = this._currentFunction.arguments[this._listIndex].description;
                 }
                 e.SuppressKeyPress = true;
-            } else if(e.KeyCode == Keys.Escape){
+            }
+            else if (e.KeyCode == Keys.Escape)
+            {
                 logger.Trace("FunctionArgumentInputKeyDown > Escape");
                 this.argumentPanel.Visible = false;
                 e.SuppressKeyPress = true;
             }
-		}
+        }
 
         /// <summary>
         /// Execute the function of the given plugin on the text and returned it. Can be executed for each line or for the whole text.

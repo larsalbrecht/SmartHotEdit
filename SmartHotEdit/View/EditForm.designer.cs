@@ -36,10 +36,10 @@ namespace SmartHotEdit.View
 		private void InitializeComponent()
 		{
             this.splitContainer = new System.Windows.Forms.SplitContainer();
-            this.argumentPanel = new SmartHotEdit.View.Controls.ArgumentPanel();
             this.pluginList = new System.Windows.Forms.ListView();
             this.clipboardTextBox = new System.Windows.Forms.RichTextBox();
             this.functionListUpDown = new System.Windows.Forms.ListBox();
+            this.argumentPanel = new SmartHotEdit.View.Controls.ArgumentPanel();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
             this.splitContainer.Panel1.SuspendLayout();
             this.splitContainer.Panel2.SuspendLayout();
@@ -63,14 +63,6 @@ namespace SmartHotEdit.View
             this.splitContainer.Size = new System.Drawing.Size(634, 261);
             this.splitContainer.SplitterDistance = 300;
             this.splitContainer.TabIndex = 0;
-            // 
-            // argumentPanel
-            // 
-            this.argumentPanel.Location = new System.Drawing.Point(0, 20);
-            this.argumentPanel.Name = "argumentPanel";
-            this.argumentPanel.Size = new System.Drawing.Size(110, 50);
-            this.argumentPanel.TabIndex = 0;
-            this.argumentPanel.Visible = false;
             // 
             // pluginList
             // 
@@ -103,6 +95,16 @@ namespace SmartHotEdit.View
             this.functionListUpDown.TabIndex = 1;
             this.functionListUpDown.Visible = false;
             this.functionListUpDown.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FunctionListUpDownKeyDown);
+            // 
+            // argumentPanel
+            // 
+            this.argumentPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.argumentPanel.Location = new System.Drawing.Point(0, 20);
+            this.argumentPanel.Name = "argumentPanel";
+            this.argumentPanel.Size = new System.Drawing.Size(110, 50);
+            this.argumentPanel.TabIndex = 0;
+            this.argumentPanel.Visible = false;
+            this.argumentPanel.InputKeyDown += new System.Windows.Forms.KeyEventHandler(this.argumentPanel_KeyDown);
             // 
             // EditForm
             // 
