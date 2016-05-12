@@ -149,6 +149,12 @@
     <Compile Include="View\Controls\HotkeyControl.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="View\Controls\ArgumentPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="View\Controls\ArgumentPanel.Designer.cs">
+      <DependentUpon>ArgumentPanel.cs</DependentUpon>
+    </Compile>
     <Compile Include="View\EditForm.cs">
       <SubType>Form</SubType>
     </Compile>

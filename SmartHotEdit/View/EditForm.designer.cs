@@ -1,11 +1,5 @@
-﻿/*
- * Erstellt mit SharpDevelop.
- * Benutzer: larsa
- * Datum: 28.04.2016
- * Zeit: 14:03
- * 
- * Sie können diese Vorlage unter Extras > Optionen > Codeerstellung > Standardheader ändern.
- */
+﻿using SmartHotEdit.View.Controls;
+
 namespace SmartHotEdit.View
 {
 	partial class EditForm
@@ -18,7 +12,7 @@ namespace SmartHotEdit.View
 		private System.Windows.Forms.ListView pluginList;
 		private System.Windows.Forms.RichTextBox clipboardTextBox;
 		private System.Windows.Forms.ListBox functionListUpDown;
-		private System.Windows.Forms.TextBox functionArgumentInput;
+        private ArgumentPanel argumentPanel;
 		
 		/// <summary>
 		/// Disposes resources used by the form.
@@ -42,10 +36,10 @@ namespace SmartHotEdit.View
 		private void InitializeComponent()
 		{
             this.splitContainer = new System.Windows.Forms.SplitContainer();
-            this.functionArgumentInput = new System.Windows.Forms.TextBox();
             this.pluginList = new System.Windows.Forms.ListView();
             this.clipboardTextBox = new System.Windows.Forms.RichTextBox();
             this.functionListUpDown = new System.Windows.Forms.ListBox();
+            this.argumentPanel = new ArgumentPanel();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
             this.splitContainer.Panel1.SuspendLayout();
             this.splitContainer.Panel2.SuspendLayout();
@@ -60,24 +54,23 @@ namespace SmartHotEdit.View
             // 
             // splitContainer.Panel1
             // 
-            this.splitContainer.Panel1.Controls.Add(this.functionArgumentInput);
+            this.splitContainer.Panel1.Controls.Add(this.argumentPanel);
             this.splitContainer.Panel1.Controls.Add(this.pluginList);
             // 
             // splitContainer.Panel2
             // 
             this.splitContainer.Panel2.Controls.Add(this.clipboardTextBox);
-            this.splitContainer.Size = new System.Drawing.Size(484, 261);
-            this.splitContainer.SplitterDistance = 161;
+            this.splitContainer.Size = new System.Drawing.Size(634, 261);
+            this.splitContainer.SplitterDistance = 300;
             this.splitContainer.TabIndex = 0;
-            // 
-            // functionArgumentInput
-            // 
-            this.functionArgumentInput.Location = new System.Drawing.Point(0, 17);
-            this.functionArgumentInput.Name = "functionArgumentInput";
-            this.functionArgumentInput.Size = new System.Drawing.Size(100, 20);
-            this.functionArgumentInput.TabIndex = 1;
-            this.functionArgumentInput.Visible = false;
-            this.functionArgumentInput.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FunctionArgumentInputKeyDown);
+            //
+            // argumentPanel
+            //
+            this.argumentPanel.Location = new System.Drawing.Point(0, 17);
+            this.argumentPanel.Name = "argumentPanel";
+            this.argumentPanel.getInput().TabIndex = 1;
+            this.argumentPanel.Visible = false;
+            this.argumentPanel.getInput().KeyDown += new System.Windows.Forms.KeyEventHandler(this.FunctionArgumentInputKeyDown);
             // 
             // pluginList
             // 
@@ -85,7 +78,7 @@ namespace SmartHotEdit.View
             this.pluginList.Location = new System.Drawing.Point(0, 0);
             this.pluginList.MultiSelect = false;
             this.pluginList.Name = "pluginList";
-            this.pluginList.Size = new System.Drawing.Size(161, 261);
+            this.pluginList.Size = new System.Drawing.Size(294, 261);
             this.pluginList.TabIndex = 0;
             this.pluginList.UseCompatibleStateImageBehavior = false;
             this.pluginList.View = System.Windows.Forms.View.Details;
@@ -96,7 +89,7 @@ namespace SmartHotEdit.View
             this.clipboardTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.clipboardTextBox.Location = new System.Drawing.Point(0, 0);
             this.clipboardTextBox.Name = "clipboardTextBox";
-            this.clipboardTextBox.Size = new System.Drawing.Size(319, 261);
+            this.clipboardTextBox.Size = new System.Drawing.Size(336, 261);
             this.clipboardTextBox.TabIndex = 10;
             this.clipboardTextBox.TabStop = false;
             this.clipboardTextBox.Text = "";
@@ -104,7 +97,7 @@ namespace SmartHotEdit.View
             // functionListUpDown
             // 
             this.functionListUpDown.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.functionListUpDown.Location = new System.Drawing.Point(0, 0);
+            this.functionListUpDown.Location = new System.Drawing.Point(75, 0);
             this.functionListUpDown.Name = "functionListUpDown";
             this.functionListUpDown.Size = new System.Drawing.Size(120, 17);
             this.functionListUpDown.TabIndex = 1;
@@ -115,23 +108,22 @@ namespace SmartHotEdit.View
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(484, 261);
+            this.ClientSize = new System.Drawing.Size(634, 261);
             this.Controls.Add(this.functionListUpDown);
             this.Controls.Add(this.splitContainer);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "EditForm";
-            this.Opacity = 0.95D;
+            this.Opacity = 0.9D;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "EditForm";
             this.Load += new System.EventHandler(this.EditFormLoad);
             this.splitContainer.Panel1.ResumeLayout(false);
-            this.splitContainer.Panel1.PerformLayout();
             this.splitContainer.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).EndInit();
             this.splitContainer.ResumeLayout(false);
             this.ResumeLayout(false);
 
 		}
-	}
+    }
 }

@@ -56,6 +56,7 @@ namespace SmartHotEdit.View
 				var tmpPluginEntry = new ListViewItem();
 				tmpPluginEntry.Tag = plugin;
 				tmpPluginEntry.Text = plugin.getName();
+                tmpPluginEntry.SubItems.Add(plugin.getDescription());
 				pluginList.Items.Add(tmpPluginEntry);
                 logger.Info("Plugin added to view: " + plugin.getName());
             }
@@ -118,11 +119,13 @@ namespace SmartHotEdit.View
 
                         // get selected item to calculate position of input
                         var selectedItem = this.pluginList.SelectedItems[0];
-                        functionArgumentInput.Text = "";
-                        functionArgumentInput.Left = (selectedItem.ListView.Columns[0].Width);
-                        functionArgumentInput.Top = selectedItem.Bounds.Top;
-                        functionArgumentInput.Visible = true;
-						functionArgumentInput.Focus();
+
+                        argumentPanel.getLabel().Text = myFunction.arguments[this._listIndex].description;
+                        argumentPanel.getInput().Text = "";
+                        argumentPanel.Left = selectedItem.ListView.Columns[0].Width;
+                        argumentPanel.Top = selectedItem.Bounds.Top;
+                        argumentPanel.Visible = true;
+                        argumentPanel.getInput().Focus();
 					} else {
                         this.clipboardTextBox.Text = this.executeFunctionOfPlugin(this.clipboardTextBox.Text, plugin, myFunction);
 					}
@@ -153,23 +156,29 @@ namespace SmartHotEdit.View
 		{
 			if (e.KeyCode == Keys.Enter){
                 logger.Trace("FunctionArgumentInputKeyDown > Enter");
-                var textBox = this.functionArgumentInput;
-				this._argumentsToFill[_listIndex++].value = textBox.Text;
+                var textBox = this.argumentPanel.getInput();
+                
+
+                this._argumentsToFill[_listIndex++].value = textBox.Text;
                 logger.Trace("Argument '" + (_listIndex-1)  + "' filled with: " + textBox.Text);
-                textBox.Text = "";
-				if (_listIndex >= _argumentsToFill.Count())
+                if (_listIndex >= _argumentsToFill.Count())
 				{
                     logger.Trace("No further arguments");
-                    textBox.Visible = false;
+                    this.argumentPanel.Visible = false;
 					_listIndex = -1;
 					this.clipboardTextBox.Text = this.executeFunctionOfPlugin(this.clipboardTextBox.Text, this._currentPlugin, this._currentFunction, true, this._argumentsToFill);
 					_argumentsToFill = null;
 					_currentPlugin = null;
-				}
+				} else
+                {
+                    // refill with new data
+                    textBox.Text = "";
+                    argumentPanel.getLabel().Text = this._currentFunction.arguments[this._listIndex].description;
+                }
                 e.SuppressKeyPress = true;
             } else if(e.KeyCode == Keys.Escape){
                 logger.Trace("FunctionArgumentInputKeyDown > Escape");
-                this.functionArgumentInput.Visible = false;
+                this.argumentPanel.Visible = false;
                 e.SuppressKeyPress = true;
             }
 		}
@@ -193,11 +202,11 @@ namespace SmartHotEdit.View
                     String[] lines = text.Split('\n');
                     foreach (String line in lines)
                     {
-                        result += plugin.getResultFromFunction(function, line) + Environment.NewLine;
+                        result += plugin.getResultFromFunction(function, line, arguments) + Environment.NewLine;
                     }
                 } else
                 {
-                    result = plugin.getResultFromFunction(function, text);
+                    result = plugin.getResultFromFunction(function, text, arguments);
                 }
             }
             return result;
