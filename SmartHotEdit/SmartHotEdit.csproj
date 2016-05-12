@@ -184,6 +184,9 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <EmbeddedResource Include="View\Controls\ArgumentPanel.resx">
+      <DependentUpon>ArgumentPanel.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="View\EditForm.resx">
       <DependentUpon>EditForm.cs</DependentUpon>
     </EmbeddedResource>

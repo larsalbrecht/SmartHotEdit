@@ -36,10 +36,10 @@ namespace SmartHotEdit.View
 		private void InitializeComponent()
 		{
             this.splitContainer = new System.Windows.Forms.SplitContainer();
+            this.argumentPanel = new SmartHotEdit.View.Controls.ArgumentPanel();
             this.pluginList = new System.Windows.Forms.ListView();
             this.clipboardTextBox = new System.Windows.Forms.RichTextBox();
             this.functionListUpDown = new System.Windows.Forms.ListBox();
-            this.argumentPanel = new ArgumentPanel();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
             this.splitContainer.Panel1.SuspendLayout();
             this.splitContainer.Panel2.SuspendLayout();
@@ -63,14 +63,14 @@ namespace SmartHotEdit.View
             this.splitContainer.Size = new System.Drawing.Size(634, 261);
             this.splitContainer.SplitterDistance = 300;
             this.splitContainer.TabIndex = 0;
-            //
+            // 
             // argumentPanel
-            //
-            this.argumentPanel.Location = new System.Drawing.Point(0, 17);
+            // 
+            this.argumentPanel.Location = new System.Drawing.Point(0, 20);
             this.argumentPanel.Name = "argumentPanel";
-            this.argumentPanel.getInput().TabIndex = 1;
+            this.argumentPanel.Size = new System.Drawing.Size(110, 50);
+            this.argumentPanel.TabIndex = 0;
             this.argumentPanel.Visible = false;
-            this.argumentPanel.getInput().KeyDown += new System.Windows.Forms.KeyEventHandler(this.FunctionArgumentInputKeyDown);
             // 
             // pluginList
             // 
@@ -78,7 +78,7 @@ namespace SmartHotEdit.View
             this.pluginList.Location = new System.Drawing.Point(0, 0);
             this.pluginList.MultiSelect = false;
             this.pluginList.Name = "pluginList";
-            this.pluginList.Size = new System.Drawing.Size(294, 261);
+            this.pluginList.Size = new System.Drawing.Size(300, 261);
             this.pluginList.TabIndex = 0;
             this.pluginList.UseCompatibleStateImageBehavior = false;
             this.pluginList.View = System.Windows.Forms.View.Details;
@@ -89,7 +89,7 @@ namespace SmartHotEdit.View
             this.clipboardTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.clipboardTextBox.Location = new System.Drawing.Point(0, 0);
             this.clipboardTextBox.Name = "clipboardTextBox";
-            this.clipboardTextBox.Size = new System.Drawing.Size(336, 261);
+            this.clipboardTextBox.Size = new System.Drawing.Size(330, 261);
             this.clipboardTextBox.TabIndex = 10;
             this.clipboardTextBox.TabStop = false;
             this.clipboardTextBox.Text = "";
@@ -97,7 +97,7 @@ namespace SmartHotEdit.View
             // functionListUpDown
             // 
             this.functionListUpDown.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.functionListUpDown.Location = new System.Drawing.Point(75, 0);
+            this.functionListUpDown.Location = new System.Drawing.Point(0, 0);
             this.functionListUpDown.Name = "functionListUpDown";
             this.functionListUpDown.Size = new System.Drawing.Size(120, 17);
             this.functionListUpDown.TabIndex = 1;
