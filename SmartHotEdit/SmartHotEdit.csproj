@@ -109,6 +109,10 @@
       <HintPath>..\packages\MoonSharp.1.5.0.1\lib\net40-client\MoonSharp.Interpreter.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="NiL.JS, Version=2.2.900.0, Culture=neutral, PublicKeyToken=f1426dd7ad77fce3, processorArchitecture=MSIL">
+      <HintPath>..\packages\NiL.JS.2.2.900.0\lib\net40\NiL.JS.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
       <HintPath>..\packages\NLog.4.3.3\lib\net40\NLog.dll</HintPath>
       <Private>True</Private>
@@ -129,6 +133,7 @@
   <ItemGroup>
     <Compile Include="Abstracts\APluginController.cs" />
     <Compile Include="Controller\Plugin\DefaultPluginController.cs" />
+    <Compile Include="Controller\Plugin\JavascriptPluginController.cs" />
     <Compile Include="Controller\Plugin\PythonPluginController.cs" />
     <Compile Include="Controller\Plugin\LuaPluginController.cs" />
     <Compile Include="Controller\HotKeyController.cs" />

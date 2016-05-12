@@ -25,9 +25,10 @@ namespace SmartHotEdit.Controller
             logger.Trace("Construct PluginController");
 
             this.pluginControllerList = new List<APluginController>();
-            this.pluginControllerList.Add(new DefaultPluginController(this));
+            /*this.pluginControllerList.Add(new DefaultPluginController(this));
             this.pluginControllerList.Add(new LuaPluginController(this));
-            this.pluginControllerList.Add(new PythonPluginController(this));
+            this.pluginControllerList.Add(new PythonPluginController(this));*/
+            this.pluginControllerList.Add(new JavascriptPluginController(this));
 
             this.loadPlugins();
         }
