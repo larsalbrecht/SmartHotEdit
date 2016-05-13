@@ -14,7 +14,7 @@ using SmartHotEdit.Abstracts;
 
 namespace SmartHotEdit.Controller.Plugin
 {
-    class LuaPluginController : APluginController
+    class LuaPluginController : AScriptPluginController
     {
         private List<APlugin> plugins = new List<APlugin>();
 
@@ -62,11 +62,8 @@ namespace SmartHotEdit.Controller.Plugin
             UserData.RegisterType<Argument>();
             UserData.RegisterType<List<Argument>>();
 
-            String pluginPath = Path.GetFullPath(@"Lua\Plugins\");
-            String pluginSearchPattern = "*_plugin.lua";
-            logger.Trace("Find plugins in path: " + pluginPath + "; with search pattern: " + pluginSearchPattern);
             // find plugins
-            string[] filePaths = Directory.GetFiles(pluginPath, pluginSearchPattern);
+            string[] filePaths = this.findScriptPlugins(@"Lua\Plugins\", "*_plugin.lua");
             foreach (string path in filePaths)
             {
                 logger.Trace("Script found at: " + path);

@@ -58,7 +58,7 @@ namespace SmartHotEdit.View
 				tmpPluginEntry.Text = plugin.getName();
                 tmpPluginEntry.SubItems.Add(plugin.getDescription());
 				pluginList.Items.Add(tmpPluginEntry);
-                logger.Info("Plugin added to view: " + plugin.getName());
+                logger.Info("Plugin added to view: " + "[" + plugin.Type + "] " + plugin.getName());
             }
 
 			pluginList.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
@@ -127,7 +127,7 @@ namespace SmartHotEdit.View
                         argumentPanel.Visible = true;
                         argumentPanel.Focus();
 					} else {
-                        this.clipboardTextBox.Text = this.executeFunctionOfPlugin(this.clipboardTextBox.Text, plugin, myFunction);
+                        this.clipboardTextBox.Text = this.executeFunctionOfPlugin(this.clipboardTextBox.Text, plugin, myFunction, true, this._argumentsToFill);
 					}
                     this.functionListUpDown.Visible = false;
 				}
@@ -164,17 +164,11 @@ namespace SmartHotEdit.View
                 {
                     logger.Trace("No further arguments");
                     this.argumentPanel.Visible = false;
-                    _listIndex = -1;
-                    this.clipboardTextBox.Text = this.executeFunctionOfPlugin(this.clipboardTextBox.Text, this._currentPlugin, this._currentFunction, true, this._argumentsToFill);
-                    _argumentsToFill = null;
-                    _currentPlugin = null;
-                }
-                else
-                {
-                    // refill with new data
-                    this.argumentPanel.InputText = "";
-                    this.argumentPanel.LabelText = this._currentFunction.arguments[this._listIndex].description;
-                }
+					_listIndex = -1;
+					this.clipboardTextBox.Text = this.executeFunctionOfPlugin(this.clipboardTextBox.Text, this._currentPlugin, this._currentFunction, true, this._argumentsToFill);
+					_argumentsToFill = null;
+					_currentPlugin = null;
+				}
                 e.SuppressKeyPress = true;
             }
             else if (e.KeyCode == Keys.Escape)
