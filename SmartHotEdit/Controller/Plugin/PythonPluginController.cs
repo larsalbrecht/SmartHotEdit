@@ -14,7 +14,7 @@ using SmartHotEdit.Abstracts;
 namespace SmartHotEdit.Controller.Plugin
 {
 
-    class PythonPluginController : APluginController
+    class PythonPluginController : AScriptPluginController
     {
         private List<APlugin> plugins = new List<APlugin>();
 
@@ -27,6 +27,8 @@ namespace SmartHotEdit.Controller.Plugin
             this.Type = "Python";
         }
 
+        
+
         public override void loadPlugins()
         {
             this.plugins.Clear();
@@ -37,11 +39,8 @@ namespace SmartHotEdit.Controller.Plugin
             paths.Add(Path.GetFullPath(@"Python\Modules"));
             engine.SetSearchPaths(paths);
 
-            String pluginPath = Path.GetFullPath(@"Python\Plugins\");
-            String pluginSearchPattern = "*_plugin.py";
-            logger.Trace("Find plugins in path: " + pluginPath + "; with search pattern: " + pluginSearchPattern);
             // find plugins
-            string[] filePaths = Directory.GetFiles(pluginPath, pluginSearchPattern);
+            string[] filePaths = this.findScriptPlugins(@"Python\Plugins\", "*_plugin.py");
             foreach (string path in filePaths)
             {
                 logger.Trace("Script found at: " + path);

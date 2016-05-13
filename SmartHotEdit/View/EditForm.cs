@@ -57,7 +57,7 @@ namespace SmartHotEdit.View
 				tmpPluginEntry.Tag = plugin;
 				tmpPluginEntry.Text = plugin.getName();
 				pluginList.Items.Add(tmpPluginEntry);
-                logger.Info("Plugin added to view: " + plugin.getName());
+                logger.Info("Plugin added to view: " + "[" + plugin.Type + "] " + plugin.getName());
             }
 
 			pluginList.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
@@ -124,7 +124,7 @@ namespace SmartHotEdit.View
                         functionArgumentInput.Visible = true;
 						functionArgumentInput.Focus();
 					} else {
-                        this.clipboardTextBox.Text = this.executeFunctionOfPlugin(this.clipboardTextBox.Text, plugin, myFunction);
+                        this.clipboardTextBox.Text = this.executeFunctionOfPlugin(this.clipboardTextBox.Text, plugin, myFunction, true, this._argumentsToFill);
 					}
                     this.functionListUpDown.Visible = false;
 				}
@@ -161,10 +161,10 @@ namespace SmartHotEdit.View
 				{
                     logger.Trace("No further arguments");
                     textBox.Visible = false;
-					_listIndex = -1;
+                    this._listIndex = -1;
 					this.clipboardTextBox.Text = this.executeFunctionOfPlugin(this.clipboardTextBox.Text, this._currentPlugin, this._currentFunction, true, this._argumentsToFill);
-					_argumentsToFill = null;
-					_currentPlugin = null;
+					this._argumentsToFill = null;
+                    this._currentPlugin = null;
 				}
                 e.SuppressKeyPress = true;
             } else if(e.KeyCode == Keys.Escape){
@@ -193,11 +193,11 @@ namespace SmartHotEdit.View
                     String[] lines = text.Split('\n');
                     foreach (String line in lines)
                     {
-                        result += plugin.getResultFromFunction(function, line) + Environment.NewLine;
+                        result += plugin.getResultFromFunction(function, line, arguments) + Environment.NewLine;
                     }
                 } else
                 {
-                    result = plugin.getResultFromFunction(function, text);
+                    result = plugin.getResultFromFunction(function, text, arguments);
                 }
             }
             return result;

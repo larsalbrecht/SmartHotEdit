@@ -132,6 +132,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Abstracts\APluginController.cs" />
+    <Compile Include="Abstracts\AScriptPluginController.cs" />
     <Compile Include="Controller\Plugin\DefaultPluginController.cs" />
     <Compile Include="Controller\Plugin\JavascriptPluginController.cs" />
     <Compile Include="Controller\Plugin\PythonPluginController.cs" />
@@ -143,6 +144,8 @@
     <Compile Include="Helper\HotkeyHandler.cs" />
     <Compile Include="Helper\PropertyHelper.cs" />
     <Compile Include="Model\HotKey.cs" />
+    <Compile Include="Model\Javascript\JavascriptFunction.cs" />
+    <Compile Include="Model\Javascript\Plugin.cs" />
     <Compile Include="Model\Python\PythonFunction.cs" />
     <Compile Include="Model\Python\Plugin.cs" />
     <Compile Include="NLogger\LayoutRenderer\NLogBuildTypeLayoutRenderer.cs" />
