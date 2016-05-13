@@ -39,7 +39,7 @@ namespace SmartHotEdit.View
             this.pluginList = new System.Windows.Forms.ListView();
             this.clipboardTextBox = new System.Windows.Forms.RichTextBox();
             this.functionListUpDown = new System.Windows.Forms.ListBox();
-            this.argumentPanel = new SmartHotEdit.View.Controls.ArgumentPanel();
+            this.argumentPanel = new ArgumentPanel();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
             this.splitContainer.Panel1.SuspendLayout();
             this.splitContainer.Panel2.SuspendLayout();
