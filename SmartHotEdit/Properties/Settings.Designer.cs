@@ -93,5 +93,17 @@ namespace SmartHotEdit.Properties {
                 this["EnablePythonPlugins"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool EnableJavascriptPlugins {
+            get {
+                return ((bool)(this["EnableJavascriptPlugins"]));
+            }
+            set {
+                this["EnableJavascriptPlugins"] = value;
+            }
+        }
     }
 }
