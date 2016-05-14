@@ -43,7 +43,7 @@ namespace SmartHotEdit.View
         #region Event Handlers
         private void menuOpenScriptPluginEditorClick(object sender, EventArgs e)
         {
-            this.scriptPluginEditor = new ScriptPluginEditor();
+            this.scriptPluginEditor = new ScriptPluginEditor(this.mainController);
             this.scriptPluginEditor.Show();
         }
 

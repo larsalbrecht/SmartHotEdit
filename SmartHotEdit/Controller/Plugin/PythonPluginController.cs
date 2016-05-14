@@ -10,6 +10,7 @@ using System.IO;
 using SmartHotEdit.Model.Python;
 using SmartHotEditPluginHost.Model;
 using SmartHotEdit.Abstracts;
+using ScintillaNET;
 
 namespace SmartHotEdit.Controller.Plugin
 {
@@ -25,9 +26,9 @@ namespace SmartHotEdit.Controller.Plugin
         {
             logger.Trace("Construct JavascriptPluginController");
             this.Type = "Python";
-        }
-
-        
+            this.TypeFileExt = ".py";
+            this.TypeScintillaLexer = Lexer.Python;
+        }        
 
         public override void loadPlugins()
         {

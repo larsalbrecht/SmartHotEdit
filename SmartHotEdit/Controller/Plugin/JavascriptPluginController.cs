@@ -11,6 +11,7 @@ using NiL.JS.BaseLibrary;
 using NiL.JS.Core;
 using NiL.JS.Extensions;
 using SmartHotEdit.Model.Javascript;
+using ScintillaNET;
 
 namespace SmartHotEdit.Controller.Plugin
 {
@@ -24,6 +25,8 @@ namespace SmartHotEdit.Controller.Plugin
         {
             logger.Trace("Construct JavascriptPluginController");
             this.Type = "Javascript";
+            this.TypeFileExt = ".js";
+            this.TypeScintillaLexer = Lexer.Cpp;
         }
 
         public override void loadPlugins()

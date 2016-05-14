@@ -42,7 +42,7 @@ namespace SmartHotEdit.Controller
             logger.Trace("Use plugins: " + Properties.Settings.Default.EnablePlugins);
             if (Properties.Settings.Default.EnablePlugins)
             {
-                foreach(APluginController concretePluginControlelr in this.pluginControllerList)
+                foreach (APluginController concretePluginControlelr in this.pluginControllerList)
                 {
                     if (concretePluginControlelr.isFullyImplemented())
                     {
@@ -62,7 +62,8 @@ namespace SmartHotEdit.Controller
                         {
                             logger.Debug(concretePluginControlelr.Type + " is disabled");
                         }
-                    } else
+                    }
+                    else
                     {
                         throw new NotImplementedException("The Controller for the " + concretePluginControlelr.Type + " Plugins is not fully implemented!");
                     }
@@ -75,11 +76,11 @@ namespace SmartHotEdit.Controller
 
         private APlugin[] arrayMerge(APlugin[] baseArray, APlugin[] arrayToMerge)
         {
-            if(baseArray == null)
+            if (baseArray == null)
             {
                 baseArray = new APlugin[0];
             }
-            if(arrayToMerge == null)
+            if (arrayToMerge == null)
             {
                 arrayToMerge = new APlugin[0];
             }
@@ -90,9 +91,23 @@ namespace SmartHotEdit.Controller
             return baseArray;
         }
 
-        public IList<APluginController> getPluginControllerList()
+        public IList<APluginController> getPluginControllerList(Type pluginControllerType = null)
         {
-            return this.pluginControllerList;
+            if (pluginControllerType == null)
+            {
+                return this.pluginControllerList;
+            }
+            var pluginControllerList = new List<APluginController>();
+            foreach (APluginController pluginController in this.pluginControllerList)
+            {
+
+                if (pluginController.GetType().IsSubclassOf(pluginControllerType) || 
+                    pluginController.GetType() == pluginControllerType)
+                {
+                    pluginControllerList.Add(pluginController);
+                }
+            }
+            return pluginControllerList;
         }
 
     }

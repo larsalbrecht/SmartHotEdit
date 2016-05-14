@@ -4,13 +4,23 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using SmartHotEdit.Controller;
+using ScintillaNET;
 
 namespace SmartHotEdit.Abstracts
 {
     abstract class AScriptPluginController : APluginController
     {
+
+        public string TypeFileExt;
+        public Lexer TypeScintillaLexer;
+
         public AScriptPluginController(PluginController pluginController) : base(pluginController)
         {
+        }
+
+        public new bool isFullyImplemented()
+        {
+            return base.isFullyImplemented() && this.TypeFileExt != null;
         }
 
         protected string[] findScriptPlugins(String pathStr, String searchPattern)

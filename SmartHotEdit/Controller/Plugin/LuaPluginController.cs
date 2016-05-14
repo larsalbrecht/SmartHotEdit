@@ -11,6 +11,7 @@ using SmartHotEditPluginHost;
 using NLog;
 using System.Text;
 using SmartHotEdit.Abstracts;
+using ScintillaNET;
 
 namespace SmartHotEdit.Controller.Plugin
 {
@@ -22,6 +23,8 @@ namespace SmartHotEdit.Controller.Plugin
         {
             logger.Trace("Construct LuaPluginController");
             this.Type = "Lua";
+            this.TypeFileExt = ".lua";
+            this.TypeScintillaLexer = Lexer.Lua;
         }
 
         private Script getConfiguredScript()
