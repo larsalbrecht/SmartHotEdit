@@ -9,9 +9,9 @@ using System.Windows.Forms;
 
 namespace SmartHotEdit.View
 {
-    public partial class PluginScriptEditor : Form
+    public partial class ScriptPluginEditor : Form
     {
-        public PluginScriptEditor()
+        public ScriptPluginEditor()
         {
             InitializeComponent();
         }

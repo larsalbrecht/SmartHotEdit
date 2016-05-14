@@ -11,6 +11,7 @@ namespace SmartHotEdit.View
         private NotifyIcon notifyIcon;
         private ContextMenu notificationMenu;
         private SettingsView settingsView;
+        private ScriptPluginEditor scriptPluginEditor;
 
         #region Initialize icon and menu
         public NotificationIcon(MainController mainController)
@@ -30,6 +31,8 @@ namespace SmartHotEdit.View
         {
             MenuItem[] menu = new MenuItem[] {
                 new MenuItem("Settings", menuSettingsClick),
+                new MenuItem("Script Plugin Editor", menuOpenScriptPluginEditorClick),
+                new MenuItem("-"),
                 new MenuItem("About", menuAboutClick),
                 new MenuItem("Exit", menuExitClick)
             };
@@ -38,6 +41,12 @@ namespace SmartHotEdit.View
         #endregion
 
         #region Event Handlers
+        private void menuOpenScriptPluginEditorClick(object sender, EventArgs e)
+        {
+            this.scriptPluginEditor = new ScriptPluginEditor();
+            this.scriptPluginEditor.Show();
+        }
+
         private void menuSettingsClick(object sender, EventArgs e)
         {
             if(settingsView == null)
@@ -62,7 +71,7 @@ namespace SmartHotEdit.View
 
         private void IconDoubleClick(object sender, EventArgs e)
         {
-            //MessageBox.Show("The icon was double clicked");
+            this.menuSettingsClick(sender, e);
         }
         #endregion
 
