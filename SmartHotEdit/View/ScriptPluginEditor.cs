@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ScintillaNET;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -14,6 +15,10 @@ namespace SmartHotEdit.View
         public ScriptPluginEditor()
         {
             InitializeComponent();
+        }
+
+        private void ScriptPluginEditor_Load(object sender, EventArgs e)
+        {
         }
     }
 }

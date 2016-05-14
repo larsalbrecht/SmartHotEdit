@@ -30,7 +30,7 @@
         {
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.editorSplitContainer = new System.Windows.Forms.SplitContainer();
-            this.editorRichTextBox = new System.Windows.Forms.RichTextBox();
+            this.scintilla = new ScintillaNET.Scintilla();
             this.outputRichTextBox = new System.Windows.Forms.RichTextBox();
             this.editorSettingsGroupBox = new System.Windows.Forms.GroupBox();
             this.scriptTypeBox = new System.Windows.Forms.ListBox();
@@ -41,9 +41,9 @@
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripSeparator();
             this.saveToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem4 = new System.Windows.Forms.ToolStripSeparator();
             this.closeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.editorSplitContainer)).BeginInit();
             this.editorSplitContainer.Panel1.SuspendLayout();
@@ -77,7 +77,7 @@
             // 
             // editorSplitContainer.Panel1
             // 
-            this.editorSplitContainer.Panel1.Controls.Add(this.editorRichTextBox);
+            this.editorSplitContainer.Panel1.Controls.Add(this.scintilla);
             // 
             // editorSplitContainer.Panel2
             // 
@@ -87,16 +87,16 @@
             this.editorSplitContainer.SplitterDistance = 230;
             this.editorSplitContainer.TabIndex = 0;
             // 
-            // editorRichTextBox
+            // scintilla
             // 
-            this.editorRichTextBox.AcceptsTab = true;
-            this.editorRichTextBox.AutoWordSelection = true;
-            this.editorRichTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.editorRichTextBox.Location = new System.Drawing.Point(0, 0);
-            this.editorRichTextBox.Name = "editorRichTextBox";
-            this.editorRichTextBox.Size = new System.Drawing.Size(441, 230);
-            this.editorRichTextBox.TabIndex = 1;
-            this.editorRichTextBox.Text = "";
+            this.scintilla.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.scintilla.EolMode = ScintillaNET.Eol.Lf;
+            this.scintilla.IndentationGuides = ScintillaNET.IndentView.Real;
+            this.scintilla.Location = new System.Drawing.Point(0, 0);
+            this.scintilla.Name = "scintilla";
+            this.scintilla.Size = new System.Drawing.Size(441, 230);
+            this.scintilla.TabIndex = 2;
+            this.scintilla.UseTabs = false;
             // 
             // outputRichTextBox
             // 
@@ -169,42 +169,42 @@
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
             this.openToolStripMenuItem.Text = "New";
             // 
             // saveToolStripMenuItem
             // 
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
             this.saveToolStripMenuItem.Text = "Open";
             // 
             // toolStripMenuItem3
             // 
             this.toolStripMenuItem3.Name = "toolStripMenuItem3";
-            this.toolStripMenuItem3.Size = new System.Drawing.Size(149, 6);
+            this.toolStripMenuItem3.Size = new System.Drawing.Size(100, 6);
             // 
             // saveToolStripMenuItem1
             // 
             this.saveToolStripMenuItem1.Name = "saveToolStripMenuItem1";
-            this.saveToolStripMenuItem1.Size = new System.Drawing.Size(152, 22);
+            this.saveToolStripMenuItem1.Size = new System.Drawing.Size(103, 22);
             this.saveToolStripMenuItem1.Text = "Save";
+            // 
+            // toolStripMenuItem4
+            // 
+            this.toolStripMenuItem4.Name = "toolStripMenuItem4";
+            this.toolStripMenuItem4.Size = new System.Drawing.Size(100, 6);
+            // 
+            // closeToolStripMenuItem
+            // 
+            this.closeToolStripMenuItem.Name = "closeToolStripMenuItem";
+            this.closeToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
+            this.closeToolStripMenuItem.Text = "Close";
             // 
             // toolStripMenuItem2
             // 
             this.toolStripMenuItem2.Name = "toolStripMenuItem2";
             this.toolStripMenuItem2.Size = new System.Drawing.Size(40, 20);
             this.toolStripMenuItem2.Text = "Run";
-            // 
-            // toolStripMenuItem4
-            // 
-            this.toolStripMenuItem4.Name = "toolStripMenuItem4";
-            this.toolStripMenuItem4.Size = new System.Drawing.Size(149, 6);
-            // 
-            // closeToolStripMenuItem
-            // 
-            this.closeToolStripMenuItem.Name = "closeToolStripMenuItem";
-            this.closeToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.closeToolStripMenuItem.Text = "Close";
             // 
             // ScriptPluginEditor
             // 
@@ -217,6 +217,7 @@
             this.Name = "ScriptPluginEditor";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "PluginScriptEditor";
+            this.Load += new System.EventHandler(this.ScriptPluginEditor_Load);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.editorSplitContainer.Panel1.ResumeLayout(false);
             this.editorSplitContainer.Panel2.ResumeLayout(false);
@@ -235,7 +236,6 @@
 
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.SplitContainer editorSplitContainer;
-        private System.Windows.Forms.RichTextBox editorRichTextBox;
         private System.Windows.Forms.RichTextBox outputRichTextBox;
         private System.Windows.Forms.GroupBox editorSettingsGroupBox;
         private System.Windows.Forms.ListBox scriptTypeBox;
@@ -249,5 +249,6 @@
         private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem1;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem4;
         private System.Windows.Forms.ToolStripMenuItem closeToolStripMenuItem;
+        private ScintillaNET.Scintilla scintilla;
     }
 }
