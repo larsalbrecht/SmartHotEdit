@@ -169,6 +169,12 @@
     <Compile Include="View\EditForm.designer.cs">
       <DependentUpon>EditForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="View\PluginScriptEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\PluginScriptEditor.Designer.cs">
+      <DependentUpon>PluginScriptEditor.cs</DependentUpon>
+    </Compile>
     <Compile Include="View\Settings.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -200,6 +206,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="View\NotificationIcon.resx">
       <DependentUpon>NotificationIcon.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\PluginScriptEditor.resx">
+      <DependentUpon>PluginScriptEditor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="View\Settings.resx">
       <DependentUpon>Settings.cs</DependentUpon>
