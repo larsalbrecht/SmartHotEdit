@@ -26,7 +26,7 @@ namespace SmartHotEdit.Controller.Plugin
         {
             logger.Trace("Construct JavascriptPluginController");
             this.Type = "Python";
-            this.TypeFileExt = ".py";
+            this.TypeFileExt = "py";
             this.TypeScintillaLexer = Lexer.Python;
         }        
 

@@ -14,7 +14,7 @@ namespace SmartHotEdit.Abstracts
 
         protected static Logger logger = LogManager.GetCurrentClassLogger();
         private PluginController pluginController;
-        public string Type;
+        public string Type { get; set; }
 
         public IList<APlugin> LoadedPlugins = new List<APlugin>();
         public IList<APlugin> EnabledPlugins = new List<APlugin>();

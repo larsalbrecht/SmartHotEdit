@@ -23,7 +23,7 @@ namespace SmartHotEdit.Controller.Plugin
         {
             logger.Trace("Construct LuaPluginController");
             this.Type = "Lua";
-            this.TypeFileExt = ".lua";
+            this.TypeFileExt = "lua";
             this.TypeScintillaLexer = Lexer.Lua;
         }
 

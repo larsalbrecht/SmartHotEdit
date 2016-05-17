@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 using SmartHotEdit.Controller;
+using SmartHotEdit.View.Editor;
 
 namespace SmartHotEdit.View
 {

@@ -11,8 +11,8 @@ namespace SmartHotEdit.Abstracts
     abstract class AScriptPluginController : APluginController
     {
 
-        public string TypeFileExt;
-        public Lexer TypeScintillaLexer;
+        public string TypeFileExt { get; set; }
+        public Lexer TypeScintillaLexer { get; set; }
 
         public AScriptPluginController(PluginController pluginController) : base(pluginController)
         {

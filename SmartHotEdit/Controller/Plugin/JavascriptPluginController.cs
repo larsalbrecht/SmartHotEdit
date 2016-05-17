@@ -25,7 +25,7 @@ namespace SmartHotEdit.Controller.Plugin
         {
             logger.Trace("Construct JavascriptPluginController");
             this.Type = "Javascript";
-            this.TypeFileExt = ".js";
+            this.TypeFileExt = "js";
             this.TypeScintillaLexer = Lexer.Cpp;
         }
 

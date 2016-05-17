@@ -117,6 +117,10 @@
       <HintPath>..\packages\NLog.4.3.3\lib\net40\NLog.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="NLog.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <HintPath>..\packages\NLog.Windows.Forms.4.2.2\lib\net35\NLog.Windows.Forms.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="ScintillaNET, Version=3.5.6.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\jacobslusser.ScintillaNET.3.5.6\lib\net40\ScintillaNET.dll</HintPath>
       <Private>True</Private>
@@ -172,10 +176,10 @@
     <Compile Include="View\EditForm.designer.cs">
       <DependentUpon>EditForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="View\ScriptPluginEditor.cs">
+    <Compile Include="View\Editor\ScriptPluginEditor.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="View\ScriptPluginEditor.Designer.cs">
+    <Compile Include="View\Editor\ScriptPluginEditor.Designer.cs">
       <DependentUpon>ScriptPluginEditor.cs</DependentUpon>
     </Compile>
     <Compile Include="View\Settings.cs">
@@ -210,7 +214,7 @@
     <EmbeddedResource Include="View\NotificationIcon.resx">
       <DependentUpon>NotificationIcon.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="View\ScriptPluginEditor.resx">
+    <EmbeddedResource Include="View\Editor\ScriptPluginEditor.resx">
       <DependentUpon>ScriptPluginEditor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="View\Settings.resx">
