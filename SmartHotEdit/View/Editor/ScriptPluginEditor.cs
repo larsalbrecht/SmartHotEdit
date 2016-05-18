@@ -74,7 +74,6 @@ namespace SmartHotEdit.View.Editor
             bindingSource.DataSource = this.scriptPluginController;
             this.scriptTypeList.DataSource = bindingSource;
             this.scriptTypeList.DisplayMember = "Type";
-            //this.scriptTypeList.ValueMember = "TypeScintillaLexer";
         }
 
         private AScriptPluginController[] getItemsForScriptTypeBox()
