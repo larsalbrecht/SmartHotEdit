@@ -12,6 +12,7 @@ using NLog;
 using System.Text;
 using SmartHotEdit.Abstracts;
 using ScintillaNET;
+using System.Drawing;
 
 namespace SmartHotEdit.Controller.Plugin
 {
@@ -215,6 +216,44 @@ namespace SmartHotEdit.Controller.Plugin
         public override bool isEnabled()
         {
             return Properties.Settings.Default.EnableLuaPlugins;
+        }
+
+        public override string getTemplate()
+        {
+            return SmartHotEdit.Properties.Resources.template_lua;
+        }
+
+        public override void setScintillaConfiguration(Scintilla scintilla)
+        {
+            // Obtained from SciLexer.h
+            const int SCLEX_LUA = 15;
+            const int SCE_LUA_DEFAULT = 0;
+            const int SCE_LUA_COMMENT = 1;
+            const int SCE_LUA_COMMENTLINE = 2;
+            const int SCE_LUA_COMMENTDOC = 3;
+            const int SCE_LUA_NUMBER = 4;
+            const int SCE_LUA_WORD = 5;
+            const int SCE_LUA_STRING = 6;
+            const int SCE_LUA_CHARACTER = 7;
+            const int SCE_LUA_LITERALSTRING = 8;
+            const int SCE_LUA_PREPROCESSOR = 9;
+            const int SCE_LUA_OPERATOR = 10;
+            const int SCE_LUA_IDENTIFIER = 11;
+            const int SCE_LUA_STRINGEOL = 12;
+            const int SCE_LUA_WORD2 = 13;
+            const int SCE_LUA_WORD3 = 14;
+            const int SCE_LUA_WORD4 = 15;
+            const int SCE_LUA_WORD5 = 16;
+            const int SCE_LUA_WORD6 = 17;
+            const int SCE_LUA_WORD7 = 18;
+            const int SCE_LUA_WORD8 = 19;
+            const int SCE_LUA_LABEL = 20;
+
+            scintilla.Styles[SCE_LUA_DEFAULT].ForeColor = Color.Black;
+            scintilla.Styles[SCE_LUA_COMMENT].ForeColor = Color.Green;
+
+            scintilla.SetKeywords(0, "and break do else elseif end false for function if in local nil not or repeat return then true until while");
+            scintilla.SetKeywords(1, "+-* / % ^ #  == ~= <= >= < > =  ( ) { } [ ]  ; : , . .. ...");
         }
     }
 }

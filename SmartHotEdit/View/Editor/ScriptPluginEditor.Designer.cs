@@ -38,17 +38,20 @@
             this.scriptTypeList = new System.Windows.Forms.ListBox();
             this.scriptTypeLabel = new System.Windows.Forms.Label();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
-            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
-            this.newMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.openMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.fileMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.fileNewMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.fileOpenMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripSeparator();
-            this.saveMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.fileSaveMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem4 = new System.Windows.Forms.ToolStripSeparator();
-            this.closeMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
+            this.fileCloseMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.testMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.templateMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.templateLoadMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openScriptDialog = new System.Windows.Forms.OpenFileDialog();
             this.saveScriptDialog = new System.Windows.Forms.SaveFileDialog();
             this.aScriptPluginControllerBindingSource = new System.Windows.Forms.BindingSource(this.components);
+            this.testRunMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.editorSplitContainer)).BeginInit();
             this.editorSplitContainer.Panel1.SuspendLayout();
@@ -169,69 +172,88 @@
             // menuStrip1
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripMenuItem1,
-            this.toolStripMenuItem2});
+            this.fileMenuItem,
+            this.testMenuItem,
+            this.templateMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(784, 24);
             this.menuStrip1.TabIndex = 1;
             this.menuStrip1.Text = "menuStrip1";
             // 
-            // toolStripMenuItem1
+            // fileMenuItem
             // 
-            this.toolStripMenuItem1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.newMenuItem,
-            this.openMenuItem,
+            this.fileMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.fileNewMenuItem,
+            this.fileOpenMenuItem,
             this.toolStripMenuItem3,
-            this.saveMenuItem,
+            this.fileSaveMenuItem,
             this.toolStripMenuItem4,
-            this.closeMenuItem});
-            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(37, 20);
-            this.toolStripMenuItem1.Text = "File";
+            this.fileCloseMenuItem});
+            this.fileMenuItem.Name = "fileMenuItem";
+            this.fileMenuItem.Size = new System.Drawing.Size(37, 20);
+            this.fileMenuItem.Text = "File";
             // 
-            // newMenuItem
+            // fileNewMenuItem
             // 
-            this.newMenuItem.Name = "newMenuItem";
-            this.newMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.newMenuItem.Text = "New";
+            this.fileNewMenuItem.Name = "fileNewMenuItem";
+            this.fileNewMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.fileNewMenuItem.Text = "New";
             // 
-            // openMenuItem
+            // fileOpenMenuItem
             // 
-            this.openMenuItem.Name = "openMenuItem";
-            this.openMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.openMenuItem.Text = "Open";
-            this.openMenuItem.Click += new System.EventHandler(this.openMenuItem_Click);
+            this.fileOpenMenuItem.Name = "fileOpenMenuItem";
+            this.fileOpenMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.fileOpenMenuItem.Text = "Open";
+            this.fileOpenMenuItem.Click += new System.EventHandler(this.openMenuItem_Click);
             // 
             // toolStripMenuItem3
             // 
             this.toolStripMenuItem3.Name = "toolStripMenuItem3";
             this.toolStripMenuItem3.Size = new System.Drawing.Size(149, 6);
             // 
-            // saveMenuItem
+            // fileSaveMenuItem
             // 
-            this.saveMenuItem.Name = "saveMenuItem";
-            this.saveMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.saveMenuItem.Text = "Save";
-            this.saveMenuItem.Click += new System.EventHandler(this.saveMenuItem_Click);
+            this.fileSaveMenuItem.Name = "fileSaveMenuItem";
+            this.fileSaveMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.fileSaveMenuItem.Text = "Save";
+            this.fileSaveMenuItem.Click += new System.EventHandler(this.saveMenuItem_Click);
             // 
             // toolStripMenuItem4
             // 
             this.toolStripMenuItem4.Name = "toolStripMenuItem4";
             this.toolStripMenuItem4.Size = new System.Drawing.Size(149, 6);
             // 
-            // closeMenuItem
+            // fileCloseMenuItem
             // 
-            this.closeMenuItem.Name = "closeMenuItem";
-            this.closeMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.closeMenuItem.Text = "Close";
-            this.closeMenuItem.Click += new System.EventHandler(this.closeMenuItem_Click);
+            this.fileCloseMenuItem.Name = "fileCloseMenuItem";
+            this.fileCloseMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.fileCloseMenuItem.Text = "Close";
+            this.fileCloseMenuItem.Click += new System.EventHandler(this.closeMenuItem_Click);
             // 
-            // toolStripMenuItem2
+            // testMenuItem
             // 
-            this.toolStripMenuItem2.Name = "toolStripMenuItem2";
-            this.toolStripMenuItem2.Size = new System.Drawing.Size(40, 20);
-            this.toolStripMenuItem2.Text = "Run";
+            this.testMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.testRunMenuItem});
+            this.testMenuItem.Enabled = false;
+            this.testMenuItem.Name = "testMenuItem";
+            this.testMenuItem.Size = new System.Drawing.Size(40, 20);
+            this.testMenuItem.Text = "Test";
+            // 
+            // templateMenuItem
+            // 
+            this.templateMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.templateLoadMenuItem});
+            this.templateMenuItem.Name = "templateMenuItem";
+            this.templateMenuItem.Size = new System.Drawing.Size(68, 20);
+            this.templateMenuItem.Text = "Template";
+            // 
+            // templateLoadMenuItem
+            // 
+            this.templateLoadMenuItem.Name = "templateLoadMenuItem";
+            this.templateLoadMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.templateLoadMenuItem.Text = "Laden";
+            this.templateLoadMenuItem.Click += new System.EventHandler(this.templateLoadMenuItem_Click);
             // 
             // openScriptDialog
             // 
@@ -240,6 +262,12 @@
             // aScriptPluginControllerBindingSource
             // 
             this.aScriptPluginControllerBindingSource.DataSource = typeof(SmartHotEdit.Abstracts.AScriptPluginController);
+            // 
+            // testRunMenuItem
+            // 
+            this.testRunMenuItem.Name = "testRunMenuItem";
+            this.testRunMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.testRunMenuItem.Text = "Run";
             // 
             // ScriptPluginEditor
             // 
@@ -276,14 +304,14 @@
         private System.Windows.Forms.RichTextBox outputRichTextBox;
         private System.Windows.Forms.GroupBox editorSettingsGroupBox;
         private System.Windows.Forms.MenuStrip menuStrip1;
-        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
-        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem2;
-        private System.Windows.Forms.ToolStripMenuItem newMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem openMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem fileMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem testMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem fileNewMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem fileOpenMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem3;
-        private System.Windows.Forms.ToolStripMenuItem saveMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem fileSaveMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem4;
-        private System.Windows.Forms.ToolStripMenuItem closeMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem fileCloseMenuItem;
         private ScintillaNET.Scintilla scintilla;
         private System.Windows.Forms.OpenFileDialog openScriptDialog;
         private System.Windows.Forms.BindingSource aScriptPluginControllerBindingSource;
@@ -291,5 +319,8 @@
         private System.Windows.Forms.ListBox scriptTypeList;
         private System.Windows.Forms.Label scriptTypeLabel;
         private System.Windows.Forms.SaveFileDialog saveScriptDialog;
+        private System.Windows.Forms.ToolStripMenuItem templateMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem templateLoadMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem testRunMenuItem;
     }
 }

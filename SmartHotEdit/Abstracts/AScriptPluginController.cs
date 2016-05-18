@@ -38,5 +38,9 @@ namespace SmartHotEdit.Abstracts
 
             return result;
         }
+
+        public abstract String getTemplate();
+
+        public abstract void setScintillaConfiguration(Scintilla scintilla);
     }
 }

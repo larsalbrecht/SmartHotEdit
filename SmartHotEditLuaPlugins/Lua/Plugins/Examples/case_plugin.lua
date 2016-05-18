@@ -23,8 +23,3 @@ end
 
 plugin = LuaCasePlugin()
 return plugin
---pluginhelper.print_r(plugin:getFunctions())
---functionSelected = plugin:getFunction(1)
---pluginhelper.print_r(functionSelected:process('Input', 'arguments'))
---functionSelected = plugin:getFunction(2)
---pluginhelper.print_r(functionSelected:process('Input', 'arguments'))

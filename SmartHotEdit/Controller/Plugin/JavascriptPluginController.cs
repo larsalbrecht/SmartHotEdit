@@ -12,6 +12,7 @@ using NiL.JS.Core;
 using NiL.JS.Extensions;
 using SmartHotEdit.Model.Javascript;
 using ScintillaNET;
+using System.Drawing;
 
 namespace SmartHotEdit.Controller.Plugin
 {
@@ -142,6 +143,31 @@ namespace SmartHotEdit.Controller.Plugin
         public override bool isEnabled()
         {
             return Properties.Settings.Default.EnablePythonPlugins;
+        }
+
+        public override string getTemplate()
+        {
+            return SmartHotEdit.Properties.Resources.template_js;
+        }
+
+        public override void setScintillaConfiguration(Scintilla scintilla)
+        {
+            scintilla.Styles[Style.Cpp.Default].ForeColor = Color.Silver;
+            scintilla.Styles[Style.Cpp.Comment].ForeColor = Color.FromArgb(0, 128, 0); // Green
+            scintilla.Styles[Style.Cpp.CommentLine].ForeColor = Color.FromArgb(0, 128, 0); // Green
+            scintilla.Styles[Style.Cpp.CommentLineDoc].ForeColor = Color.FromArgb(128, 128, 128); // Gray
+            scintilla.Styles[Style.Cpp.Number].ForeColor = Color.Olive;
+            scintilla.Styles[Style.Cpp.Word].ForeColor = Color.Blue;
+            scintilla.Styles[Style.Cpp.Word2].ForeColor = Color.Blue;
+            scintilla.Styles[Style.Cpp.String].ForeColor = Color.FromArgb(163, 21, 21); // Red
+            scintilla.Styles[Style.Cpp.Character].ForeColor = Color.FromArgb(163, 21, 21); // Red
+            scintilla.Styles[Style.Cpp.Verbatim].ForeColor = Color.FromArgb(163, 21, 21); // Red
+            scintilla.Styles[Style.Cpp.StringEol].BackColor = Color.Pink;
+            scintilla.Styles[Style.Cpp.Operator].ForeColor = Color.Purple;
+            scintilla.Styles[Style.Cpp.Preprocessor].ForeColor = Color.Maroon;
+
+            scintilla.SetKeywords(0, "abstract arguments boolean break byte case catch char class const continue debugger default delete do double else enum eval export extends false final finally float for function goto if implements import in instanceof int interface let long native new null package private protected public return short static super switch synchronized this throw throws transient true try typeof var void volatile while with yield");
+            scintilla.SetKeywords(1, "Array Date eval function hasOwnProperty Infinity isFinite isNaN isPrototypeOf length Math NaN name Number Object prototype String toString undefined valueOf");
         }
     }
 }

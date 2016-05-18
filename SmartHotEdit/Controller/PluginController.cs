@@ -97,16 +97,17 @@ namespace SmartHotEdit.Controller
             {
                 return this.pluginControllerList;
             }
+
             var pluginControllerList = new List<APluginController>();
             foreach (APluginController pluginController in this.pluginControllerList)
             {
-
                 if (pluginController.GetType().IsSubclassOf(pluginControllerType) || 
                     pluginController.GetType() == pluginControllerType)
                 {
                     pluginControllerList.Add(pluginController);
                 }
             }
+
             return pluginControllerList;
         }
 

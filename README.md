@@ -173,21 +173,17 @@ class PythonStringPlugin(Plugin.APlugin):
     
     def __init__(self):
         super(PythonStringPlugin, self).__init__("PythonString", "Some function to modify a string")
-        replace_string_func = Models.Function(
-			"Replace", 
-			"Replaces a string in a string",
+        replace_string_func = Models.Function("Replace", "Replaces a string in a string",
 			PythonStringPlugin.replace_string,
 			[
 				Models.Argument("oldString", "old string"),
 				Models.Argument("newString", "new string")
-			]
-		)
+			])
         self.add_function(replace_string_func)
 
     @staticmethod
     def replace_string(value, arguments):
         if isinstance(value, basestring):
-            print arguments
             if type(arguments) is dict and len(arguments) == 2:
                 return value.replace(arguments["oldString"], arguments["newString"])
             else:
@@ -196,4 +192,41 @@ class PythonStringPlugin(Plugin.APlugin):
             print "Wrong value (must string) given"
 
 plugin = PythonStringPlugin()
+```
+
+### Javascript
+You can write plugins with Javascript (ECMAScript 6.0 [ES2015])
+#### Example Plugins
+There are some examples in the directory ``Javascript\Plugins\Examples`` in the project "SmartHotEditJavascriptPlugins":
+* case_plugin.js
+* string_plugin.js
+ 
+#### Short implementation description
+You need to create a class that extends from APlugin.
+In your class you must call ``super`` with the both parameters ``name`` and ``description``.
+After that, you can add your functions to the base class with ``this:addFunction(Function function)``.
+The script must set a variable called plugin with a new instance of your plugin:
+`` var plugin = new MyPlugin() ``.
+
+Your scripts must saved in the directory ``Javascript\Plugins`` and must end with ``_plugin.js``: ``example_plugin.js``
+
+#### Example Code
+```JavaScript
+"use strict";
+class StringPlugin extends APlugin {
+	constructor(){
+		super("JSString", "Some functions to modify a string");
+		
+		var replaceStringFunc = new Function('Replace', 'Replaces a string in a string', this.replaceString, [new Argument("oldString", "old string"), new Argument("newString", "new string")]);
+		this.addFunction(replaceStringFunc);
+	}
+	
+	replaceString(value, argumentList){
+		if(value && argumentList && argumentList.length === 2){
+			return value.replace(argumentList[0].value, argumentList[1].value);
+		}
+		return value;
+	}
+};
+var plugin = new StringPlugin();
 ```

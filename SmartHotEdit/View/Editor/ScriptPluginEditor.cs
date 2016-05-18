@@ -13,6 +13,9 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
+/// <summary>
+/// TODO refactor!
+/// </summary>
 namespace SmartHotEdit.View.Editor
 {
     public partial class ScriptPluginEditor : Form
@@ -22,6 +25,8 @@ namespace SmartHotEdit.View.Editor
         private String originalHeadertext;
         private MainController mainController;
         private IList<AScriptPluginController> scriptPluginController;
+        private AScriptPluginController _currentPluginController;
+
         private String _filepathToSave;
         private Boolean _isSaved = true;
 
@@ -31,11 +36,12 @@ namespace SmartHotEdit.View.Editor
             set
             {
                 _isSaved = value;
-                var baseText = this.originalHeadertext + " -" + (_filepathToSave != null ? " [" + _filepathToSave + "]" : "" );
+                var baseText = this.originalHeadertext + " -" + (_filepathToSave != null ? " [" + _filepathToSave + "]" : "");
                 if (_isSaved == false)
                 {
                     this.Text = baseText + " *";
-                } else
+                }
+                else
                 {
                     this.Text = baseText;
                 }
@@ -79,6 +85,7 @@ namespace SmartHotEdit.View.Editor
         private String getFilterForDialog()
         {
             var resultList = new List<string>();
+            resultList.Add("All Files (*.*)|*.*");
             foreach (AScriptPluginController pluginController in this.scriptPluginController)
             {
                 resultList.Add(pluginController.Type + "|" + "*." + pluginController.TypeFileExt);
@@ -88,14 +95,22 @@ namespace SmartHotEdit.View.Editor
 
         private void openMenuItem_Click(object sender, EventArgs e)
         {
-            var pluginController = ((AScriptPluginController)this.scriptTypeList.SelectedValue);
-            this.openScriptDialog.DefaultExt = pluginController.TypeFileExt;
+            this.openScriptDialog.DefaultExt = this._currentPluginController.TypeFileExt;
 
             DialogResult result = this.openScriptDialog.ShowDialog();
             if (result == DialogResult.OK)
             {
                 string scriptFile = this.openScriptDialog.FileName;
                 this.FilepathToSave = scriptFile;
+                foreach(AScriptPluginController pluginController in this.scriptPluginController)
+                {
+                    Console.WriteLine(Path.GetExtension(scriptFile));
+                    if("." + pluginController.TypeFileExt == Path.GetExtension(scriptFile))
+                    {
+                        this._currentPluginController = pluginController;
+                        break;
+                    }
+                }
                 try
                 {
                     this.scintilla.Text = File.ReadAllText(scriptFile);
@@ -104,6 +119,14 @@ namespace SmartHotEdit.View.Editor
                 catch (IOException ex)
                 {
                     logger.Error(ex.Message);
+                }
+            }
+            for (int i = 0; i < this.scriptTypeList.Items.Count; i++)
+            {
+                if (this.scriptTypeList.Items[i] == this._currentPluginController)
+                {
+                    this.scriptTypeList.SelectedIndex = i;
+                    break;
                 }
             }
         }
@@ -115,7 +138,7 @@ namespace SmartHotEdit.View.Editor
 
         private bool saveFile()
         {
-            if(this.FilepathToSave == null)
+            if (this.FilepathToSave == null)
             {
                 DialogResult result = this.saveScriptDialog.ShowDialog();
                 if (result == DialogResult.OK && saveScriptDialog.FileName != "")
@@ -135,7 +158,8 @@ namespace SmartHotEdit.View.Editor
                         logger.Error(ex.Message);
                     }
                 }
-            } else
+            }
+            else
             {
                 if (this.writeFile(this.FilepathToSave, this.scintilla.Text))
                 {
@@ -159,14 +183,14 @@ namespace SmartHotEdit.View.Editor
 
             // Did the number of characters in the line number display change?
             // i.e. nnn VS nn, or nnnn VS nn, etc...
-            var maxLineNumberCharLength = scintilla.Lines.Count.ToString().Length;
+            var maxLineNumberCharLength = this.scintilla.Lines.Count.ToString().Length;
             if (maxLineNumberCharLength == this.maxLineNumberCharLength)
                 return;
 
             // Calculate the width required to display the last line number
             // and include some padding for good measure.
             const int padding = 2;
-            scintilla.Margins[0].Width = scintilla.TextWidth(Style.LineNumber, new string('9', maxLineNumberCharLength + 1)) + padding;
+            this.scintilla.Margins[0].Width = this.scintilla.TextWidth(Style.LineNumber, new string('9', maxLineNumberCharLength + 1)) + padding;
             this.maxLineNumberCharLength = maxLineNumberCharLength;
         }
 
@@ -174,9 +198,19 @@ namespace SmartHotEdit.View.Editor
         {
             if (this.scriptTypeList.SelectedValue != null && this.scriptTypeList.SelectedValue is AScriptPluginController)
             {
-                var pluginController = ((AScriptPluginController)this.scriptTypeList.SelectedValue);
-                this.scintilla.Lexer = pluginController.TypeScintillaLexer;
-                this.saveScriptDialog.DefaultExt = pluginController.TypeFileExt;
+                this._currentPluginController = ((AScriptPluginController)this.scriptTypeList.SelectedValue);
+                this.scintilla.StyleResetDefault();
+                this.scintilla.Styles[Style.Default].Font = "Consolas";
+                this.scintilla.Styles[Style.Default].Size = 10;
+                this.scintilla.StyleClearAll();
+
+                this.scintilla.Lexer = _currentPluginController.TypeScintillaLexer;
+                this._currentPluginController.setScintillaConfiguration(this.scintilla);
+
+                this.saveScriptDialog.DefaultExt = _currentPluginController.TypeFileExt;
+
+                // enable/disable button for loading templating
+                this.templateLoadMenuItem.Enabled = (this._currentPluginController.getTemplate() != null);
 
                 if (logger != null)
                 {
@@ -214,22 +248,43 @@ namespace SmartHotEdit.View.Editor
             {
                 logger.Trace("File saved already, close");
                 this.Close();
-            } else
+            }
+            else
             {
                 DialogResult dialogResult = MessageBox.Show("Sure", "Some Title", MessageBoxButtons.YesNoCancel);
                 if (dialogResult != DialogResult.Cancel)
                 {
-                    if((dialogResult == DialogResult.OK && this.saveFile()) || dialogResult == DialogResult.No)
+                    if ((dialogResult == DialogResult.OK && this.saveFile()) || dialogResult == DialogResult.No)
                     {
                         logger.Trace("Close after save");
                         this.Close();
-                    } else
+                    }
+                    else
                     {
                         logger.Trace("Could not save, do not close");
                     }
-                } else
+                }
+                else
                 {
                     logger.Trace("Close canceled");
+                }
+            }
+        }
+
+        private void templateLoadMenuItem_Click(object sender, EventArgs e)
+        {
+            if (this._currentPluginController != null)
+            {
+                var template = this._currentPluginController.getTemplate();
+                if (template != null)
+                {
+                    this.scintilla.Text = template;
+                    this.outputRichTextBox.Clear();
+                    logger.Info("Template loaded for " + this._currentPluginController.Type);
+                }
+                else
+                {
+                    MessageBox.Show("There is no template for this scriptplugin: " + this._currentPluginController.Type, "No template found", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }
         }
