@@ -1,5 +1,4 @@
 ﻿using NLog;
-using SmartHotEdit.Abstracts;
 using SmartHotEdit.Controller;
 using SmartHotEdit.Helper;
 using SmartHotEdit.Model;

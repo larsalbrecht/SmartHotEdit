@@ -3,7 +3,6 @@ using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using SmartHotEditPluginHost;
 using NLog;
-using SmartHotEdit.Abstracts;
 
 namespace SmartHotEdit.Controller.Plugin
 {
@@ -13,7 +12,7 @@ namespace SmartHotEdit.Controller.Plugin
         [ImportMany(typeof(APlugin))]
         private APlugin[] plugins = null;
 
-        public DefaultPluginController(PluginController pluginController) : base(pluginController)
+        public DefaultPluginController(IPluginController pluginController) : base(pluginController)
         {
             logger.Trace("Construct DefaultPluginController");
             this.Type = "Default";

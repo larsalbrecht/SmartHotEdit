@@ -3,13 +3,14 @@ using SmartHotEditPluginHost;
 using System;
 using SmartHotEdit.Controller.Plugin;
 using System.Collections.Generic;
-using SmartHotEdit.Abstracts;
 using System.Linq;
+using System.ComponentModel.Composition;
+using System.ComponentModel.Composition.Hosting;
 
 namespace SmartHotEdit.Controller
 {
     // TODO let the user disable different plugin loader
-    public class PluginController
+    public class PluginController : IPluginController
     {
 
         private static Logger logger = LogManager.GetCurrentClassLogger();
@@ -20,16 +21,32 @@ namespace SmartHotEdit.Controller
 
         private IList<APluginController> pluginControllerList;
 
+        [ImportMany(typeof(AScriptPluginController))]
+        private AScriptPluginController[] scriptPluginControllerList = null;
+
+        [Export("IPluginController")]
+        private IPluginController pluginController { get; set; }
+
         public PluginController()
         {
             logger.Trace("Construct PluginController");
 
+            logger.Trace("Load ScriptPluginController using CompositionContainer");
+            var pluginCatalog = new DirectoryCatalog(".");
+            var container = new CompositionContainer(pluginCatalog);
+            this.pluginController = this;
+            container.ComposeParts(this);
+            container.Dispose();
+            logger.Trace("Load ScriptPluginController finished");
+
             this.pluginControllerList = new List<APluginController>();
             this.pluginControllerList.Add(new DefaultPluginController(this));
-            this.pluginControllerList.Add(new LuaPluginController(this));
-            this.pluginControllerList.Add(new PythonPluginController(this));
-            this.pluginControllerList.Add(new JavascriptPluginController(this));
 
+            foreach(AScriptPluginController scriptPluginController in this.scriptPluginControllerList)
+            {
+                this.pluginControllerList.Add(scriptPluginController);
+            }
+            
             this.loadPlugins();
         }
 

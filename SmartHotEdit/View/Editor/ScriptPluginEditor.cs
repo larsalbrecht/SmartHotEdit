@@ -1,8 +1,8 @@
 ﻿using NLog;
 using NLog.Config;
 using ScintillaNET;
-using SmartHotEdit.Abstracts;
 using SmartHotEdit.Controller;
+using SmartHotEditPluginHost;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

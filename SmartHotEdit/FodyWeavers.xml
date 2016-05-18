@@ -3,6 +3,9 @@
   <Costura>
     <ExcludeAssemblies>
       SmartHotEditBasePlugins
+      SmartHotEditJavascriptPlugins
+      SmartHotEditLuaPlugins
+      SmartHotEditPythonPlugins
     </ExcludeAssemblies>
   </Costura>
   

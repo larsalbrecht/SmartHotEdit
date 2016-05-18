@@ -6,6 +6,8 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartHotEdit", "SmartHotEdit\SmartHotEdit.csproj", "{3F876DBE-B304-4453-AC24-A8077191EF4C}"
 	ProjectSection(ProjectDependencies) = postProject
 		{0E4ACF29-6D40-47E2-864D-ABDB6A89F231} = {0E4ACF29-6D40-47E2-864D-ABDB6A89F231}
+		{B46E932B-E19B-49B7-B2F7-714144E73EBF} = {B46E932B-E19B-49B7-B2F7-714144E73EBF}
+		{80725890-1B16-4FC9-96A8-3007439B6519} = {80725890-1B16-4FC9-96A8-3007439B6519}
 		{F9A175E9-1871-4C71-83DF-985F4E447996} = {F9A175E9-1871-4C71-83DF-985F4E447996}
 	EndProjectSection
 EndProject
@@ -19,6 +21,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartHotEditLuaPlugins", "SmartHotEditLuaPlugins\SmartHotEditLuaPlugins.csproj", "{B46E932B-E19B-49B7-B2F7-714144E73EBF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartHotEditPythonPlugins", "SmartHotEditPythonPlugins\SmartHotEditPythonPlugins.csproj", "{EB591EDF-6836-4799-960B-7860AFA629C7}"
+	ProjectSection(ProjectDependencies) = postProject
+		{F9A175E9-1871-4C71-83DF-985F4E447996} = {F9A175E9-1871-4C71-83DF-985F4E447996}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartHotEditJavascriptPlugins", "SmartHotEditJavascriptPlugins\SmartHotEditJavascriptPlugins.csproj", "{80725890-1B16-4FC9-96A8-3007439B6519}"
 EndProject

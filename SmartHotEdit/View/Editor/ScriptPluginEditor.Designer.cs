@@ -1,4 +1,6 @@
-﻿namespace SmartHotEdit.View.Editor
+﻿using SmartHotEditPluginHost;
+
+namespace SmartHotEdit.View.Editor
 {
     partial class ScriptPluginEditor
     {
@@ -261,7 +263,7 @@
             // 
             // aScriptPluginControllerBindingSource
             // 
-            this.aScriptPluginControllerBindingSource.DataSource = typeof(SmartHotEdit.Abstracts.AScriptPluginController);
+            this.aScriptPluginControllerBindingSource.DataSource = typeof(AScriptPluginController);
             // 
             // testRunMenuItem
             // 
