@@ -1,6 +1,4 @@
-﻿using SmartHotEditPluginHost;
-
-namespace SmartHotEdit.View.Editor
+﻿namespace SmartHotEdit.View.Editor
 {
     partial class ScriptPluginEditor
     {
@@ -30,7 +28,7 @@ namespace SmartHotEdit.View.Editor
         /// </summary>
         private void InitializeComponent()
         {
-            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.baseTableLayout = new System.Windows.Forms.TableLayoutPanel();
             this.editorSplitContainer = new System.Windows.Forms.SplitContainer();
             this.scintilla = new ScintillaNET.Scintilla();
             this.outputRichTextBox = new System.Windows.Forms.RichTextBox();
@@ -38,7 +36,8 @@ namespace SmartHotEdit.View.Editor
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.scriptTypeList = new System.Windows.Forms.ListBox();
             this.scriptTypeLabel = new System.Windows.Forms.Label();
-            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
+            this.openScriptDialog = new System.Windows.Forms.OpenFileDialog();
+            this.saveScriptDialog = new System.Windows.Forms.SaveFileDialog();
             this.fileMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.fileNewMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.fileOpenMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -50,34 +49,33 @@ namespace SmartHotEdit.View.Editor
             this.testRunMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.templateMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.templateLoadMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.openScriptDialog = new System.Windows.Forms.OpenFileDialog();
-            this.saveScriptDialog = new System.Windows.Forms.SaveFileDialog();
-            this.tableLayoutPanel1.SuspendLayout();
+            this.mainMenu = new System.Windows.Forms.MenuStrip();
+            this.baseTableLayout.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.editorSplitContainer)).BeginInit();
             this.editorSplitContainer.Panel1.SuspendLayout();
             this.editorSplitContainer.Panel2.SuspendLayout();
             this.editorSplitContainer.SuspendLayout();
             this.editorSettingsGroupBox.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
-            this.menuStrip1.SuspendLayout();
+            this.mainMenu.SuspendLayout();
             this.SuspendLayout();
             // 
-            // tableLayoutPanel1
+            // baseTableLayout
             // 
-            this.tableLayoutPanel1.AutoSize = true;
-            this.tableLayoutPanel1.ColumnCount = 2;
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 24.10714F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 75.89286F));
-            this.tableLayoutPanel1.Controls.Add(this.editorSplitContainer, 1, 0);
-            this.tableLayoutPanel1.Controls.Add(this.editorSettingsGroupBox, 0, 0);
-            this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 24);
-            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 2;
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 61.53846F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 38.46154F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(784, 337);
-            this.tableLayoutPanel1.TabIndex = 0;
+            this.baseTableLayout.AutoSize = true;
+            this.baseTableLayout.ColumnCount = 2;
+            this.baseTableLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 24.10714F));
+            this.baseTableLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 75.89286F));
+            this.baseTableLayout.Controls.Add(this.editorSplitContainer, 1, 0);
+            this.baseTableLayout.Controls.Add(this.editorSettingsGroupBox, 0, 0);
+            this.baseTableLayout.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.baseTableLayout.Location = new System.Drawing.Point(0, 24);
+            this.baseTableLayout.Name = "baseTableLayout";
+            this.baseTableLayout.RowCount = 2;
+            this.baseTableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 61.53846F));
+            this.baseTableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 38.46154F));
+            this.baseTableLayout.Size = new System.Drawing.Size(784, 337);
+            this.baseTableLayout.TabIndex = 0;
             // 
             // editorSplitContainer
             // 
@@ -93,7 +91,7 @@ namespace SmartHotEdit.View.Editor
             // editorSplitContainer.Panel2
             // 
             this.editorSplitContainer.Panel2.Controls.Add(this.outputRichTextBox);
-            this.tableLayoutPanel1.SetRowSpan(this.editorSplitContainer, 2);
+            this.baseTableLayout.SetRowSpan(this.editorSplitContainer, 2);
             this.editorSplitContainer.Size = new System.Drawing.Size(590, 331);
             this.editorSplitContainer.SplitterDistance = 238;
             this.editorSplitContainer.TabIndex = 0;
@@ -168,13 +166,9 @@ namespace SmartHotEdit.View.Editor
             this.scriptTypeLabel.TabIndex = 5;
             this.scriptTypeLabel.Text = "Script Type";
             // 
-            // menuStrip1
+            // openScriptDialog
             // 
-            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
-            this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(784, 24);
-            this.menuStrip1.TabIndex = 1;
-            this.menuStrip1.Text = "menuStrip1";
+            this.openScriptDialog.DefaultExt = "*.*";
             // 
             // fileMenuItem
             // 
@@ -192,37 +186,38 @@ namespace SmartHotEdit.View.Editor
             // fileNewMenuItem
             // 
             this.fileNewMenuItem.Name = "fileNewMenuItem";
-            this.fileNewMenuItem.Size = new System.Drawing.Size(103, 22);
+            this.fileNewMenuItem.Size = new System.Drawing.Size(152, 22);
             this.fileNewMenuItem.Text = "New";
+            this.fileNewMenuItem.Click += new System.EventHandler(this.fileNewMenuItem_Click);
             // 
             // fileOpenMenuItem
             // 
             this.fileOpenMenuItem.Name = "fileOpenMenuItem";
-            this.fileOpenMenuItem.Size = new System.Drawing.Size(103, 22);
+            this.fileOpenMenuItem.Size = new System.Drawing.Size(152, 22);
             this.fileOpenMenuItem.Text = "Open";
             this.fileOpenMenuItem.Click += new System.EventHandler(this.openMenuItem_Click);
             // 
             // toolStripMenuItem3
             // 
             this.toolStripMenuItem3.Name = "toolStripMenuItem3";
-            this.toolStripMenuItem3.Size = new System.Drawing.Size(100, 6);
+            this.toolStripMenuItem3.Size = new System.Drawing.Size(149, 6);
             // 
             // fileSaveMenuItem
             // 
             this.fileSaveMenuItem.Name = "fileSaveMenuItem";
-            this.fileSaveMenuItem.Size = new System.Drawing.Size(103, 22);
+            this.fileSaveMenuItem.Size = new System.Drawing.Size(152, 22);
             this.fileSaveMenuItem.Text = "Save";
             this.fileSaveMenuItem.Click += new System.EventHandler(this.saveMenuItem_Click);
             // 
             // toolStripMenuItem4
             // 
             this.toolStripMenuItem4.Name = "toolStripMenuItem4";
-            this.toolStripMenuItem4.Size = new System.Drawing.Size(100, 6);
+            this.toolStripMenuItem4.Size = new System.Drawing.Size(149, 6);
             // 
             // fileCloseMenuItem
             // 
             this.fileCloseMenuItem.Name = "fileCloseMenuItem";
-            this.fileCloseMenuItem.Size = new System.Drawing.Size(103, 22);
+            this.fileCloseMenuItem.Size = new System.Drawing.Size(152, 22);
             this.fileCloseMenuItem.Text = "Close";
             this.fileCloseMenuItem.Click += new System.EventHandler(this.closeMenuItem_Click);
             // 
@@ -252,27 +247,35 @@ namespace SmartHotEdit.View.Editor
             // templateLoadMenuItem
             // 
             this.templateLoadMenuItem.Name = "templateLoadMenuItem";
-            this.templateLoadMenuItem.Size = new System.Drawing.Size(106, 22);
-            this.templateLoadMenuItem.Text = "Laden";
+            this.templateLoadMenuItem.Size = new System.Drawing.Size(100, 22);
+            this.templateLoadMenuItem.Text = "Load";
             this.templateLoadMenuItem.Click += new System.EventHandler(this.templateLoadMenuItem_Click);
             // 
-            // openScriptDialog
+            // mainMenu
             // 
-            this.openScriptDialog.DefaultExt = "*.*";
+            this.mainMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.fileMenuItem,
+            this.testMenuItem,
+            this.templateMenuItem});
+            this.mainMenu.Location = new System.Drawing.Point(0, 0);
+            this.mainMenu.Name = "mainMenu";
+            this.mainMenu.Size = new System.Drawing.Size(784, 24);
+            this.mainMenu.TabIndex = 1;
+            this.mainMenu.Text = "menuStrip1";
             // 
             // ScriptPluginEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(784, 361);
-            this.Controls.Add(this.tableLayoutPanel1);
-            this.Controls.Add(this.menuStrip1);
-            this.MainMenuStrip = this.menuStrip1;
+            this.Controls.Add(this.baseTableLayout);
+            this.Controls.Add(this.mainMenu);
+            this.MainMenuStrip = this.mainMenu;
             this.Name = "ScriptPluginEditor";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "PluginScriptEditor";
             this.Load += new System.EventHandler(this.ScriptPluginEditor_Load);
-            this.tableLayoutPanel1.ResumeLayout(false);
+            this.baseTableLayout.ResumeLayout(false);
             this.editorSplitContainer.Panel1.ResumeLayout(false);
             this.editorSplitContainer.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.editorSplitContainer)).EndInit();
@@ -280,8 +283,8 @@ namespace SmartHotEdit.View.Editor
             this.editorSettingsGroupBox.ResumeLayout(false);
             this.tableLayoutPanel2.ResumeLayout(false);
             this.tableLayoutPanel2.PerformLayout();
-            this.menuStrip1.ResumeLayout(false);
-            this.menuStrip1.PerformLayout();
+            this.mainMenu.ResumeLayout(false);
+            this.mainMenu.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -289,27 +292,27 @@ namespace SmartHotEdit.View.Editor
 
         #endregion
 
-        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
+        private System.Windows.Forms.TableLayoutPanel baseTableLayout;
         private System.Windows.Forms.SplitContainer editorSplitContainer;
         private System.Windows.Forms.RichTextBox outputRichTextBox;
         private System.Windows.Forms.GroupBox editorSettingsGroupBox;
-        private System.Windows.Forms.MenuStrip menuStrip1;
-        private System.Windows.Forms.ToolStripMenuItem fileMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem testMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem fileNewMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem fileOpenMenuItem;
-        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem3;
-        private System.Windows.Forms.ToolStripMenuItem fileSaveMenuItem;
-        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem4;
-        private System.Windows.Forms.ToolStripMenuItem fileCloseMenuItem;
         private ScintillaNET.Scintilla scintilla;
         private System.Windows.Forms.OpenFileDialog openScriptDialog;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
         private System.Windows.Forms.ListBox scriptTypeList;
         private System.Windows.Forms.Label scriptTypeLabel;
         private System.Windows.Forms.SaveFileDialog saveScriptDialog;
+        private System.Windows.Forms.ToolStripMenuItem fileMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem fileNewMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem fileOpenMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem3;
+        private System.Windows.Forms.ToolStripMenuItem fileSaveMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem4;
+        private System.Windows.Forms.ToolStripMenuItem fileCloseMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem testMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem testRunMenuItem;
         private System.Windows.Forms.ToolStripMenuItem templateMenuItem;
         private System.Windows.Forms.ToolStripMenuItem templateLoadMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem testRunMenuItem;
+        private System.Windows.Forms.MenuStrip mainMenu;
     }
 }

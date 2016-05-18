@@ -250,7 +250,7 @@ namespace SmartHotEdit.View.Editor
             }
             else
             {
-                DialogResult dialogResult = MessageBox.Show("Sure", "Some Title", MessageBoxButtons.YesNoCancel);
+                DialogResult dialogResult = MessageBox.Show("The current script is unsaved. Do you want to save?", "Unsaved changes", MessageBoxButtons.YesNoCancel);
                 if (dialogResult != DialogResult.Cancel)
                 {
                     if ((dialogResult == DialogResult.OK && this.saveFile()) || dialogResult == DialogResult.No)
@@ -284,6 +284,39 @@ namespace SmartHotEdit.View.Editor
                 else
                 {
                     MessageBox.Show("There is no template for this scriptplugin: " + this._currentPluginController.Type, "No template found", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+            }
+        }
+
+        private void fileNewMenuItem_Click(object sender, EventArgs e)
+        {
+            if (this.IsSaved)
+            {
+                logger.Trace("File saved already, create new");
+                this.scintilla.ClearAll();
+                this._filepathToSave = null;
+                this._isSaved = true;
+            }
+            else
+            {
+                DialogResult dialogResult = MessageBox.Show("The current script is unsaved. Do you want to save?", "Unsaved changes", MessageBoxButtons.YesNoCancel);
+                if (dialogResult != DialogResult.Cancel)
+                {
+                    if ((dialogResult == DialogResult.OK && this.saveFile()) || dialogResult == DialogResult.No)
+                    {
+                        this.scintilla.ClearAll();
+                        this._filepathToSave = null;
+                        this._isSaved = true;
+                        this.Close();
+                    }
+                    else
+                    {
+                        logger.Trace("Could not save, do not close");
+                    }
+                }
+                else
+                {
+                    logger.Trace("Close canceled");
                 }
             }
         }
