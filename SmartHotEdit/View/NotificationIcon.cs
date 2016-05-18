@@ -6,7 +6,7 @@ using SmartHotEdit.View.Editor;
 
 namespace SmartHotEdit.View
 {
-    public sealed class NotificationIcon
+    public sealed class NotificationIcon : IDisposable
     {
         private MainController mainController;
         private NotifyIcon notifyIcon;
@@ -81,5 +81,24 @@ namespace SmartHotEdit.View
             return this.notifyIcon;
         }
 
+        public void Dispose()
+        {
+            if(this.settingsView != null)
+            {
+                this.settingsView.Dispose();
+            }
+            if(this.scriptPluginEditor != null)
+            {
+                this.scriptPluginEditor.Dispose();
+            }
+            if (notifyIcon != null)
+            {
+                notifyIcon.Dispose();
+            }
+            if(notificationMenu != null)
+            {
+                notificationMenu.Dispose();
+            }
+        }
     }
 }

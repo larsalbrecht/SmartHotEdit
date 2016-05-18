@@ -6,26 +6,31 @@ using System.Runtime.InteropServices;
 
 namespace SmartHotEdit.Handler
 {
+
+    internal static class NativeMethods
+    {
+        #region Interop
+
+        [DllImport("user32.dll", SetLastError = true)]
+        internal static extern int RegisterHotKey(IntPtr hWnd, int id, uint fsModifiers, Keys vk);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        internal static extern int UnregisterHotKey(IntPtr hWnd, int id);
+
+        internal const uint WM_HOTKEY = 0x312;
+
+        internal const uint MOD_ALT = 0x1;
+        internal const uint MOD_CONTROL = 0x2;
+        internal const uint MOD_SHIFT = 0x4;
+        internal const uint MOD_WIN = 0x8;
+
+        internal const uint ERROR_HOTKEY_ALREADY_REGISTERED = 1409;
+
+        #endregion
+    }
+
     public class HotkeyHandler : IMessageFilter
 	{
-		#region Interop
-
-		[DllImport("user32.dll", SetLastError = true)]
-		private static extern int RegisterHotKey(IntPtr hWnd, int id, uint fsModifiers, Keys vk);
-
-		[DllImport("user32.dll", SetLastError=true)]
-		private static extern int UnregisterHotKey(IntPtr hWnd, int id);
-
-		private const uint WM_HOTKEY = 0x312;
-
-		private const uint MOD_ALT = 0x1;
-		private const uint MOD_CONTROL = 0x2;
-		private const uint MOD_SHIFT = 0x4;
-		private const uint MOD_WIN = 0x8;
-
-		private const uint ERROR_HOTKEY_ALREADY_REGISTERED = 1409;
-
-		#endregion
 
 		private static int currentID;
 		private const int maximumID = 0xBFFF;
@@ -110,14 +115,14 @@ namespace SmartHotEdit.Handler
 			HotkeyHandler.currentID = HotkeyHandler.currentID + 1 % HotkeyHandler.maximumID;
 
 			// Translate modifier keys into unmanaged version
-			uint modifiers = (this.Alt ? HotkeyHandler.MOD_ALT : 0) | (this.Control ? HotkeyHandler.MOD_CONTROL : 0) |
-							(this.Shift ? HotkeyHandler.MOD_SHIFT : 0) | (this.Windows ? HotkeyHandler.MOD_WIN : 0);
+			uint modifiers = (this.Alt ? NativeMethods.MOD_ALT : 0) | (this.Control ? NativeMethods.MOD_CONTROL : 0) |
+							(this.Shift ? NativeMethods.MOD_SHIFT : 0) | (this.Windows ? NativeMethods.MOD_WIN : 0);
 
 			// Register the hotkey
-			if (HotkeyHandler.RegisterHotKey(windowControl.Handle, this.id, modifiers, keyCode) == 0)
+			if (NativeMethods.RegisterHotKey(windowControl.Handle, this.id, modifiers, keyCode) == 0)
 			{ 
 				// Is the error that the hotkey is registered?
-				if (Marshal.GetLastWin32Error() == ERROR_HOTKEY_ALREADY_REGISTERED)
+				if (Marshal.GetLastWin32Error() == NativeMethods.ERROR_HOTKEY_ALREADY_REGISTERED)
 				{ return false; }
 				else
 				{ throw new Win32Exception(); } 
@@ -141,7 +146,7 @@ namespace SmartHotEdit.Handler
 			if (!this.windowControl.IsDisposed)
 			{
 				// Clean up after ourselves
-				if (HotkeyHandler.UnregisterHotKey(this.windowControl.Handle, this.id) == 0)
+				if (NativeMethods.UnregisterHotKey(this.windowControl.Handle, this.id) == 0)
 				{ throw new Win32Exception(); }
 			}
 
@@ -167,7 +172,7 @@ namespace SmartHotEdit.Handler
 		public bool PreFilterMessage(ref Message message)
 		{
 			// Only process WM_HOTKEY messages
-			if (message.Msg != HotkeyHandler.WM_HOTKEY)
+			if (message.Msg != NativeMethods.WM_HOTKEY)
 			{ return false; }
 
 			// Check that the ID is our key and we are registerd

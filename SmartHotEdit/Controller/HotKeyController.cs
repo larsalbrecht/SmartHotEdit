@@ -10,7 +10,7 @@ using NLog;
 
 namespace SmartHotEdit.Controller
 {
-    public class HotKeyController
+    public sealed class HotKeyController : IDisposable
     {
         private static Logger logger = LogManager.GetCurrentClassLogger();
 
@@ -136,6 +136,23 @@ namespace SmartHotEdit.Controller
             }
 
             return isRegistered;
+        }
+
+        public void Dispose()
+        {
+            if(this.hk != null)
+            {
+                this.hk.Unregister();
+            }
+            if(this.hkc != null)
+            {
+                this.hkc.Dispose();
+            }
+            if(this.ef != null)
+            {
+                this.ef.Dispose();
+            }
+            GC.SuppressFinalize(this);
         }
     }
 }

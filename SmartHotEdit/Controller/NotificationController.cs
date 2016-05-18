@@ -5,7 +5,7 @@ using NLog;
 
 namespace SmartHotEdit.Controller
 {
-    public class NotificationController
+    public class NotificationController : IDisposable
     {
 
         private static Logger logger = LogManager.GetCurrentClassLogger();
@@ -42,6 +42,27 @@ namespace SmartHotEdit.Controller
             logger.Trace("Dispose NotificationIcon");
             this.notificationIcon.getNotifyIcon().Dispose();
         }
-        
+
+        public void Dispose()
+        {
+            this.Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        ~NotificationController()
+        {
+            Dispose(false);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing == true)
+            {
+                if (this.notificationIcon != null)
+                {
+                    this.notificationIcon.Dispose();
+                }
+            }
+        }
     }
 }

@@ -3,10 +3,11 @@ using System.Windows.Forms;
 using SmartHotEdit.Controller.Plugin;
 using NLog;
 using NLog.Config;
+using System;
 
 namespace SmartHotEdit.Controller
 {
-    public class MainController
+    public sealed class MainController : IDisposable
     {
         private NotificationController notificationController;
         private HotKeyController hotKeyController;
@@ -92,5 +93,17 @@ namespace SmartHotEdit.Controller
             return this.hotKeyController;
         }
 
+        public void Dispose()
+        {
+            if(this.hotKeyController != null)
+            {
+                this.hotKeyController.Dispose();
+            }
+            if(this.notificationController != null)
+            {
+                this.notificationController.Dispose();
+            }
+            GC.SuppressFinalize(this);
+        }
     }
 }
