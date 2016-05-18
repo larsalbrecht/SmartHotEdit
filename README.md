@@ -1,5 +1,10 @@
 # SmartHotEdit
-Edit text from clipboard with smart functions. It is expandable with C# (compiled *.dll-files), Lua ([Moonsharp](//www.moonsharp.org)) and Python ([IronPython](//ironpython.net) / uses Python 2.7).
+Edit text from clipboard with smart functions. You can extend the functionality with plugins, made with C# (compiled *.dll-files).
+
+You also can use (or write your own) ScriptPluginHost. There are three ScriptPluginHosts available for:
+* Lua ([Moonsharp](//www.moonsharp.org))
+* Python ([IronPython](//ironpython.net) / uses Python 2.7)
+* JavaScript ([NiL.JS](https://github.com/nilproject/NiL.JS)).
 
 
 ## Control
@@ -23,6 +28,9 @@ The settings will be saved in the directory (Win):
 
 ``C:\Users\<username>\AppData\Local\SmartHotEdit``
 
+### Script Plugin Editor
+> coming soon
+
 ### HotKey
 #### Default
 The default HotKey to open SmartHotEdit is ``[CTRL]`` + ``[WIN]`` + ``[Y]``
@@ -39,6 +47,8 @@ In the app directory, there is a log-directory, to save the logs. You can disabl
 
 ## Plugins
 SmartHotEdit can handle plugins to add support for custom functionality.
+Inside SmartHotEdit there is a pluginengine for C#. 
+
 ### C*#*
 You can write plugins in C#. For this, there is a small project (SmartHotEditPluginHost) with the needed classes.
 #### Example Plugins
@@ -104,6 +114,13 @@ namespace SmartHotEditBasePlugins {
     }
 }
 ```
+
+## Script Plugins
+You can write pluginhosts to let SmartHotEdit support script languages. There are currently three Pluginhosts available.
+
+### Create own Pluginhost
+> coming soon
+
 ### LUA
 You can write plugins with LUA. For this, there is a helper library you need to require to your script.
 #### Example Plugins
