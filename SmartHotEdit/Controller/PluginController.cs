@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
+using System.IO;
 
 namespace SmartHotEdit.Controller
 {
@@ -27,6 +28,8 @@ namespace SmartHotEdit.Controller
         [Export("IPluginController")]
         private IPluginController pluginController { get; set; }
 
+        private IList<FileSystemWatcher> watcherList;
+
         public PluginController()
         {
             logger.Trace("Construct PluginController");
@@ -42,11 +45,11 @@ namespace SmartHotEdit.Controller
             this.pluginControllerList = new List<APluginController>();
             this.pluginControllerList.Add(new DefaultPluginController(this));
 
-            foreach(AScriptPluginController scriptPluginController in this.scriptPluginControllerList)
+            foreach (AScriptPluginController scriptPluginController in this.scriptPluginControllerList)
             {
                 this.pluginControllerList.Add(scriptPluginController);
             }
-            
+
             this.loadPlugins();
         }
 
@@ -59,36 +62,77 @@ namespace SmartHotEdit.Controller
             logger.Trace("Use plugins: " + Properties.Settings.Default.EnablePlugins);
             if (Properties.Settings.Default.EnablePlugins)
             {
-                foreach (APluginController concretePluginControlelr in this.pluginControllerList)
+                foreach (APluginController concretePluginController in this.pluginControllerList)
                 {
-                    if (concretePluginControlelr.isFullyImplemented())
+                    if ((concretePluginController is AScriptPluginController && ((AScriptPluginController)concretePluginController).isFullyImplemented()) || (!(concretePluginController is AScriptPluginController) && concretePluginController.isFullyImplemented()))
                     {
-                        logger.Trace(concretePluginControlelr.Type + " is fully implemented");
-                        if (concretePluginControlelr.isEnabled())
+                        logger.Trace(concretePluginController.Type + " is fully implemented");
+                        if (concretePluginController.isEnabled())
                         {
-                            logger.Trace(concretePluginControlelr.Type + " is enabled");
-                            concretePluginControlelr.preLoadPlugins();
-                            concretePluginControlelr.loadPlugins();
-                            concretePluginControlelr.postLoadPlugins();
+                            logger.Trace(concretePluginController.Type + " is enabled");
+                            concretePluginController.preLoadPlugins();
+                            concretePluginController.loadPlugins();
+                            concretePluginController.postLoadPlugins();
 
-                            this.LoadedPlugins.AddRange(concretePluginControlelr.LoadedPlugins);
-                            this.EnabledPlugins.AddRange(concretePluginControlelr.EnabledPlugins);
-                            this.DisabledPlugins.AddRange(concretePluginControlelr.DisabledPlugins);
+                            if (concretePluginController is AScriptPluginController)
+                            {
+                                if (this.watcherList == null)
+                                {
+                                    this.watcherList = new List<FileSystemWatcher>();
+                                }
+                                // TODO temporary disabled | this.watchScriptPluginController((AScriptPluginController)concretePluginController);
+                            }
+
+                            this.LoadedPlugins.AddRange(concretePluginController.LoadedPlugins);
+                            this.EnabledPlugins.AddRange(concretePluginController.EnabledPlugins);
+                            this.DisabledPlugins.AddRange(concretePluginController.DisabledPlugins);
                         }
                         else
                         {
-                            logger.Debug(concretePluginControlelr.Type + " is disabled");
+                            logger.Debug(concretePluginController.Type + " is disabled");
                         }
                     }
                     else
                     {
-                        throw new NotImplementedException("The Controller for the " + concretePluginControlelr.Type + " Plugins is not fully implemented!");
+                        throw new NotImplementedException("The Controller is not fully implemented: " + concretePluginController.Type);
                     }
                 }
             }
             logger.Debug("Plugins found: " + this.LoadedPlugins.Count);
             logger.Debug("Plugins enabled: " + this.EnabledPlugins.Count);
             logger.Debug("Plugins disabled: " + this.DisabledPlugins.Count);
+        }
+
+        private void watchScriptPluginController(AScriptPluginController scriptPluginController)
+        {
+            var path = Path.GetFullPath(scriptPluginController.TypePluginPath);
+            var fileFilter = "*." + scriptPluginController.TypeFileExt;
+
+            if (Directory.Exists(path))
+            {
+                // TODO implement http://stackoverflow.com/questions/1406808/wait-for-file-to-be-freed-by-process/1406853#1406853
+                var watcher = new FileSystemWatcher();
+                watcher.Path = path;
+                watcher.NotifyFilter = NotifyFilters.LastWrite;
+                watcher.Filter = fileFilter;
+                watcher.EnableRaisingEvents = true;
+                watcher.IncludeSubdirectories = false;
+                watcher.Changed += new FileSystemEventHandler(OnPluginDirectoryChanged);
+
+                this.watcherList.Add(watcher);
+            }
+            else
+            {
+                logger.Info("ScriptPluginController can not be watched (pluginpath did not exists): " + path + "; " + scriptPluginController.Type);
+            }
+
+        }
+        
+        private void OnPluginDirectoryChanged(object source, FileSystemEventArgs e)
+        {
+            Console.WriteLine("Type: " + e.ChangeType);
+            Console.WriteLine("Name: " + e.Name);
+            Console.WriteLine("File changed: " + e.FullPath);
         }
 
         private APlugin[] arrayMerge(APlugin[] baseArray, APlugin[] arrayToMerge)
@@ -118,7 +162,7 @@ namespace SmartHotEdit.Controller
             var pluginControllerList = new List<APluginController>();
             foreach (APluginController pluginController in this.pluginControllerList)
             {
-                if (pluginController.GetType().IsSubclassOf(pluginControllerType) || 
+                if (pluginController.GetType().IsSubclassOf(pluginControllerType) ||
                     pluginController.GetType() == pluginControllerType)
                 {
                     pluginControllerList.Add(pluginController);

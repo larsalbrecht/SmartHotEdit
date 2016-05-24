@@ -3,6 +3,7 @@ using NLog.Config;
 using ScintillaNET;
 using SmartHotEdit.Controller;
 using SmartHotEditPluginHost;
+using SmartHotEditPluginHost.Model;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -101,10 +102,10 @@ namespace SmartHotEdit.View.Editor
             {
                 string scriptFile = this.openScriptDialog.FileName;
                 this.FilepathToSave = scriptFile;
-                foreach(AScriptPluginController pluginController in this.scriptPluginController)
+                foreach (AScriptPluginController pluginController in this.scriptPluginController)
                 {
                     Console.WriteLine(Path.GetExtension(scriptFile));
-                    if("." + pluginController.TypeFileExt == Path.GetExtension(scriptFile))
+                    if ("." + pluginController.TypeFileExt == Path.GetExtension(scriptFile))
                     {
                         this._currentPluginController = pluginController;
                         break;
@@ -319,6 +320,57 @@ namespace SmartHotEdit.View.Editor
                     logger.Trace("Close canceled");
                 }
             }
+        }
+
+        private void runTestMenuItem_Click(object sender, EventArgs e)
+        {
+            var defaultValue = "n/a";
+            functionsListView.Clear();
+            try
+            {
+                APlugin plugin = this._currentPluginController.getPluginForScript(this.scintilla.Text);
+                if (plugin != null)
+                {
+                    logger.Info("Plugin found: " + plugin.getName());
+
+                    var functions = plugin.getFunctionsAsArray();
+                    this.nameLabel.Text = plugin.getName();
+
+                    if(functions != null)
+                    {
+                        functionsListView.Columns.Add("Name", -2, HorizontalAlignment.Left);
+                        functionsListView.Columns.Add("Description", -2, HorizontalAlignment.Left);
+
+                        this.functionLabel.Text = functions.Length.ToString();
+
+                        foreach(Function function in functions)
+                        {
+                            var tmpFunctionEntry = new ListViewItem();
+                            tmpFunctionEntry.Tag = function;
+                            tmpFunctionEntry.Text = function.Name;
+                            tmpFunctionEntry.SubItems.Add(function.Description);
+                            functionsListView.Items.Add(tmpFunctionEntry);
+                        }
+                        
+
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.Error(String.Format("No valid plugin found. Exception during parsing by {0}", this._currentPluginController.Type));
+                logger.Error(ex.Message);
+            }
+            finally
+            {
+                this.nameLabel.Text = defaultValue;
+                this.functionLabel.Text = defaultValue;
+            }
+        }
+
+        private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

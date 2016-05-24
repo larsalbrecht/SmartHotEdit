@@ -20,6 +20,7 @@ namespace SmartHotEditJavascriptPlugins.Controller
     class JavascriptPluginController : AScriptPluginController
     {
         private List<APlugin> plugins = new List<APlugin>();
+        private const string PLUGIN_PATH = @"Javascript\Plugins\";
 
         [ImportingConstructor]
         public JavascriptPluginController([Import("IPluginController")]IPluginController pluginController) : base(pluginController)
@@ -27,52 +28,57 @@ namespace SmartHotEditJavascriptPlugins.Controller
             logger.Trace("Construct JavascriptPluginController");
             this.Type = "Javascript";
             this.TypeFileExt = "js";
+            this.TypePluginPath = JavascriptPluginController.PLUGIN_PATH;
             this.TypeScintillaLexer = Lexer.Cpp;
+        }
+
+        private APlugin getPluginFromScript(string script)
+        {
+            APlugin resultPlugin = null;
+            Module module = null;
+
+            var modulePath = Path.GetFullPath(@"Javascript\Modules\pluginbase.js");
+
+            // find plugins
+            if (File.Exists(modulePath) && script != null && script != "")
+            {
+                var moduleContent = File.ReadAllText(modulePath);
+                var finalScript = moduleContent + Environment.NewLine + script;
+                module = new Module(finalScript);
+                module.Run();
+
+                var jsPlugin = module.Context.GetVariable("plugin");
+                if (this.isValidPlugin(jsPlugin))
+                {
+                    resultPlugin = this.buildJavascriptPlugin(jsPlugin);
+                }
+            }
+
+            return resultPlugin;
         }
 
         public override void loadPlugins()
         {
             this.plugins.Clear();
-
-            Module module = null;
             try
             {
-                var modulePath = Path.GetFullPath(@"Javascript\Modules\pluginbase.js");
-
-                // find plugins
-                if (File.Exists(modulePath))
+                string[] filePaths = this.findScriptPlugins(JavascriptPluginController.PLUGIN_PATH, "*_plugin.js");
+                foreach (string pluginPath in filePaths)
                 {
-                    var moduleContent = File.ReadAllText(modulePath);
+                    var fileContent = File.ReadAllText(pluginPath);
 
-                    string[] filePaths = this.findScriptPlugins(@"Javascript\Plugins\", "*_plugin.js");
-                    foreach(string pluginPath in filePaths)
+                    APlugin plugin = this.getPluginFromScript(fileContent);
+                    if (plugin != null)
                     {
-                        var fileContent = File.ReadAllText(pluginPath);
-                        var script = moduleContent + Environment.NewLine + fileContent;
-
-                        module = new Module(script);
-                        module.Run();
-
-                        var jsPlugin = module.Context.GetVariable("plugin");
-                        if(jsPlugin != null)
-                        {
-                            APlugin plugin = buildJavascriptPlugin(jsPlugin);
-                            if (plugin != null)
-                            {
-                                this.plugins.Add(plugin);
-                                logger.Debug("Plugin found: " + plugin.getName());
-                            }
-                            else
-                            {
-                                logger.Warn("Plugin not found in script: " + pluginPath);
-                            }
-                        }
-                    }                   
-                } else
-                {
-                    Console.WriteLine("Does not exists");
+                        this.plugins.Add(plugin);
+                        logger.Debug("Plugin found: " + plugin.getName());
+                    }
+                    else
+                    {
+                        logger.Warn("Plugin not found in script: " + pluginPath);
+                    }
                 }
-                
+
             }
             catch (JSException e)
             {
@@ -88,6 +94,21 @@ namespace SmartHotEditJavascriptPlugins.Controller
             }
         }
 
+        private bool isValidPlugin(JSValue jsPlugin)
+        {
+            bool result = false;
+
+            if(jsPlugin != null && jsPlugin.Is(JSValueType.Object))
+            {
+                if(jsPlugin["name"] != null && jsPlugin["description"] != null)
+                {
+                    result = true;
+                }
+            }
+
+            return result;
+        }
+
         private APlugin buildJavascriptPlugin(JSValue jsPlugin)
         {
             var name = (string)jsPlugin["name"].Value;
@@ -101,7 +122,7 @@ namespace SmartHotEditJavascriptPlugins.Controller
                 foreach (KeyValuePair<string, NiL.JS.Core.JSValue> keyValue in functions)
                 {
                     var tempFunction = this.buildJavascriptFunction(jsPlugin, keyValue.Value);
-                    if(tempFunction != null)
+                    if (tempFunction != null)
                     {
                         plugin.addFunction(tempFunction);
                     }
@@ -122,7 +143,7 @@ namespace SmartHotEditJavascriptPlugins.Controller
             {
                 List<Argument> arguments = null;
                 var calledFunctionDelegate = (Func<string, List<Argument>, string>)calledFunction.MakeDelegate(typeof(Func<string, List<Argument>, string>));
-                if(value["argumentList"] != null)
+                if (value["argumentList"] != null)
                 {
                     arguments = new List<Argument>();
                     foreach (KeyValuePair<string, NiL.JS.Core.JSValue> keyValue in value["argumentList"])
@@ -168,6 +189,11 @@ namespace SmartHotEditJavascriptPlugins.Controller
 
             scintilla.SetKeywords(0, "abstract arguments boolean break byte case catch char class const continue debugger default delete do double else enum eval export extends false final finally float for function goto if implements import in instanceof int interface let long native new null package private protected public return short static super switch synchronized this throw throws transient true try typeof var void volatile while with yield");
             scintilla.SetKeywords(1, "Array Date eval function hasOwnProperty Infinity isFinite isNaN isPrototypeOf length Math NaN name Number Object prototype String toString undefined valueOf");
+        }
+
+        public override APlugin getPluginForScript(string text)
+        {
+            return this.getPluginFromScript(text);
         }
     }
 }

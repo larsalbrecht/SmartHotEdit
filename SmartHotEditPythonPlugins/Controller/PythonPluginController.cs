@@ -20,6 +20,7 @@ namespace SmartHotEditPythonPlugins.Controller
     class PythonPluginController : AScriptPluginController
     {
         private List<APlugin> plugins = new List<APlugin>();
+        private const String PLUGIN_PATH = @"Python\Plugins\";
 
         private ScriptEngine engine;
         private ScriptScope scope;
@@ -30,6 +31,7 @@ namespace SmartHotEditPythonPlugins.Controller
             logger.Trace("Construct JavascriptPluginController");
             this.Type = "Python";
             this.TypeFileExt = "py";
+            this.TypePluginPath = PythonPluginController.PLUGIN_PATH;
             this.TypeScintillaLexer = Lexer.Python;
         }        
 
@@ -44,7 +46,7 @@ namespace SmartHotEditPythonPlugins.Controller
             engine.SetSearchPaths(paths);
 
             // find plugins
-            string[] filePaths = this.findScriptPlugins(@"Python\Plugins\", "*_plugin.py");
+            string[] filePaths = this.findScriptPlugins(PythonPluginController.PLUGIN_PATH, "*_plugin.py");
             foreach (string path in filePaths)
             {
                 logger.Trace("Script found at: " + path);
@@ -184,6 +186,11 @@ namespace SmartHotEditPythonPlugins.Controller
             var cython = "cdef cimport cpdef";
 
             scintilla.SetKeywords(0, python2 + " " + cython);
+        }
+
+        public override APlugin getPluginForScript(string text)
+        {
+            throw new NotImplementedException();
         }
     }
 }

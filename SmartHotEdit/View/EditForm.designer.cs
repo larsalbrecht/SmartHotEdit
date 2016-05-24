@@ -39,11 +39,14 @@ namespace SmartHotEdit.View
             this.pluginList = new System.Windows.Forms.ListView();
             this.clipboardTextBox = new System.Windows.Forms.RichTextBox();
             this.functionListUpDown = new System.Windows.Forms.ListBox();
-            this.argumentPanel = new ArgumentPanel();
+            this.statusStrip = new System.Windows.Forms.StatusStrip();
+            this.toolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.argumentPanel = new SmartHotEdit.View.Controls.ArgumentPanel();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
             this.splitContainer.Panel1.SuspendLayout();
             this.splitContainer.Panel2.SuspendLayout();
             this.splitContainer.SuspendLayout();
+            this.statusStrip.SuspendLayout();
             this.SuspendLayout();
             // 
             // splitContainer
@@ -60,17 +63,19 @@ namespace SmartHotEdit.View
             // splitContainer.Panel2
             // 
             this.splitContainer.Panel2.Controls.Add(this.clipboardTextBox);
-            this.splitContainer.Size = new System.Drawing.Size(634, 261);
+            this.splitContainer.Size = new System.Drawing.Size(634, 262);
             this.splitContainer.SplitterDistance = 300;
             this.splitContainer.TabIndex = 0;
             // 
             // pluginList
             // 
-            this.pluginList.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pluginList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.pluginList.Location = new System.Drawing.Point(0, 0);
             this.pluginList.MultiSelect = false;
             this.pluginList.Name = "pluginList";
-            this.pluginList.Size = new System.Drawing.Size(300, 261);
+            this.pluginList.Size = new System.Drawing.Size(300, 237);
             this.pluginList.TabIndex = 0;
             this.pluginList.UseCompatibleStateImageBehavior = false;
             this.pluginList.View = System.Windows.Forms.View.Details;
@@ -78,10 +83,12 @@ namespace SmartHotEdit.View
             // 
             // clipboardTextBox
             // 
-            this.clipboardTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.clipboardTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.clipboardTextBox.Location = new System.Drawing.Point(0, 0);
             this.clipboardTextBox.Name = "clipboardTextBox";
-            this.clipboardTextBox.Size = new System.Drawing.Size(330, 261);
+            this.clipboardTextBox.Size = new System.Drawing.Size(330, 237);
             this.clipboardTextBox.TabIndex = 10;
             this.clipboardTextBox.TabStop = false;
             this.clipboardTextBox.Text = "";
@@ -89,16 +96,32 @@ namespace SmartHotEdit.View
             // functionListUpDown
             // 
             this.functionListUpDown.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.functionListUpDown.Location = new System.Drawing.Point(0, 0);
+            this.functionListUpDown.Location = new System.Drawing.Point(0, 1);
             this.functionListUpDown.Name = "functionListUpDown";
             this.functionListUpDown.Size = new System.Drawing.Size(120, 17);
             this.functionListUpDown.TabIndex = 1;
             this.functionListUpDown.Visible = false;
             this.functionListUpDown.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FunctionListUpDownKeyDown);
             // 
+            // statusStrip
+            // 
+            this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripStatusLabel});
+            this.statusStrip.Location = new System.Drawing.Point(0, 240);
+            this.statusStrip.Name = "statusStrip";
+            this.statusStrip.Size = new System.Drawing.Size(634, 22);
+            this.statusStrip.TabIndex = 2;
+            // 
+            // toolStripStatusLabel
+            // 
+            this.toolStripStatusLabel.Name = "toolStripStatusLabel";
+            this.toolStripStatusLabel.Size = new System.Drawing.Size(0, 17);
+            // 
             // argumentPanel
             // 
             this.argumentPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.argumentPanel.InputText = "";
+            this.argumentPanel.LabelText = "n/a";
             this.argumentPanel.Location = new System.Drawing.Point(0, 20);
             this.argumentPanel.Name = "argumentPanel";
             this.argumentPanel.Size = new System.Drawing.Size(110, 50);
@@ -108,9 +131,9 @@ namespace SmartHotEdit.View
             // 
             // EditForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(634, 261);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+            this.ClientSize = new System.Drawing.Size(634, 262);
+            this.Controls.Add(this.statusStrip);
             this.Controls.Add(this.functionListUpDown);
             this.Controls.Add(this.splitContainer);
             this.MaximizeBox = false;
@@ -119,13 +142,20 @@ namespace SmartHotEdit.View
             this.Opacity = 0.9D;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "EditForm";
+            this.TopMost = true;
             this.Load += new System.EventHandler(this.EditFormLoad);
             this.splitContainer.Panel1.ResumeLayout(false);
             this.splitContainer.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).EndInit();
             this.splitContainer.ResumeLayout(false);
+            this.statusStrip.ResumeLayout(false);
+            this.statusStrip.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
 		}
+
+        private System.Windows.Forms.StatusStrip statusStrip;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel;
     }
 }

@@ -10,6 +10,7 @@ namespace SmartHotEditPluginHost
     public abstract class AScriptPluginController : APluginController
     {
 
+        public string TypePluginPath { get; set; }
         public string TypeFileExt { get; set; }
         public Lexer TypeScintillaLexer { get; set; }
 
@@ -19,7 +20,7 @@ namespace SmartHotEditPluginHost
 
         public new bool isFullyImplemented()
         {
-            return base.isFullyImplemented() && this.TypeFileExt != null;
+            return base.isFullyImplemented() && this.TypeFileExt != null && this.TypePluginPath != null;
         }
 
         protected string[] findScriptPlugins(String pathStr, String searchPattern)
@@ -41,5 +42,7 @@ namespace SmartHotEditPluginHost
         public abstract String getTemplate();
 
         public abstract void setScintillaConfiguration(Scintilla scintilla);
+
+        public abstract APlugin getPluginForScript(string text);
     }
 }

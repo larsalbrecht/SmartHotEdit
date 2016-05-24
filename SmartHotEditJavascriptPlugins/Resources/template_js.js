@@ -1,5 +1,5 @@
 ﻿"use strict";
-class MyPlugin extends Plugin {
+class MyPlugin extends APlugin {
     constructor() {
         super("<Pluginname>", "<Description>");
 

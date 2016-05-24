@@ -20,6 +20,7 @@ namespace SmartHotEditLuaPlugins.Controller
     class LuaPluginController : AScriptPluginController
     {
         private List<APlugin> plugins = new List<APlugin>();
+        private const String PLUGIN_PATH = @"Lua\Plugins\";
 
         [ImportingConstructor]
         public LuaPluginController([Import("IPluginController")]IPluginController pluginController) : base(pluginController)
@@ -27,6 +28,7 @@ namespace SmartHotEditLuaPlugins.Controller
             logger.Trace("Construct LuaPluginController");
             this.Type = "Lua";
             this.TypeFileExt = "lua";
+            this.TypePluginPath = LuaPluginController.PLUGIN_PATH;
             this.TypeScintillaLexer = Lexer.Lua;
         }
 
@@ -38,7 +40,7 @@ namespace SmartHotEditLuaPlugins.Controller
             // set script loader to load modules
             script.Options.ScriptLoader = new ReplInterpreterScriptLoader();
             var originalModulePaths = ((ScriptLoaderBase)script.Options.ScriptLoader).ModulePaths;
-            var customModulePaths = new string[] { "Lua/Modules/?", "Lua/Modules/?.lua", "Lua/Plugins/?", "Lua/Plugins/?.lua" };
+            var customModulePaths = new string[] { "Lua/Modules/?", "Lua/Modules/?.lua", LuaPluginController.PLUGIN_PATH + "?", LuaPluginController.PLUGIN_PATH + "?.lua" };
             logger.Trace("Custom module paths added: " + string.Join("; ", customModulePaths));
             var mergedModulePaths = new string[customModulePaths.Length + originalModulePaths.Length];
             originalModulePaths.CopyTo(mergedModulePaths, 0);
@@ -69,7 +71,7 @@ namespace SmartHotEditLuaPlugins.Controller
             UserData.RegisterType<List<Argument>>();
 
             // find plugins
-            string[] filePaths = this.findScriptPlugins(@"Lua\Plugins\", "*_plugin.lua");
+            string[] filePaths = this.findScriptPlugins(LuaPluginController.PLUGIN_PATH, "*_plugin.lua");
             foreach (string path in filePaths)
             {
                 logger.Trace("Script found at: " + path);
@@ -236,6 +238,11 @@ namespace SmartHotEditLuaPlugins.Controller
 
             scintilla.SetKeywords(0, "and break do else elseif end false for function if in local nil not or repeat return then true until while");
             scintilla.SetKeywords(1, "+-* / % ^ #  == ~= <= >= < > =  ( ) { } [ ]  ; : , . .. ...");
+        }
+
+        public override APlugin getPluginForScript(string text)
+        {
+            throw new NotImplementedException();
         }
     }
 }
