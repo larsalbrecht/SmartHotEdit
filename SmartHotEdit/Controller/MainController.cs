@@ -1,18 +1,16 @@
 ﻿using System.Threading;
 using System.Windows.Forms;
-using SmartHotEdit.Controller.Plugin;
 using NLog;
-using NLog.Config;
 using System;
 
 namespace SmartHotEdit.Controller
 {
     public sealed class MainController : IDisposable
     {
-        private NotificationController notificationController;
-        private HotKeyController hotKeyController;
-        private PluginController pluginController;
-        private static Logger logger = LogManager.GetCurrentClassLogger();
+        public NotificationController NotificationController { get; set; }
+        public HotKeyController HotKeyController { get; set; }
+        public PluginController PluginController { get; set; }
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         public MainController()
         {
@@ -24,85 +22,62 @@ namespace SmartHotEdit.Controller
             {
                 LogManager.EnableLogging();
             }
-            logger.Info("Program started");
+            Logger.Info("Program started");
             bool isFirstInstance;
             // Please use a unique name for the mutex to prevent conflicts with other programs
             using (Mutex mtx = new Mutex(true, "SmartHotEdit", out isFirstInstance))
             {
                 if (isFirstInstance)
                 {
-                    logger.Trace("Is first instance");
-                    this.initFirstInstance();
+                    Logger.Trace("Is first instance");
+
+                    Logger.Trace("Init first instance");
+
+                    Logger.Trace("Init PluginController now");
+                    this.PluginController = new PluginController();
+                    Logger.Trace("Init NotificationController now");
+                    this.NotificationController = new NotificationController(this);
+                    Logger.Trace("Init HotKeyController now");
+                    this.HotKeyController = new HotKeyController(this);
+
+                    Logger.Trace("Controller initialized, Application.Run()");
+                    Application.Run();
+                    Logger.Trace("Application.Run finished");
+                    this.OnClose();
+
                 }
                 else
                 {
-                    logger.Trace("Is not the first instance");
-                    this.onApplicationInstanceAlreadyStarted();
+                    Logger.Trace("Is not the first instance");
+                    this.OnApplicationInstanceAlreadyStarted();
                 }
             } // releases the Mutex
         }
 
-        private void initFirstInstance()
+        private void OnApplicationInstanceAlreadyStarted()
         {
-            logger.Trace("Init first instance");
-
-            logger.Trace("Init PluginController now");
-            this.pluginController = new PluginController();
-            logger.Trace("Init NotificationController now");
-            this.notificationController = new NotificationController(this);
-            logger.Trace("Init HotKeyController now");
-            this.hotKeyController = new HotKeyController(this);
-
-            logger.Trace("Controller initialized, Application.Run()");
-            Application.Run();
-            logger.Trace("Application.Run finished");
-            this.onClose();
+            this.NotificationController.CreateBalloonTip(ToolTipIcon.Info, "Smart Hot Edit", "Smart Hot Edit already running", 10000);
         }
 
-        private void onApplicationInstanceAlreadyStarted()
+        public void OnUserWillClose()
         {
-            this.notificationController.createBalloonTip(ToolTipIcon.Info, "Smart Hot Edit", "Smart Hot Edit already running", 10000);
-        }
-
-        public void onUserWillClose()
-        {
-            logger.Trace("onUserWillClose");
-            hotKeyController.onClose();
+            Logger.Trace("onUserWillClose");
+            this.HotKeyController.OnClose();
             Application.Exit();
         }
 
-        private void onClose()
+        private void OnClose()
         {
             Properties.Settings.Default.Save();
-            logger.Trace("onClose");
-            this.notificationController.onClose();
-        }
-        
-        public NotificationController getNotificationController()
-        {
-            return this.notificationController;
+            Logger.Trace("onClose");
+            this.NotificationController.OnClose();
         }
 
-        public PluginController getPluginController()
-        {
-            return this.pluginController;
-        }
-
-        public HotKeyController getHotKeyController()
-        {
-            return this.hotKeyController;
-        }
 
         public void Dispose()
         {
-            if(this.hotKeyController != null)
-            {
-                this.hotKeyController.Dispose();
-            }
-            if(this.notificationController != null)
-            {
-                this.notificationController.Dispose();
-            }
+            this.HotKeyController?.Dispose();
+            this.NotificationController?.Dispose();
             GC.SuppressFinalize(this);
         }
     }

@@ -67,7 +67,7 @@ namespace SmartHotEdit.View
 
         private void menuExitClick(object sender, EventArgs e)
         {
-            mainController.onUserWillClose();
+            mainController.OnUserWillClose();
         }
 
         private void IconDoubleClick(object sender, EventArgs e)

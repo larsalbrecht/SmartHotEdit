@@ -25,7 +25,7 @@ namespace SmartHotEditJavascriptPlugins.Controller
         [ImportingConstructor]
         public JavascriptPluginController([Import("IPluginController")]IPluginController pluginController) : base(pluginController)
         {
-            logger.Trace("Construct JavascriptPluginController");
+            Logger.Trace("Construct JavascriptPluginController");
             this.Type = "Javascript";
             this.TypeFileExt = "js";
             this.TypePluginPath = JavascriptPluginController.PLUGIN_PATH;
@@ -57,12 +57,12 @@ namespace SmartHotEditJavascriptPlugins.Controller
             return resultPlugin;
         }
 
-        public override void loadPlugins()
+        public override void LoadPlugins()
         {
             this.plugins.Clear();
             try
             {
-                string[] filePaths = this.findScriptPlugins(JavascriptPluginController.PLUGIN_PATH, "*_plugin.js");
+                string[] filePaths = this.FindScriptPlugins(JavascriptPluginController.PLUGIN_PATH, "*_plugin.js");
                 foreach (string pluginPath in filePaths)
                 {
                     var fileContent = File.ReadAllText(pluginPath);
@@ -71,11 +71,11 @@ namespace SmartHotEditJavascriptPlugins.Controller
                     if (plugin != null)
                     {
                         this.plugins.Add(plugin);
-                        logger.Debug("Plugin found: " + plugin.getName());
+                        Logger.Debug("Plugin found: " + plugin.Name);
                     }
                     else
                     {
-                        logger.Warn("Plugin not found in script: " + pluginPath);
+                        Logger.Warn("Plugin not found in script: " + pluginPath);
                     }
                 }
 
@@ -156,22 +156,22 @@ namespace SmartHotEditJavascriptPlugins.Controller
             return function;
         }
 
-        protected override APlugin[] getPlugins()
+        protected override APlugin[] GetPlugins()
         {
             return this.plugins.ToArray();
         }
 
-        public override bool isEnabled()
+        public override bool IsEnabled()
         {
             return true; // Fix this (make dynamic) Properties.Settings.Default.EnablePythonPlugins;
         }
 
-        public override string getTemplate()
+        public override string GetTemplate()
         {
             return SmartHotEditJavascriptPlugins.Properties.Resources.template_js;
         }
 
-        public override void setScintillaConfiguration(Scintilla scintilla)
+        public override void SetScintillaConfiguration(Scintilla scintilla)
         {
             scintilla.Styles[Style.Cpp.Default].ForeColor = Color.Silver;
             scintilla.Styles[Style.Cpp.Comment].ForeColor = Color.FromArgb(0, 128, 0); // Green
@@ -191,7 +191,7 @@ namespace SmartHotEditJavascriptPlugins.Controller
             scintilla.SetKeywords(1, "Array Date eval function hasOwnProperty Infinity isFinite isNaN isPrototypeOf length Math NaN name Number Object prototype String toString undefined valueOf");
         }
 
-        public override APlugin getPluginForScript(string text)
+        public override APlugin GetPluginForScript(string text)
         {
             return this.getPluginFromScript(text);
         }

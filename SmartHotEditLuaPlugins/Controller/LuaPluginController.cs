@@ -25,7 +25,7 @@ namespace SmartHotEditLuaPlugins.Controller
         [ImportingConstructor]
         public LuaPluginController([Import("IPluginController")]IPluginController pluginController) : base(pluginController)
         {
-            logger.Trace("Construct LuaPluginController");
+            Logger.Trace("Construct LuaPluginController");
             this.Type = "Lua";
             this.TypeFileExt = "lua";
             this.TypePluginPath = LuaPluginController.PLUGIN_PATH;
@@ -41,17 +41,17 @@ namespace SmartHotEditLuaPlugins.Controller
             script.Options.ScriptLoader = new ReplInterpreterScriptLoader();
             var originalModulePaths = ((ScriptLoaderBase)script.Options.ScriptLoader).ModulePaths;
             var customModulePaths = new string[] { "Lua/Modules/?", "Lua/Modules/?.lua", LuaPluginController.PLUGIN_PATH + "?", LuaPluginController.PLUGIN_PATH + "?.lua" };
-            logger.Trace("Custom module paths added: " + string.Join("; ", customModulePaths));
+            Logger.Trace("Custom module paths added: " + string.Join("; ", customModulePaths));
             var mergedModulePaths = new string[customModulePaths.Length + originalModulePaths.Length];
             originalModulePaths.CopyTo(mergedModulePaths, 0);
             customModulePaths.CopyTo(mergedModulePaths, originalModulePaths.Length);
-            logger.Debug("Merged module paths: " + string.Join("; ", mergedModulePaths));
+            Logger.Debug("Merged module paths: " + string.Join("; ", mergedModulePaths));
             ((ScriptLoaderBase)script.Options.ScriptLoader).ModulePaths = mergedModulePaths;
 
 
             string[] neededModules = new string[] { "class", "baseplugin", "pluginhelper", "inspect" };
 
-            logger.Debug("Require needed modules: " + string.Join("; ", neededModules));
+            Logger.Debug("Require needed modules: " + string.Join("; ", neededModules));
             foreach (string moduleName in neededModules)
             {
                 script.RequireModule(moduleName);
@@ -59,37 +59,37 @@ namespace SmartHotEditLuaPlugins.Controller
             return script;
         }
 
-        public override void loadPlugins()
+        public override void LoadPlugins()
         {
             this.plugins.Clear();
             Script script = this.getConfiguredScript();
 
-            logger.Trace("Register UserData types");
+            Logger.Trace("Register UserData types");
             // register types
             UserData.RegisterType<SmartHotEditPluginHost.Model.Function>();
             UserData.RegisterType<Argument>();
             UserData.RegisterType<List<Argument>>();
 
             // find plugins
-            string[] filePaths = this.findScriptPlugins(LuaPluginController.PLUGIN_PATH, "*_plugin.lua");
+            string[] filePaths = this.FindScriptPlugins(LuaPluginController.PLUGIN_PATH, "*_plugin.lua");
             foreach (string path in filePaths)
             {
-                logger.Trace("Script found at: " + path);
+                Logger.Trace("Script found at: " + path);
                 APlugin plugin = this.getPluginFromScript(script, path);
                 if (plugin != null)
                 {
                     this.plugins.Add(plugin);
-                    logger.Debug("Plugin found: " + plugin.getName());
+                    Logger.Debug("Plugin found: " + plugin.Name);
                 } else
                 {
-                    logger.Warn("Plugin not found in script: " + path);
+                    Logger.Warn("Plugin not found in script: " + path);
                 }
             }
         }
 
         private APlugin getPluginFromScript(Script script, String scriptPath)
         {
-            logger.Trace("Try to get plugin from script");
+            Logger.Trace("Try to get plugin from script");
             try
             {
                 script.DoFile(scriptPath);
@@ -212,22 +212,22 @@ namespace SmartHotEditLuaPlugins.Controller
             return arguments;
         }
 
-        protected override APlugin[] getPlugins()
+        protected override APlugin[] GetPlugins()
         {
             return this.plugins.ToArray();
         }
 
-        public override bool isEnabled()
+        public override bool IsEnabled()
         {
             return true; // TODO fix this (make dynamic) Properties.Settings.Default.EnableLuaPlugins;
         }
 
-        public override string getTemplate()
+        public override string GetTemplate()
         {
             return SmartHotEditLuaPlugins.Properties.Resources.template_lua;
         }
 
-        public override void setScintillaConfiguration(Scintilla scintilla)
+        public override void SetScintillaConfiguration(Scintilla scintilla)
         {
             // Obtained from SciLexer.h
             const int SCE_LUA_DEFAULT = 0;
@@ -240,7 +240,7 @@ namespace SmartHotEditLuaPlugins.Controller
             scintilla.SetKeywords(1, "+-* / % ^ #  == ~= <= >= < > =  ( ) { } [ ]  ; : , . .. ...");
         }
 
-        public override APlugin getPluginForScript(string text)
+        public override APlugin GetPluginForScript(string text)
         {
             throw new NotImplementedException();
         }

@@ -12,127 +12,129 @@ namespace SmartHotEdit.Controller
 {
     public sealed class HotKeyController : IDisposable
     {
-        private static Logger logger = LogManager.GetCurrentClassLogger();
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        HotkeyHandler hk;
-        EditForm ef;
+        HotkeyHandler _hk;
+        private EditForm _ef;
 
-        HotKeyDummyControl hkc = new HotKeyDummyControl();
+        HotKeyDummyControl _hkc = new HotKeyDummyControl();
 
-        MainController mainController;
+        readonly MainController _mainController;
 
         public HotKeyController(MainController mainController)
         {
-            this.mainController = mainController;
-            init();
+            this._mainController = mainController;
+            Init();
         }
 
-        private void init()
+        private void Init()
         {
-            logger.Trace("Register HotKey");
+            Logger.Trace("Register HotKey");
             HotKey defaultHotKey = new HotKey(Keys.Y, false, true, false, true);
-            bool hotKeyDefault = true;
+            var hotKeyDefault = true;
 
-            HotKey hotkeyToRegister = null;
+            HotKey hotkeyToRegister;
             // Register default
-            if(Properties.Settings.Default.HotKey != null)
+            if (Properties.Settings.Default.HotKey != null)
             {
                 hotkeyToRegister = Properties.Settings.Default.HotKey;
                 hotKeyDefault = false;
-            } else
+            }
+            else
             {
                 hotkeyToRegister = defaultHotKey;
             }
-            if (!this.registerCustomHotKey(hotkeyToRegister))
+            if (!this.RegisterCustomHotKey(hotkeyToRegister))
             {
                 if (!hotKeyDefault)
                 {
-                    logger.Warn("Try to register default hotkey");
-                    if (this.registerCustomHotKey(hotkeyToRegister))
+                    Logger.Warn("Try to register default hotkey");
+                    if (this.RegisterCustomHotKey(hotkeyToRegister))
                     {
-                        this.mainController.getNotificationController().createBalloonTip(ToolTipIcon.Warning, "Hot Key", "You tried to register a custom hotkey, but it fails. We registered the default again.", 1000);
-                    } else
-                    {
-                        logger.Fatal("Custom hotkey could not registered and default could not registered again");
-                        this.mainController.getNotificationController().createBalloonTip(ToolTipIcon.Error, "Hot Key", "You tried to register a custom hotkey, but it fails. We tried to register the default again, but this also failed!", 1000);
+                        this._mainController.NotificationController.CreateBalloonTip(ToolTipIcon.Warning, "Hot Key", "You tried to register a custom hotkey, but it fails. We registered the default again.", 1000);
                     }
-                    
+                    else
+                    {
+                        Logger.Fatal("Custom hotkey could not registered and default could not registered again");
+                        this._mainController.NotificationController.CreateBalloonTip(ToolTipIcon.Error, "Hot Key", "You tried to register a custom hotkey, but it fails. We tried to register the default again, but this also failed!", 1000);
+                    }
+
                 }
                 // TODO check if this is the default, and if not, then register default.
                 //logger.Warn("");
             }
         }
 
-        private void onHotKeyPressed()
+        private void OnHotKeyPressed()
         {
-            logger.Trace("HotKeyPressed");
-            if (ef == null || ef.IsDisposed)
+            Logger.Trace("HotKeyPressed");
+            if (_ef == null || _ef.IsDisposed)
             {
-                logger.Trace("Create EditForm, it is null (" + ef == null + " ) or disposed (" + (ef != null && ef.IsDisposed) + ")");
-                this.mainController.getPluginController().loadPlugins();
-                ef = new EditForm(this.mainController);
+                Logger.Trace("Create EditForm, it is null (" + _ef == null + " ) or disposed (" + (_ef != null && _ef.IsDisposed) + ")");
+                this._mainController.PluginController.LoadPlugins();
+                _ef = new EditForm(this._mainController);
             }
-            if (!ef.Visible)
+            if (!_ef.Visible)
             {
-                ef.Show();
+                _ef.Show();
             }
-            ef.BringToFront();
+            _ef.BringToFront();
         }
 
-        private void onHotKeyCouldNotRegistered(Boolean alreadyRegistered = false)
+        private void OnHotKeyCouldNotRegistered(Boolean alreadyRegistered = false)
         {
-            logger.Warn("HotKey could not be registered" + (alreadyRegistered ? " Already registered" : ""));
-            this.mainController.getNotificationController().createBalloonTip(ToolTipIcon.Warning, "Hot Key", "Hot key could not be set!" + (alreadyRegistered ? " Already registered!" : ""), 1000);
+            Logger.Warn("HotKey could not be registered" + (alreadyRegistered ? " Already registered" : ""));
+            this._mainController.NotificationController.CreateBalloonTip(ToolTipIcon.Warning, "Hot Key", "Hot key could not be set!" + (alreadyRegistered ? " Already registered!" : ""), 1000);
         }
 
         private void onHotKeyIsRegistered()
         {
-            logger.Debug("HotKey registered");
+            Logger.Debug("HotKey registered");
         }
 
-        public void onClose()
+        public void OnClose()
         {
-            this.hk.Unregister();
+            this._hk.Unregister();
         }
 
-        private Boolean registerCustomHotKey(HotKey hotkeyToRegister)
+        private bool RegisterCustomHotKey(HotKey hotkeyToRegister)
         {
-            return registerCustomHotKey(hotkeyToRegister.hotkey, hotkeyToRegister.isShift, hotkeyToRegister.isControl, hotkeyToRegister.isAlt, hotkeyToRegister.isWin);
+            return RegisterCustomHotKey(hotkeyToRegister.Hotkey, hotkeyToRegister.IsShift, hotkeyToRegister.IsControl, hotkeyToRegister.IsAlt, hotkeyToRegister.IsWin);
         }
 
-        public Boolean registerCustomHotKey(Keys keyCode, Boolean shiftPressed, Boolean controlPressed, Boolean altPressed, Boolean winPressed)
+        public bool RegisterCustomHotKey(Keys keyCode, bool shiftPressed, bool controlPressed, bool altPressed, bool winPressed)
         {
-            logger.Debug("Try to register new hotkey");
-            Boolean isRegistered = false;
-            if (this.hk != null && this.hk.Registered == true)
+            Logger.Debug("Try to register new hotkey");
+            bool isRegistered = false;
+            if (this._hk != null && this._hk.Registered)
             {
-                logger.Debug("Old hotkey found, unregister first");
-                this.hk.Unregister();
+                Logger.Debug("Old hotkey found, unregister first");
+                this._hk.Unregister();
             }
 
-            this.hk = new HotkeyHandler();
+            this._hk = new HotkeyHandler();
 
-            this.hk.Pressed += delegate {
-                onHotKeyPressed();
+            this._hk.Pressed += delegate {
+                OnHotKeyPressed();
             };
 
-            this.hk.KeyCode = keyCode;
-            this.hk.Shift = shiftPressed;
-            this.hk.Control = controlPressed;
-            this.hk.Alt = altPressed;
-            this.hk.Windows = winPressed;
+            this._hk.KeyCode = keyCode;
+            this._hk.Shift = shiftPressed;
+            this._hk.Control = controlPressed;
+            this._hk.Alt = altPressed;
+            this._hk.Windows = winPressed;
 
-            if (!this.hk.GetCanRegister(hkc))
+            if (!this._hk.GetCanRegister(_hkc))
             {
-                this.onHotKeyCouldNotRegistered();
+                this.OnHotKeyCouldNotRegistered();
             }
-            else if (this.hk.Register(hkc))
+            else if (this._hk.Register(_hkc))
                 {
                 this.onHotKeyIsRegistered();
                 isRegistered = true;
             } else
             {
-                this.onHotKeyCouldNotRegistered(true);
+                this.OnHotKeyCouldNotRegistered(true);
             }
 
             return isRegistered;
@@ -140,18 +142,9 @@ namespace SmartHotEdit.Controller
 
         public void Dispose()
         {
-            if(this.hk != null)
-            {
-                this.hk.Unregister();
-            }
-            if(this.hkc != null)
-            {
-                this.hkc.Dispose();
-            }
-            if(this.ef != null)
-            {
-                this.ef.Dispose();
-            }
+            this._hk?.Unregister();
+            this._hkc?.Dispose();
+            this._ef?.Dispose();
             GC.SuppressFinalize(this);
         }
     }

@@ -20,19 +20,25 @@ namespace SmartHotEditJavascriptPlugins.Model
             this.description = description;
         }
 
-        public override string getDescription()
+        public override string Description
         {
-            return this.description;
+            get
+            {
+                return this.description;
+            }
         }
 
-        public override string getName()
+        public override string Name
         {
-            return this.name;
+            get
+            {
+                return this.name;
+            }
         }
 
         public new void addFunction(Function function)
         {
-            base.addFunction(function);
+            base.AddFunction(function);
         }
     }
 }

@@ -15,32 +15,32 @@ namespace SmartHotEdit.View
     public partial class EditForm : Form
     {
 
-        private static Logger logger = LogManager.GetCurrentClassLogger();
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        enum POPUP_STATE { Small, Big };
+        private enum PopupState { Small = 0, Big = 1 };
 
-        private MainController mainController;
+        private readonly MainController _mainController;
 
         private int _currentPopupState;
         private int _listIndex = -1;
-        private List<Argument> _argumentsToFill = null;
-        private APlugin _currentPlugin = null;
-        private Function _currentFunction = null;
+        private List<Argument> _argumentsToFill;
+        private APlugin _currentPlugin;
+        private Function _currentFunction;
 
         public EditForm(MainController mainController)
         {
-            logger.Trace("Init EditForm now");
+            Logger.Trace("Init EditForm now");
 
             InitializeComponent();
 
-            this.mainController = mainController;
-            this._currentPopupState = (int)POPUP_STATE.Small;
+            this._mainController = mainController;
+            this._currentPopupState = (int)PopupState.Small;
         }
 
         private void EditFormLoad(object sender, EventArgs e)
         {
             // init textbox with clipboard text
-            logger.Trace("Clipboard contains text?: " + Clipboard.ContainsText());
+            Logger.Trace("Clipboard contains text?: " + Clipboard.ContainsText());
             if (Clipboard.ContainsText())
             {
                 this.clipboardTextBox.Text = Clipboard.GetText();
@@ -50,16 +50,17 @@ namespace SmartHotEdit.View
             pluginList.Columns.Add("Plugin", -2, HorizontalAlignment.Left);
             pluginList.Columns.Add("Description", -2, HorizontalAlignment.Left);
 
-            logger.Debug("Add plugins to view");
+            Logger.Debug("Add plugins to view");
 
-            foreach (APlugin plugin in this.mainController.getPluginController().EnabledPlugins)
+            foreach (var plugin in this._mainController.PluginController.EnabledPlugins)
             {
-                var tmpPluginEntry = new ListViewItem();
-                tmpPluginEntry.Tag = plugin;
-                tmpPluginEntry.Text = plugin.getName();
-                tmpPluginEntry.SubItems.Add(plugin.getDescription());
+                var tmpPluginEntry = new ListViewItem
+                {
+                    Tag = plugin,
+                    Text = plugin.Name                };
+                tmpPluginEntry.SubItems.Add(plugin.Description);
                 pluginList.Items.Add(tmpPluginEntry);
-                logger.Info(String.Format("Plugin added to view: [{0}] {1}", plugin.Type, plugin.getName()));
+                Logger.Info($"Plugin added to view: [{plugin.Type}] {plugin.Name}");
             }
 
             pluginList.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
@@ -69,10 +70,10 @@ namespace SmartHotEdit.View
         {
             if (e.KeyData == (Keys.Enter))
             {
-                logger.Trace("PluginListKeyDown > Enter");
-                if (clipboardTextBox.Text != null && clipboardTextBox.Text.Length > 0)
+                Logger.Trace("PluginListKeyDown > Enter");
+                if (!string.IsNullOrEmpty(clipboardTextBox.Text))
                 {
-                    logger.Debug("Set text to clipboard: " + clipboardTextBox.Text);
+                    Logger.Debug("Set text to clipboard: " + clipboardTextBox.Text);
                     Clipboard.SetText(clipboardTextBox.Text);
                 }
                 this.Close();
@@ -80,18 +81,19 @@ namespace SmartHotEdit.View
             }
             else if (e.KeyData == (Keys.Control | Keys.Space))
             {
-                logger.Trace("PluginListKeyDown > Control + Space");
+                Logger.Trace("PluginListKeyDown > Control + Space");
                 if (this.pluginList.SelectedItems.Count > 0)
                 {
                     var selectedItem = pluginList.SelectedItems[0];
                     this.functionListUpDown.Items.Clear();
 
                     var plugin = (APlugin)selectedItem.Tag;
-                    logger.Debug("Selected plugin: " + plugin.getName());
+                    Logger.Debug("Selected plugin: " + plugin.Name);
 
-                    this.functionListUpDown.Items.AddRange(plugin.getFunctionsAsArray());
+                    // ReSharper disable once CoVariantArrayConversion
+                    this.functionListUpDown.Items.AddRange(plugin.GetFunctionsAsArray());
 
-                    _currentPopupState = (int)POPUP_STATE.Small;
+                    _currentPopupState = (int)PopupState.Small;
 
                     this.functionListUpDown.Left = (selectedItem.ListView.Columns[0].Width);
                     this.functionListUpDown.Top = selectedItem.Bounds.Top;
@@ -107,21 +109,22 @@ namespace SmartHotEdit.View
             if (e.KeyData == (Keys.Enter))
             {
                 // TODO refactor!
-                logger.Trace("FunctionListUpDownKeyDown > Enter");
+                Logger.Trace("FunctionListUpDownKeyDown > Enter");
                 var myFunction = this.functionListUpDown.SelectedItem as Function;
                 var plugin = (APlugin)this.pluginList.SelectedItems[0].Tag;
                 if (myFunction != null && plugin != null)
                 {
-                    logger.Debug(String.Format("Selected function '{0}' of plugin '{1}'.", myFunction.Name, plugin.getName()));
-                    logger.Debug(String.Format("Function has: {0} arguments"), (myFunction.arguments == null || myFunction.arguments.Count == 0 ? 0 : myFunction.arguments.Count));
-                    if (myFunction.arguments != null && myFunction.arguments.Count > 0)
+                    Logger.Debug($"Selected function '{myFunction.Name}' of plugin '{plugin.Name}'.");
+                    // ReSharper disable once PassStringInterpolation
+                    Logger.Debug("Function has: {0} arguments", (myFunction.Arguments == null || myFunction.Arguments.Count == 0 ? 0 : myFunction.Arguments.Count));
+                    if (myFunction.Arguments != null && myFunction.Arguments.Count > 0)
                     {
-                        if (!myFunction.arguments.Any())
+                        if (!myFunction.Arguments.Any())
                             return;
-                        logger.Trace("Open argument inputs");
+                        Logger.Trace("Open argument inputs");
 
-                        this._currentPopupState = (int)POPUP_STATE.Small;
-                        this._argumentsToFill = myFunction.arguments;
+                        this._currentPopupState = (int)PopupState.Small;
+                        this._argumentsToFill = myFunction.Arguments;
                         this._currentFunction = myFunction;
                         this._currentPlugin = plugin;
                         this._listIndex = 0;
@@ -129,7 +132,7 @@ namespace SmartHotEdit.View
                         // get selected item to calculate position of input
                         var selectedItem = this.pluginList.SelectedItems[0];
 
-                        argumentPanel.LabelText = myFunction.arguments[this._listIndex].description;
+                        argumentPanel.LabelText = myFunction.Arguments[this._listIndex].Description;
                         argumentPanel.InputText = "";
                         argumentPanel.Left = selectedItem.ListView.Columns[0].Width;
                         argumentPanel.Top = selectedItem.Bounds.Top;
@@ -138,7 +141,7 @@ namespace SmartHotEdit.View
                     }
                     else
                     {
-                        this.clipboardTextBox.Text = this.executeFunctionOfPlugin(this.clipboardTextBox.Text, plugin, myFunction, true, this._argumentsToFill);
+                        this.clipboardTextBox.Text = this.ExecuteFunctionOfPlugin(this.clipboardTextBox.Text, plugin, myFunction, true, this._argumentsToFill);
                     }
                     this.functionListUpDown.Visible = false;
                 }
@@ -146,23 +149,23 @@ namespace SmartHotEdit.View
             }
             else if (e.KeyData == (Keys.Control | Keys.Space))
             {
-                logger.Trace("FunctionListUpDownKeyDown > Control + Space");
-                logger.Trace("Change size of functionListUpDown input");
-                if (this._currentPopupState == (int)POPUP_STATE.Small)
+                Logger.Trace("FunctionListUpDownKeyDown > Control + Space");
+                Logger.Trace("Change size of functionListUpDown input");
+                if (this._currentPopupState == (int)PopupState.Small)
                 {
-                    this._currentPopupState = (int)POPUP_STATE.Big;
+                    this._currentPopupState = (int)PopupState.Big;
                     this.functionListUpDown.Height = this.functionListUpDown.PreferredHeight;
                 }
                 else
                 {
-                    this._currentPopupState = (int)POPUP_STATE.Small;
+                    this._currentPopupState = (int)PopupState.Small;
                     this.functionListUpDown.Height = this.functionListUpDown.ItemHeight;
                 }
                 e.SuppressKeyPress = true;
             }
             else if (e.KeyCode == Keys.Escape)
             {
-                logger.Trace("FunctionListUpDownKeyDown > Escape");
+                Logger.Trace("FunctionListUpDownKeyDown > Escape");
                 this.functionListUpDown.Visible = false;
                 e.SuppressKeyPress = true;
             }
@@ -172,28 +175,28 @@ namespace SmartHotEdit.View
         {
             if (e.KeyCode == Keys.Enter)
             {
-                logger.Trace("FunctionArgumentInputKeyDown > Enter");
+                Logger.Trace("FunctionArgumentInputKeyDown > Enter");
 
-                this._argumentsToFill[_listIndex++].value = this.argumentPanel.InputText;
-                logger.Trace("Argument '" + (_listIndex - 1) + "' filled with: " + this.argumentPanel.InputText);
-                if (_listIndex >= _argumentsToFill.Count())
+                this._argumentsToFill[_listIndex++].Value = this.argumentPanel.InputText;
+                Logger.Trace("Argument '" + (_listIndex - 1) + "' filled with: " + this.argumentPanel.InputText);
+                if (_listIndex >= _argumentsToFill.Count)
                 {
-                    logger.Trace("No further arguments");
+                    Logger.Trace("No further arguments");
                     this.argumentPanel.Visible = false;
                     _listIndex = -1;
-                    this.clipboardTextBox.Text = this.executeFunctionOfPlugin(this.clipboardTextBox.Text, this._currentPlugin, this._currentFunction, true, this._argumentsToFill);
+                    this.clipboardTextBox.Text = this.ExecuteFunctionOfPlugin(this.clipboardTextBox.Text, this._currentPlugin, this._currentFunction, true, this._argumentsToFill);
                     _argumentsToFill = null;
                     _currentPlugin = null;
-                } else
+                }
+                else
                 {
                     // TODO refactor!
                     var selectedItem = this.pluginList.SelectedItems[0];
                     var myFunction = this.functionListUpDown.SelectedItem as Function;
-                    var plugin = (APlugin)selectedItem.Tag;
 
-                    logger.Trace("More arguments found");
+                    Logger.Trace("More arguments found");
                     // get selected item to calculate position of input
-                    argumentPanel.LabelText = myFunction.arguments[this._listIndex].description;
+                    if (myFunction != null) argumentPanel.LabelText = myFunction.Arguments[this._listIndex].Description;
                     argumentPanel.InputText = "";
                     argumentPanel.Left = selectedItem.ListView.Columns[0].Width;
                     argumentPanel.Top = selectedItem.Bounds.Top;
@@ -204,7 +207,7 @@ namespace SmartHotEdit.View
             }
             else if (e.KeyCode == Keys.Escape)
             {
-                logger.Trace("FunctionArgumentInputKeyDown > Escape");
+                Logger.Trace("FunctionArgumentInputKeyDown > Escape");
                 this.argumentPanel.Visible = false;
                 e.SuppressKeyPress = true;
             }
@@ -219,35 +222,34 @@ namespace SmartHotEdit.View
         /// <param name="forEachLine"></param>
         /// <param name="arguments"></param>
         /// <returns></returns>
-        private String executeFunctionOfPlugin(String text, APlugin plugin, Function function, Boolean forEachLine = true, List<Argument> arguments = null)
+        private String ExecuteFunctionOfPlugin(String text, APlugin plugin, Function function, Boolean forEachLine = true, List<Argument> arguments = null)
         {
-            logger.Trace(String.Format("[{0}] Plugin '{1}' will execute function '{2}'", plugin.Type, plugin.getName(), function.Name));
-            String result = null;
+            Logger.Trace($"[{plugin.Type}] Plugin '{plugin.Name}' will execute function '{function.Name}'");
+            string result = null;
             try
             {
                 result = "";
                 if (text != null)
                 {
                     // TODO create option for this
-                    if (forEachLine == true)
+                    if (forEachLine)
                     {
-                        String[] lines = text.Split('\n');
-                        foreach (String line in lines)
-                        {
-                            result += plugin.getResultFromFunction(function, line, arguments) + Environment.NewLine;
-                        }
+                        var lines = text.Split('\n');
+                        result = lines.Aggregate(result, (current, line) => current + (plugin.GetResultFromFunction(function, line, arguments) + Environment.NewLine));
                     }
                     else
                     {
-                        result = plugin.getResultFromFunction(function, text, arguments);
+                        result = plugin.GetResultFromFunction(function, text, arguments);
                     }
-                    this.toolStripStatusLabel.Text = String.Format("[{0}] Plugin '{1}' has executed function '{2}'", plugin.Type, plugin.getName(), function.Name);
+                    this.toolStripStatusLabel.Text =
+                        $"[{plugin.Type}] Plugin '{plugin.Name}' has executed function '{function.Name}'";
                 }
             }
             catch (Exception e)
             {
-                logger.Error("An Error occured " + "(" + e.Source + "): " + e.Message + "\n" + e.StackTrace);
-                this.toolStripStatusLabel.Text = String.Format("[{0}] Plugin '{1}' has an error in function '{2}': {3}", plugin.Type, plugin.getName(), function.Name, e.Message);
+                Logger.Error("An Error occured " + "(" + e.Source + "): " + e.Message + "\n" + e.StackTrace);
+                this.toolStripStatusLabel.Text =
+                    $"[{plugin.Type}] Plugin '{plugin.Name}' has an error in function '{function.Name}': {e.Message}";
             }
             return result;
         }

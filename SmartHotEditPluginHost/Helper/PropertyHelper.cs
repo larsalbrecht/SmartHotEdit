@@ -1,13 +1,8 @@
-﻿using SmartHotEditPluginHost;
-using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Linq;
-using System.Text;
+﻿using System;
 
-namespace SmartHotEdit.Helper
+namespace SmartHotEditPluginHost.Helper
 {
-    class PropertyHelper
+    internal class PropertyHelper
     {
         public static bool PropertiesHasKey(string key)
         {
@@ -22,7 +17,7 @@ namespace SmartHotEdit.Helper
             return false;
         }
 
-        public static void CreateProperty(String propertyKey, object defaultValue, Type propertyType)
+        public static void CreateProperty(string propertyKey, object defaultValue, Type propertyType)
         {
             /*
             SettingsProperty property = new SettingsProperty(propertyKey);

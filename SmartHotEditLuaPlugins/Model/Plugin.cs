@@ -20,21 +20,27 @@ namespace SmartHotEditLuaPlugins.Model
             this.description = description;
         }
 
-        public override string getDescription()
+        public override string Description
         {
-            return this.description;
+            get
+            {
+                return this.description;
+            }
         }
 
-        public override string getName()
+        public override string Name
         {
-            return this.name;
+            get
+            {
+                return this.name;
+            }
         }
 
         public void addLuaFunction(LuaFunction function)
         {
             if(function != null && function.getFunction() != null)
             {
-                base.addFunction(function.getFunction());
+                base.AddFunction(function.getFunction());
             }
         }
     }

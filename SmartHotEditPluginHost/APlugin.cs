@@ -1,46 +1,46 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Windows.Forms;
 using SmartHotEditPluginHost.Model;
 using System.Linq;
 
 namespace SmartHotEditPluginHost
 {
-    abstract public class APlugin : IPlugin
+    public abstract class APlugin : IPlugin
     {
 
-        protected List<Function> functionList = new List<Function>();
+        protected List<Function> FunctionList = new List<Function>();
 
         public bool Enabled = true;
         public string Type = null;
 
-        public abstract String getName();
-        public abstract String getDescription();
+        public abstract string Name { get; }
 
-        protected void addFunction(Function function)
+        public abstract string Description { get; }
+
+        protected void AddFunction(Function function)
         {
-            this.functionList.Add(function);
+            this.FunctionList.Add(function);
         }
 
-        public String getResultFromFunction(Function function, String value, List<Argument> arguments = null)
+        public string GetResultFromFunction(Function function, String value, List<Argument> arguments = null)
         {
-            String result = value;
+            var result = value;
             if (value != null)
             {
-                result = function.processFunction(value, arguments);
+                result = function.ProcessFunction(value, arguments);
             }
 
             return result;
         }
 
-        public Function[] getFunctionsAsArray()
+        public Function[] GetFunctionsAsArray()
         {
-            return this.functionList.Cast<Function>().ToArray();
+            return this.FunctionList.Cast<Function>().ToArray();
         }
 
-        public String getPropertynameForEnablePlugin()
+        public string GetPropertynameForEnablePlugin()
         {
-            return "Plugin" + this.Type + this.getName() + "Enabled";
+            return "Plugin" + this.Type + this.Name+ "Enabled";
         }
     }
 }

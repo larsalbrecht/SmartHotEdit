@@ -8,14 +8,14 @@ namespace SmartHotEditPluginHost.Model
     public class Argument
     {
 
-        public String value;
+        public string Value;
         
-        public String key;
-        public String description;
+        public string Key;
+        public string Description;
         
-        public Argument(String key, String description){
-        	this.key = key;
-        	this.description = description;
+        public Argument(string key, string description){
+        	this.Key = key;
+        	this.Description = description;
         }
     }
 }

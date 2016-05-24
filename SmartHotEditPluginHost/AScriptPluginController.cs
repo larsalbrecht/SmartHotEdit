@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using ScintillaNET;
 
 namespace SmartHotEditPluginHost
@@ -14,18 +11,19 @@ namespace SmartHotEditPluginHost
         public string TypeFileExt { get; set; }
         public Lexer TypeScintillaLexer { get; set; }
 
-        public AScriptPluginController(IPluginController pluginController) : base(pluginController)
+        protected AScriptPluginController(IPluginController pluginController) : base(pluginController)
         {
         }
 
-        public new bool isFullyImplemented()
+        // ReSharper disable once UnusedMember.Local
+        private new bool IsFullyImplemented()
         {
-            return base.isFullyImplemented() && this.TypeFileExt != null && this.TypePluginPath != null;
+            return base.IsFullyImplemented() && this.TypeFileExt != null && this.TypePluginPath != null;
         }
 
-        protected string[] findScriptPlugins(String pathStr, String searchPattern)
+        protected string[] FindScriptPlugins(String pathStr, String searchPattern)
         {
-            logger.Trace("Find plugins in path: " + pathStr + "; with search pattern: " + searchPattern);
+            Logger.Trace("Find plugins in path: " + pathStr + "; with search pattern: " + searchPattern);
             string[] result = null;
             if (pathStr != null && searchPattern != null)
             {
@@ -39,10 +37,10 @@ namespace SmartHotEditPluginHost
             return result;
         }
 
-        public abstract String getTemplate();
+        public abstract string GetTemplate();
 
-        public abstract void setScintillaConfiguration(Scintilla scintilla);
+        public abstract void SetScintillaConfiguration(Scintilla scintilla);
 
-        public abstract APlugin getPluginForScript(string text);
+        public abstract APlugin GetPluginForScript(string text);
     }
 }

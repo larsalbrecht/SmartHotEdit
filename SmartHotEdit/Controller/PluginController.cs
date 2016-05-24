@@ -3,10 +3,10 @@ using SmartHotEditPluginHost;
 using System;
 using SmartHotEdit.Controller.Plugin;
 using System.Collections.Generic;
-using System.Linq;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using System.IO;
+using System.Linq;
 
 namespace SmartHotEdit.Controller
 {
@@ -14,71 +14,71 @@ namespace SmartHotEdit.Controller
     public class PluginController : IPluginController
     {
 
-        private static Logger logger = LogManager.GetCurrentClassLogger();
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         public List<APlugin> LoadedPlugins = new List<APlugin>();
         public List<APlugin> EnabledPlugins = new List<APlugin>();
         public List<APlugin> DisabledPlugins = new List<APlugin>();
 
-        private IList<APluginController> pluginControllerList;
+        private readonly IList<APluginController> _pluginControllerList;
 
         [ImportMany(typeof(AScriptPluginController))]
-        private AScriptPluginController[] scriptPluginControllerList = null;
+        // ReSharper disable once FieldCanBeMadeReadOnly.Local
+        private AScriptPluginController[] _scriptPluginControllerList = null;
 
         [Export("IPluginController")]
-        private IPluginController pluginController { get; set; }
+        private IPluginController PluginControllerList { get; set; }
 
-        private IList<FileSystemWatcher> watcherList;
+        private IList<FileSystemWatcher> _watcherList;
 
         public PluginController()
         {
-            logger.Trace("Construct PluginController");
+            Logger.Trace("Construct PluginController");
 
-            logger.Trace("Load ScriptPluginController using CompositionContainer");
+            Logger.Trace("Load ScriptPluginController using CompositionContainer");
             var pluginCatalog = new DirectoryCatalog(".");
             var container = new CompositionContainer(pluginCatalog);
-            this.pluginController = this;
+            this.PluginControllerList = this;
             container.ComposeParts(this);
             container.Dispose();
-            logger.Trace("Load ScriptPluginController finished");
+            Logger.Trace("Load ScriptPluginController finished");
 
-            this.pluginControllerList = new List<APluginController>();
-            this.pluginControllerList.Add(new DefaultPluginController(this));
+            this._pluginControllerList = new List<APluginController> { new DefaultPluginController(this) };
 
-            foreach (AScriptPluginController scriptPluginController in this.scriptPluginControllerList)
+            foreach (var scriptPluginController in this._scriptPluginControllerList)
             {
-                this.pluginControllerList.Add(scriptPluginController);
+                this._pluginControllerList.Add(scriptPluginController);
             }
 
-            this.loadPlugins();
+            this.LoadPlugins();
         }
 
-        public void loadPlugins()
+        public void LoadPlugins()
         {
             this.LoadedPlugins.Clear();
             this.EnabledPlugins.Clear();
             this.DisabledPlugins.Clear();
-            logger.Trace("Get Plugins from *PluginController");
-            logger.Trace("Use plugins: " + Properties.Settings.Default.EnablePlugins);
+            Logger.Trace("Get Plugins from *PluginController");
+            Logger.Trace("Use plugins: " + Properties.Settings.Default.EnablePlugins);
             if (Properties.Settings.Default.EnablePlugins)
             {
-                foreach (APluginController concretePluginController in this.pluginControllerList)
+                foreach (var concretePluginController in this._pluginControllerList)
                 {
-                    if ((concretePluginController is AScriptPluginController && ((AScriptPluginController)concretePluginController).isFullyImplemented()) || (!(concretePluginController is AScriptPluginController) && concretePluginController.isFullyImplemented()))
+                    if ((concretePluginController is AScriptPluginController && ((AScriptPluginController)concretePluginController).IsFullyImplemented()) || (!(concretePluginController is AScriptPluginController) && concretePluginController.IsFullyImplemented()))
                     {
-                        logger.Trace(concretePluginController.Type + " is fully implemented");
-                        if (concretePluginController.isEnabled())
+                        Logger.Trace(concretePluginController.Type + " is fully implemented");
+                        if (concretePluginController.IsEnabled())
                         {
-                            logger.Trace(concretePluginController.Type + " is enabled");
-                            concretePluginController.preLoadPlugins();
-                            concretePluginController.loadPlugins();
-                            concretePluginController.postLoadPlugins();
+                            Logger.Trace(concretePluginController.Type + " is enabled");
+                            concretePluginController.PreLoadPlugins();
+                            concretePluginController.LoadPlugins();
+                            concretePluginController.PostLoadPlugins();
 
                             if (concretePluginController is AScriptPluginController)
                             {
-                                if (this.watcherList == null)
+                                if (this._watcherList == null)
                                 {
-                                    this.watcherList = new List<FileSystemWatcher>();
+                                    this._watcherList = new List<FileSystemWatcher>();
                                 }
                                 // TODO temporary disabled | this.watchScriptPluginController((AScriptPluginController)concretePluginController);
                             }
@@ -89,7 +89,7 @@ namespace SmartHotEdit.Controller
                         }
                         else
                         {
-                            logger.Debug(concretePluginController.Type + " is disabled");
+                            Logger.Debug(concretePluginController.Type + " is disabled");
                         }
                     }
                     else
@@ -98,12 +98,12 @@ namespace SmartHotEdit.Controller
                     }
                 }
             }
-            logger.Debug("Plugins found: " + this.LoadedPlugins.Count);
-            logger.Debug("Plugins enabled: " + this.EnabledPlugins.Count);
-            logger.Debug("Plugins disabled: " + this.DisabledPlugins.Count);
+            Logger.Debug("Plugins found: " + this.LoadedPlugins.Count);
+            Logger.Debug("Plugins enabled: " + this.EnabledPlugins.Count);
+            Logger.Debug("Plugins disabled: " + this.DisabledPlugins.Count);
         }
 
-        private void watchScriptPluginController(AScriptPluginController scriptPluginController)
+        private void WatchScriptPluginController(AScriptPluginController scriptPluginController)
         {
             var path = Path.GetFullPath(scriptPluginController.TypePluginPath);
             var fileFilter = "*." + scriptPluginController.TypeFileExt;
@@ -111,23 +111,25 @@ namespace SmartHotEdit.Controller
             if (Directory.Exists(path))
             {
                 // TODO implement http://stackoverflow.com/questions/1406808/wait-for-file-to-be-freed-by-process/1406853#1406853
-                var watcher = new FileSystemWatcher();
-                watcher.Path = path;
-                watcher.NotifyFilter = NotifyFilters.LastWrite;
-                watcher.Filter = fileFilter;
-                watcher.EnableRaisingEvents = true;
-                watcher.IncludeSubdirectories = false;
-                watcher.Changed += new FileSystemEventHandler(OnPluginDirectoryChanged);
+                var watcher = new FileSystemWatcher
+                {
+                    Path = path,
+                    NotifyFilter = NotifyFilters.LastWrite,
+                    Filter = fileFilter,
+                    EnableRaisingEvents = true,
+                    IncludeSubdirectories = false
+                };
+                watcher.Changed += OnPluginDirectoryChanged;
 
-                this.watcherList.Add(watcher);
+                this._watcherList.Add(watcher);
             }
             else
             {
-                logger.Info("ScriptPluginController can not be watched (pluginpath did not exists): " + path + "; " + scriptPluginController.Type);
+                Logger.Info("ScriptPluginController can not be watched (pluginpath did not exists): " + path + "; " + scriptPluginController.Type);
             }
 
         }
-        
+
         private void OnPluginDirectoryChanged(object source, FileSystemEventArgs e)
         {
             Console.WriteLine("Type: " + e.ChangeType);
@@ -135,7 +137,7 @@ namespace SmartHotEdit.Controller
             Console.WriteLine("File changed: " + e.FullPath);
         }
 
-        private APlugin[] arrayMerge(APlugin[] baseArray, APlugin[] arrayToMerge)
+        private APlugin[] ArrayMerge(APlugin[] baseArray, APlugin[] arrayToMerge)
         {
             if (baseArray == null)
             {
@@ -152,25 +154,13 @@ namespace SmartHotEdit.Controller
             return baseArray;
         }
 
-        public IList<APluginController> getPluginControllerList(Type pluginControllerType = null)
+        public IList<APluginController> GetPluginControllerList(Type pluginControllerType = null)
         {
-            if (pluginControllerType == null)
-            {
-                return this.pluginControllerList;
-            }
-
-            var pluginControllerList = new List<APluginController>();
-            foreach (APluginController pluginController in this.pluginControllerList)
-            {
-                if (pluginController.GetType().IsSubclassOf(pluginControllerType) ||
-                    pluginController.GetType() == pluginControllerType)
-                {
-                    pluginControllerList.Add(pluginController);
-                }
-            }
-
-            return pluginControllerList;
+            return pluginControllerType == null ?
+                this._pluginControllerList :
+                this._pluginControllerList.Where(
+                    pluginController => pluginController.GetType().IsSubclassOf(pluginControllerType) || pluginController.GetType() == pluginControllerType
+                    ).ToList();
         }
-
     }
 }

@@ -9,7 +9,7 @@ namespace SmartHotEdit
     static class Program
     {
 
-        public static String AppName = "SmartHotEdit";
+        public static string AppName = "SmartHotEdit";
 
         /// <summary>
         /// Main entrypoint to the application
@@ -19,10 +19,11 @@ namespace SmartHotEdit
         {
             // NLog
             ConfigurationItemFactory.Default.LayoutRenderers
-                            .RegisterDefinition("buildConfiguration", typeof(SmartHotEdit.NLogger.LayoutRenderer.NLogBuildTypeLayoutRenderer));
+                            .RegisterDefinition("buildConfiguration", typeof(NLogger.LayoutRenderer.NLogBuildTypeLayoutRenderer));
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
+            // ReSharper disable once ObjectCreationAsStatement
             new MainController();
         }
     }

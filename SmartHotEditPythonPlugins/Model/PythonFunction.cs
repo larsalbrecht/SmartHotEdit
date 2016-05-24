@@ -24,7 +24,7 @@ namespace SmartHotEditPythonPlugins.Model
                 pythonArgs = new IronPython.Runtime.PythonDictionary();
                 foreach (Argument arg in arguments)
                 {
-                    pythonArgs.Add(arg.key, arg.value);
+                    pythonArgs.Add(arg.Key, arg.Value);
                 }
             }
             

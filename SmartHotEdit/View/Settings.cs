@@ -1,6 +1,5 @@
 ﻿using NLog;
 using SmartHotEdit.Controller;
-using SmartHotEdit.Helper;
 using SmartHotEdit.Model;
 using SmartHotEditPluginHost;
 using System;
@@ -69,7 +68,7 @@ namespace SmartHotEdit.View
             bool isControl = isShiftControl || isAltControl || isShiftAltControl || this.hotKeyTextBox.Modifiers == Keys.Control;
             bool isWin = this.hotKeyTextBox.WinModifier;
 
-            if (this.mainController.getHotKeyController().registerCustomHotKey(this.hotKeyTextBox.Hotkey, isShift, isControl, isAlt, isWin))
+            if (this.mainController.HotKeyController.RegisterCustomHotKey(this.hotKeyTextBox.Hotkey, isShift, isControl, isAlt, isWin))
             {
                 HotKey hotKey = new HotKey(this.hotKeyTextBox.Hotkey, isShift, isControl, isAlt, isWin);
                 Properties.Settings.Default.HotKey = hotKey;
@@ -85,7 +84,7 @@ namespace SmartHotEdit.View
         {
             this.enableDisablePluginListView.Items.Clear();
             this.enableDisablePluginListView.Groups.Clear();
-            foreach (APluginController concretePluginController in this.mainController.getPluginController().getPluginControllerList())
+            foreach (APluginController concretePluginController in this.mainController.PluginController.GetPluginControllerList())
             {
                 var tempListViewGroup = new ListViewGroup(concretePluginController.Type, System.Windows.Forms.HorizontalAlignment.Left);
                 tempListViewGroup.Header = concretePluginController.Type;
@@ -98,7 +97,7 @@ namespace SmartHotEdit.View
                 {
                     foreach (APlugin plugin in concretePluginController.LoadedPlugins)
                     {
-                        var tempListViewItem = new ListViewItem(plugin.getName());
+                        var tempListViewItem = new ListViewItem(plugin.Name);
                         tempListViewItem.Group = tempListViewGroup;
                         tempListViewItem.StateImageIndex = 0;
                         tempListViewItem.Tag = plugin;
@@ -121,9 +120,9 @@ namespace SmartHotEdit.View
                 APlugin plugin = (APlugin)item.Tag;
                 plugin.Enabled = item.Checked;
 
-                logger.Debug("Plugin " + plugin.getName() + " changed state. Is it enabled? " + plugin.Enabled);
+                logger.Debug("Plugin " + plugin.Name+ " changed state. Is it enabled? " + plugin.Enabled);
 
-                Properties.Settings.Default[plugin.getPropertynameForEnablePlugin()] = plugin.Enabled;
+                Properties.Settings.Default[plugin.GetPropertynameForEnablePlugin()] = plugin.Enabled;
                 Properties.Settings.Default.Save();
             }
         }

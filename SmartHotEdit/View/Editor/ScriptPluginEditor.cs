@@ -14,9 +14,6 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
-/// <summary>
-/// TODO refactor!
-/// </summary>
 namespace SmartHotEdit.View.Editor
 {
     public partial class ScriptPluginEditor : Form
@@ -68,7 +65,7 @@ namespace SmartHotEdit.View.Editor
 
             this.originalHeadertext = this.Text;
             this.mainController = mainController;
-            this.scriptPluginController = this.mainController.getPluginController().getPluginControllerList(typeof(AScriptPluginController)).Cast<AScriptPluginController>().ToList();
+            this.scriptPluginController = this.mainController.PluginController.GetPluginControllerList(typeof(AScriptPluginController)).Cast<AScriptPluginController>().ToList();
             this.openScriptDialog.Filter = this.getFilterForDialog();
             this.saveScriptDialog.Filter = this.getFilterForDialog();
             var bindingSource = new BindingSource();
@@ -205,12 +202,12 @@ namespace SmartHotEdit.View.Editor
                 this.scintilla.StyleClearAll();
 
                 this.scintilla.Lexer = _currentPluginController.TypeScintillaLexer;
-                this._currentPluginController.setScintillaConfiguration(this.scintilla);
+                this._currentPluginController.SetScintillaConfiguration(this.scintilla);
 
                 this.saveScriptDialog.DefaultExt = _currentPluginController.TypeFileExt;
 
                 // enable/disable button for loading templating
-                this.templateLoadMenuItem.Enabled = (this._currentPluginController.getTemplate() != null);
+                this.templateLoadMenuItem.Enabled = (this._currentPluginController.GetTemplate() != null);
 
                 if (logger != null)
                 {
@@ -275,7 +272,7 @@ namespace SmartHotEdit.View.Editor
         {
             if (this._currentPluginController != null)
             {
-                var template = this._currentPluginController.getTemplate();
+                var template = this._currentPluginController.GetTemplate();
                 if (template != null)
                 {
                     this.scintilla.Text = template;
@@ -328,13 +325,13 @@ namespace SmartHotEdit.View.Editor
             functionsListView.Clear();
             try
             {
-                APlugin plugin = this._currentPluginController.getPluginForScript(this.scintilla.Text);
+                APlugin plugin = this._currentPluginController.GetPluginForScript(this.scintilla.Text);
                 if (plugin != null)
                 {
-                    logger.Info("Plugin found: " + plugin.getName());
+                    logger.Info("Plugin found: " + plugin.Name);
 
-                    var functions = plugin.getFunctionsAsArray();
-                    this.nameLabel.Text = plugin.getName();
+                    var functions = plugin.GetFunctionsAsArray();
+                    this.nameLabel.Text = plugin.Name;
 
                     if(functions != null)
                     {

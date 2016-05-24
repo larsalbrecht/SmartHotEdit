@@ -1,57 +1,55 @@
 ﻿using NLog;
-using SmartHotEdit.Helper;
-using SmartHotEditPluginHost;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using SmartHotEditPluginHost.Helper;
 
 namespace SmartHotEditPluginHost
 {
-    abstract public class APluginController
+    public abstract class APluginController
     {
 
-        protected static Logger logger = LogManager.GetCurrentClassLogger();
-        private IPluginController pluginController;
+        protected static Logger Logger = LogManager.GetCurrentClassLogger();
+        // ReSharper disable once NotAccessedField.Local
+        private IPluginController _pluginController;
         public string Type { get; set; }
 
         public IList<APlugin> LoadedPlugins = new List<APlugin>();
         public IList<APlugin> EnabledPlugins = new List<APlugin>();
         public IList<APlugin> DisabledPlugins = new List<APlugin>();
 
-        protected abstract APlugin[] getPlugins();
+        protected abstract APlugin[] GetPlugins();
 
-        public abstract bool isEnabled();
+        public abstract bool IsEnabled();
 
-        public APluginController(IPluginController pluginController)
+        protected APluginController(IPluginController pluginController)
         {
-            this.pluginController = pluginController;
+            this._pluginController = pluginController;
         }
 
-        public bool isFullyImplemented()
+        public bool IsFullyImplemented()
         {
             return this.Type != null;
         }
 
-        public void preLoadPlugins()
+        public void PreLoadPlugins()
         {
-            logger.Debug("Load " + this.Type + " Plugins");
+            Logger.Debug("Load " + this.Type + " Plugins");
         }
 
-        public abstract void loadPlugins();
+        public abstract void LoadPlugins();
 
-        public void postLoadPlugins()
+        public void PostLoadPlugins()
         {
-            this.LoadedPlugins = this.getPlugins();
+            this.LoadedPlugins = this.GetPlugins();
             this.EnabledPlugins.Clear();
             this.DisabledPlugins.Clear();
-            foreach (APlugin plugin in this.LoadedPlugins)
+            foreach (var plugin in this.LoadedPlugins)
             {
                 plugin.Type = this.Type;
-                Console.WriteLine("Property exists: " + plugin.getPropertynameForEnablePlugin() + " | " + PropertyHelper.PropertiesHasKey(plugin.getPropertynameForEnablePlugin()));
-                if (!PropertyHelper.PropertiesHasKey(plugin.getPropertynameForEnablePlugin()))
+                Console.WriteLine("Property exists: " + plugin.GetPropertynameForEnablePlugin() + " | " + PropertyHelper.PropertiesHasKey(plugin.GetPropertynameForEnablePlugin()));
+                if (!PropertyHelper.PropertiesHasKey(plugin.GetPropertynameForEnablePlugin()))
                 {
-                    PropertyHelper.CreateProperty(plugin.getPropertynameForEnablePlugin(), true, typeof(bool));
+                    PropertyHelper.CreateProperty(plugin.GetPropertynameForEnablePlugin(), true, typeof(bool));
                 }
                 plugin.Enabled = true; // TODO fix this (make dynamic) (bool)Properties.Settings.Default[plugin.getPropertynameForEnablePlugin()];
                 if (plugin.Enabled)
@@ -62,9 +60,9 @@ namespace SmartHotEditPluginHost
                     this.DisabledPlugins.Add(plugin);
                 }
             }
-            logger.Debug(this.Type + " Plugins found: " + this.LoadedPlugins.Count);
-            logger.Debug(this.Type + " Plugins enabled: " + this.EnabledPlugins.Count);
-            logger.Debug(this.Type + " Plugins disabled: " + this.DisabledPlugins.Count);
+            Logger.Debug(this.Type + " Plugins found: " + this.LoadedPlugins.Count);
+            Logger.Debug(this.Type + " Plugins enabled: " + this.EnabledPlugins.Count);
+            Logger.Debug(this.Type + " Plugins disabled: " + this.DisabledPlugins.Count);
         }
     }
 

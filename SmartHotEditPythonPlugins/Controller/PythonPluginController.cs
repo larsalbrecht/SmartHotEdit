@@ -28,14 +28,14 @@ namespace SmartHotEditPythonPlugins.Controller
         [ImportingConstructor]
         public PythonPluginController([Import("IPluginController")]IPluginController pluginController) : base(pluginController)
         {
-            logger.Trace("Construct JavascriptPluginController");
+            Logger.Trace("Construct JavascriptPluginController");
             this.Type = "Python";
             this.TypeFileExt = "py";
             this.TypePluginPath = PythonPluginController.PLUGIN_PATH;
             this.TypeScintillaLexer = Lexer.Python;
         }        
 
-        public override void loadPlugins()
+        public override void LoadPlugins()
         {
             this.plugins.Clear();
             this.engine = Python.CreateEngine();
@@ -46,25 +46,25 @@ namespace SmartHotEditPythonPlugins.Controller
             engine.SetSearchPaths(paths);
 
             // find plugins
-            string[] filePaths = this.findScriptPlugins(PythonPluginController.PLUGIN_PATH, "*_plugin.py");
+            string[] filePaths = this.FindScriptPlugins(PythonPluginController.PLUGIN_PATH, "*_plugin.py");
             foreach (string path in filePaths)
             {
-                logger.Trace("Script found at: " + path);
+                Logger.Trace("Script found at: " + path);
                 APlugin plugin = this.getPluginFromPython(path);
                 if (plugin != null)
                 {
                     this.plugins.Add(plugin);
-                    logger.Debug("Plugin found: " + plugin.getName());
+                    Logger.Debug("Plugin found: " + plugin.Name);
                 } else
                 {
-                    logger.Warn("Plugin not found in script: " + path);
+                    Logger.Warn("Plugin not found in script: " + path);
                 }
             }
         }
 
         private APlugin getPluginFromPython(String pythonPath)
         {
-            logger.Trace("Try to get plugin from python script");
+            Logger.Trace("Try to get plugin from python script");
             try
             {
                 this.scope = this.engine.ExecuteFile(pythonPath);
@@ -73,7 +73,7 @@ namespace SmartHotEditPythonPlugins.Controller
                 return this.buildPythonPlugin(plugin);
             } catch(Microsoft.Scripting.SyntaxErrorException e)
             {
-                logger.Error("Error occured on execute file: " + pythonPath + " > (Line Number: " + e.Line + ") [" + e.Message + "] {Errorline: '" + e.GetCodeLine() + "'}");
+                Logger.Error("Error occured on execute file: " + pythonPath + " > (Line Number: " + e.Line + ") [" + e.Message + "] {Errorline: '" + e.GetCodeLine() + "'}");
             }
             return null;
         }
@@ -107,22 +107,22 @@ namespace SmartHotEditPythonPlugins.Controller
             return pythonPlugin;
         }
 
-        protected override APlugin[] getPlugins()
+        protected override APlugin[] GetPlugins()
         {
             return this.plugins.ToArray();
         }
 
-        public override bool isEnabled()
+        public override bool IsEnabled()
         {
             return true;// TODO fix (make dynamic) Properties.Settings.Default.EnablePythonPlugins;
         }
 
-        public override string getTemplate()
+        public override string GetTemplate()
         {
             return SmartHotEditPythonPlugins.Properties.Resources.template_py;
         }
 
-        public override void setScintillaConfiguration(Scintilla scintilla)
+        public override void SetScintillaConfiguration(Scintilla scintilla)
         {
             // Some properties we like
             scintilla.SetProperty("tab.timmy.whinge.level", "1");
@@ -188,7 +188,7 @@ namespace SmartHotEditPythonPlugins.Controller
             scintilla.SetKeywords(0, python2 + " " + cython);
         }
 
-        public override APlugin getPluginForScript(string text)
+        public override APlugin GetPluginForScript(string text)
         {
             throw new NotImplementedException();
         }

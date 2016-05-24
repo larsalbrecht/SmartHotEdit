@@ -8,39 +8,35 @@ namespace SmartHotEdit.Controller
     public class NotificationController : IDisposable
     {
 
-        private static Logger logger = LogManager.GetCurrentClassLogger();
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        NotificationIcon notificationIcon;
-        MainController mainController;
+        private readonly NotificationIcon _notificationIcon;
+        // ReSharper disable once PrivateFieldCanBeConvertedToLocalVariable
+        private readonly MainController _mainController;
 
         public NotificationController(MainController mainController)
         {
-            logger.Trace("Init NotificationController now");
-            this.mainController = mainController;
-            init();
+            Logger.Trace("Init NotificationController now");
+            this._mainController = mainController;
+            Logger.Trace("Create TrayIcon");
+            this._notificationIcon = new NotificationIcon(this._mainController);
+            this._notificationIcon.getNotifyIcon().Visible = true;
         }
 
-        private void init()
+        public void CreateBalloonTip(ToolTipIcon toolTipIcon, string title, string text, int duration)
         {
-            logger.Trace("Create TrayIcon");
-            this.notificationIcon = new NotificationIcon(this.mainController);
-            this.notificationIcon.getNotifyIcon().Visible = true;
-        }
-
-        public void createBalloonTip(ToolTipIcon toolTipIcon, String title, String text, int duration)
-        {
-            logger.Trace("Create BalloonTip");
-            var notifyIcon = this.notificationIcon.getNotifyIcon();
+            Logger.Trace("Create BalloonTip");
+            var notifyIcon = this._notificationIcon.getNotifyIcon();
             notifyIcon.BalloonTipIcon = toolTipIcon;
             notifyIcon.BalloonTipTitle = title;
             notifyIcon.BalloonTipText = text;
             notifyIcon.ShowBalloonTip(duration);
         }
 
-        public void onClose()
+        public void OnClose()
         {
-            logger.Trace("Dispose NotificationIcon");
-            this.notificationIcon.getNotifyIcon().Dispose();
+            Logger.Trace("Dispose NotificationIcon");
+            this._notificationIcon.getNotifyIcon().Dispose();
         }
 
         public void Dispose()
@@ -56,13 +52,8 @@ namespace SmartHotEdit.Controller
 
         protected virtual void Dispose(bool disposing)
         {
-            if (disposing == true)
-            {
-                if (this.notificationIcon != null)
-                {
-                    this.notificationIcon.Dispose();
-                }
-            }
+            if (disposing != true) return;
+            this._notificationIcon?.Dispose();
         }
     }
 }

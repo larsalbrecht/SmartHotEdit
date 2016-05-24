@@ -1,18 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 
 namespace SmartHotEdit.Model
 {
     public sealed class HotKey
     {
-        public Keys hotkey;
-        public bool isAlt;
-        public bool isControl;
-        public bool isShift;
-        public bool isWin;
+        public Keys Hotkey;
+        public bool IsAlt;
+        public bool IsControl;
+        public bool IsShift;
+        public bool IsWin;
 
 
         public HotKey()
@@ -22,11 +18,11 @@ namespace SmartHotEdit.Model
 
         public HotKey(Keys hotkey, bool isShift, bool isControl, bool isAlt, bool isWin)
         {
-            this.hotkey = hotkey;
-            this.isShift = isShift;
-            this.isControl = isControl;
-            this.isAlt = isAlt;
-            this.isWin = isWin;
+            this.Hotkey = hotkey;
+            this.IsShift = isShift;
+            this.IsControl = isControl;
+            this.IsAlt = isAlt;
+            this.IsWin = isWin;
         }
     }
 }

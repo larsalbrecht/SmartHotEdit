@@ -1,8 +1,6 @@
-﻿using System;
-using System.ComponentModel.Composition;
+﻿using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using SmartHotEditPluginHost;
-using NLog;
 
 namespace SmartHotEdit.Controller.Plugin
 {
@@ -10,29 +8,30 @@ namespace SmartHotEdit.Controller.Plugin
     {
 
         [ImportMany(typeof(APlugin))]
-        private APlugin[] plugins = null;
+        // ReSharper disable once FieldCanBeMadeReadOnly.Local
+        private APlugin[] _plugins = null;
 
         public DefaultPluginController(IPluginController pluginController) : base(pluginController)
         {
-            logger.Trace("Construct DefaultPluginController");
+            Logger.Trace("Construct DefaultPluginController");
             this.Type = "Default";
         }
 
-        public override void loadPlugins()
+        public override void LoadPlugins()
         {
-            logger.Trace("Load DefaultPlugins using CompositionContainer");
+            Logger.Trace("Load DefaultPlugins using CompositionContainer");
             var pluginCatalog = new DirectoryCatalog(".");
             var container = new CompositionContainer(pluginCatalog);
             container.ComposeParts(this);
-            logger.Trace("Load DefaultPlugins finished");
+            Logger.Trace("Load DefaultPlugins finished");
         }
 
-        protected override APlugin[] getPlugins()
+        protected override APlugin[] GetPlugins()
         {
-            return this.plugins;
+            return this._plugins;
         }
 
-        public override bool isEnabled()
+        public override bool IsEnabled()
         {
             return Properties.Settings.Default.EnableDefaultPlugins;
         }
