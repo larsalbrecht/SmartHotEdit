@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace SmartHotEdit.View.Controls
@@ -10,12 +10,33 @@ namespace SmartHotEdit.View.Controls
          * Property to contain the Hotkey value.
          */
         private Keys _Hotkey = Keys.None;
+
+        /*
+         * Property to contain the Modifiers value.
+         */
+        private Keys _Modifiers = Keys.None;
+
+        private bool _WinModifier;
+
+        /*
+         * When the class is constructed: Modify some properties by default and add event call backs.
+         */
+
+        public HotKeyControl()
+        {
+            this.Cursor = Cursors.Arrow;
+            this.ReadOnly = true;
+            this.BackColor = Color.White;
+
+            this.KeyPress += Control_KeyPress;
+            this.KeyDown += Control_KeyDown;
+            this.KeyUp += Control_KeyUp;
+            this.SelectionChanged += Control_SelectionChanged;
+        }
+
         public Keys Hotkey
         {
-            get
-            {
-                return _Hotkey;
-            }
+            get { return _Hotkey; }
             set
             {
                 _Hotkey = value;
@@ -23,16 +44,9 @@ namespace SmartHotEdit.View.Controls
             }
         }
 
-        /*
-         * Property to contain the Modifiers value.
-         */
-        private Keys _Modifiers = Keys.None;
         public Keys Modifiers
         {
-            get
-            {
-                return _Modifiers;
-            }
+            get { return _Modifiers; }
             set
             {
                 _Modifiers = value;
@@ -40,13 +54,9 @@ namespace SmartHotEdit.View.Controls
             }
         }
 
-        private Boolean _WinModifier = false;
-        public Boolean WinModifier
+        public bool WinModifier
         {
-            get
-            {
-                return _WinModifier;
-            }
+            get { return _WinModifier; }
             set
             {
                 _WinModifier = value;
@@ -63,23 +73,9 @@ namespace SmartHotEdit.View.Controls
         }
 
         /*
-         * When the class is constructed: Modify some properties by default and add event call backs.
-         */
-        public HotKeyControl()
-        {
-            this.Cursor = Cursors.Arrow;
-            this.ReadOnly = true;
-            this.BackColor = System.Drawing.Color.White;
-
-            this.KeyPress += new KeyPressEventHandler(Control_KeyPress);
-            this.KeyDown += new KeyEventHandler(Control_KeyDown);
-            this.KeyUp += new KeyEventHandler(Control_KeyUp);
-            this.SelectionChanged += new EventHandler(Control_SelectionChanged);
-        }
-
-        /*
          * Bypassess the controls default handling. 
          */
+
         private void Control_KeyPress(object Sender, KeyPressEventArgs e)
         {
             e.Handled = true;
@@ -88,6 +84,7 @@ namespace SmartHotEdit.View.Controls
         /*
          * Obtain the Modifiers and Key then 'draw' the string.
          */
+
         private void Control_KeyDown(object Sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Back || e.KeyCode == Keys.Delete)
@@ -98,7 +95,7 @@ namespace SmartHotEdit.View.Controls
 
             // Workaround to handle WinKeys as modifiers
             Modifiers = e.Modifiers;
-            if(e.KeyCode == Keys.LWin || e.KeyCode == Keys.RWin)
+            if (e.KeyCode == Keys.LWin || e.KeyCode == Keys.RWin)
             {
                 WinModifier = true;
             }
@@ -112,9 +109,10 @@ namespace SmartHotEdit.View.Controls
         /*
          * This isn't really required.
          */
+
         private void Control_KeyUp(object Sender, KeyEventArgs e)
         {
-            if (Hotkey == Keys.None && Control.ModifierKeys == Keys.None)
+            if (Hotkey == Keys.None && ModifierKeys == Keys.None)
             {
                 ResetHotKeys();
             }
@@ -125,6 +123,7 @@ namespace SmartHotEdit.View.Controls
         /*
          * This prevents the user from selecting text (my preference).
          */
+
         private void Control_SelectionChanged(object Sender, EventArgs e)
         {
             if (this.SelectionStart != this.TextLength)
@@ -136,12 +135,12 @@ namespace SmartHotEdit.View.Controls
         /*
          * This method is called to print the hotkey combination.
          */
+
         private void Redraw()
         {
-
             if (Modifiers != Keys.None)
             {
-                this.Text = (Modifiers.ToString()).Replace(", ", " + ");
+                this.Text = Modifiers.ToString().Replace(", ", " + ");
             }
 
             if (Hotkey == Keys.None)
@@ -163,12 +162,11 @@ namespace SmartHotEdit.View.Controls
 
             if (Modifiers != Keys.None)
             {
-                this.Text = (Modifiers.ToString()).Replace(", ", " + ") + " + " + (WinModifier == true ? "Win + " : "") + Hotkey.ToString();
+                this.Text = Modifiers.ToString().Replace(", ", " + ") + " + " + (WinModifier ? "Win + " : "") + Hotkey;
                 return;
             }
 
             this.Text = Hotkey.ToString();
         }
-
     }
 }

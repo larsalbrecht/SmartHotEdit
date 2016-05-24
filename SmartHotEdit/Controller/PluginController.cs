@@ -1,24 +1,20 @@
-﻿using NLog;
-using SmartHotEditPluginHost;
-using System;
-using SmartHotEdit.Controller.Plugin;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using System.IO;
 using System.Linq;
+using NLog;
+using SmartHotEdit.Controller.Plugin;
+using SmartHotEdit.Properties;
+using SmartHotEditPluginHost;
 
 namespace SmartHotEdit.Controller
 {
     // TODO let the user disable different plugin loader
     public class PluginController : IPluginController
     {
-
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-
-        public List<APlugin> LoadedPlugins = new List<APlugin>();
-        public List<APlugin> EnabledPlugins = new List<APlugin>();
-        public List<APlugin> DisabledPlugins = new List<APlugin>();
 
         private readonly IList<APluginController> _pluginControllerList;
 
@@ -26,10 +22,11 @@ namespace SmartHotEdit.Controller
         // ReSharper disable once FieldCanBeMadeReadOnly.Local
         private AScriptPluginController[] _scriptPluginControllerList = null;
 
-        [Export("IPluginController")]
-        private IPluginController PluginControllerList { get; set; }
-
         private IList<FileSystemWatcher> _watcherList;
+        public List<APlugin> DisabledPlugins = new List<APlugin>();
+        public List<APlugin> EnabledPlugins = new List<APlugin>();
+
+        public List<APlugin> LoadedPlugins = new List<APlugin>();
 
         public PluginController()
         {
@@ -43,7 +40,7 @@ namespace SmartHotEdit.Controller
             container.Dispose();
             Logger.Trace("Load ScriptPluginController finished");
 
-            this._pluginControllerList = new List<APluginController> { new DefaultPluginController(this) };
+            this._pluginControllerList = new List<APluginController> {new DefaultPluginController(this)};
 
             foreach (var scriptPluginController in this._scriptPluginControllerList)
             {
@@ -53,18 +50,24 @@ namespace SmartHotEdit.Controller
             this.LoadPlugins();
         }
 
+        [Export("IPluginController")]
+        private IPluginController PluginControllerList { get; set; }
+
         public void LoadPlugins()
         {
             this.LoadedPlugins.Clear();
             this.EnabledPlugins.Clear();
             this.DisabledPlugins.Clear();
             Logger.Trace("Get Plugins from *PluginController");
-            Logger.Trace("Use plugins: " + Properties.Settings.Default.EnablePlugins);
-            if (Properties.Settings.Default.EnablePlugins)
+            Logger.Trace("Use plugins: " + Settings.Default.EnablePlugins);
+            if (Settings.Default.EnablePlugins)
             {
                 foreach (var concretePluginController in this._pluginControllerList)
                 {
-                    if ((concretePluginController is AScriptPluginController && ((AScriptPluginController)concretePluginController).IsFullyImplemented()) || (!(concretePluginController is AScriptPluginController) && concretePluginController.IsFullyImplemented()))
+                    if ((concretePluginController is AScriptPluginController &&
+                         ((AScriptPluginController) concretePluginController).IsFullyImplemented()) ||
+                        (!(concretePluginController is AScriptPluginController) &&
+                         concretePluginController.IsFullyImplemented()))
                     {
                         Logger.Trace(concretePluginController.Type + " is fully implemented");
                         if (concretePluginController.IsEnabled())
@@ -94,7 +97,8 @@ namespace SmartHotEdit.Controller
                     }
                     else
                     {
-                        throw new NotImplementedException("The Controller is not fully implemented: " + concretePluginController.Type);
+                        throw new NotImplementedException("The Controller is not fully implemented: " +
+                                                          concretePluginController.Type);
                     }
                 }
             }
@@ -125,9 +129,9 @@ namespace SmartHotEdit.Controller
             }
             else
             {
-                Logger.Info("ScriptPluginController can not be watched (pluginpath did not exists): " + path + "; " + scriptPluginController.Type);
+                Logger.Info("ScriptPluginController can not be watched (pluginpath did not exists): " + path + "; " +
+                            scriptPluginController.Type);
             }
-
         }
 
         private void OnPluginDirectoryChanged(object source, FileSystemEventArgs e)
@@ -147,7 +151,7 @@ namespace SmartHotEdit.Controller
             {
                 arrayToMerge = new APlugin[0];
             }
-            int originalLength = baseArray.Length;
+            var originalLength = baseArray.Length;
             Array.Resize(ref baseArray, originalLength + arrayToMerge.Length);
             Array.Copy(arrayToMerge, 0, baseArray, originalLength, arrayToMerge.Length);
 
@@ -156,10 +160,12 @@ namespace SmartHotEdit.Controller
 
         public IList<APluginController> GetPluginControllerList(Type pluginControllerType = null)
         {
-            return pluginControllerType == null ?
-                this._pluginControllerList :
-                this._pluginControllerList.Where(
-                    pluginController => pluginController.GetType().IsSubclassOf(pluginControllerType) || pluginController.GetType() == pluginControllerType
+            return pluginControllerType == null
+                ? this._pluginControllerList
+                : this._pluginControllerList.Where(
+                    pluginController =>
+                        pluginController.GetType().IsSubclassOf(pluginControllerType) ||
+                        pluginController.GetType() == pluginControllerType
                     ).ToList();
         }
     }

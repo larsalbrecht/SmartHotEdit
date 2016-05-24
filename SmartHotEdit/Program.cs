@@ -1,25 +1,24 @@
 ﻿using System;
 using System.Windows.Forms;
-using SmartHotEdit.Controller;
 using NLog.Config;
+using SmartHotEdit.Controller;
+using SmartHotEdit.NLogger.LayoutRenderer;
 
 namespace SmartHotEdit
 {
-
-    static class Program
+    internal static class Program
     {
-
         public static string AppName = "SmartHotEdit";
 
         /// <summary>
-        /// Main entrypoint to the application
+        ///     Main entrypoint to the application
         /// </summary>
         [STAThread]
-        static void Main()
+        private static void Main()
         {
             // NLog
             ConfigurationItemFactory.Default.LayoutRenderers
-                            .RegisterDefinition("buildConfiguration", typeof(NLogger.LayoutRenderer.NLogBuildTypeLayoutRenderer));
+                .RegisterDefinition("buildConfiguration", typeof(NLogBuildTypeLayoutRenderer));
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 

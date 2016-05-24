@@ -1,20 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using SmartHotEditPluginHost;
-using SmartHotEditPluginHost.Model;
+﻿using SmartHotEditPluginHost;
 
 namespace SmartHotEditLuaPlugins.Model
 {
-    class Plugin : APlugin
+    internal class Plugin : APlugin
     {
-        public String name;
-        public String description;
+        public string description;
+        public string name;
 
-        public Plugin(){}
+        public Plugin()
+        {
+        }
 
-        public Plugin(String name, String description)
+        public Plugin(string name, string description)
         {
             this.name = name;
             this.description = description;
@@ -22,25 +19,19 @@ namespace SmartHotEditLuaPlugins.Model
 
         public override string Description
         {
-            get
-            {
-                return this.description;
-            }
+            get { return this.description; }
         }
 
         public override string Name
         {
-            get
-            {
-                return this.name;
-            }
+            get { return this.name; }
         }
 
         public void addLuaFunction(LuaFunction function)
         {
-            if(function != null && function.getFunction() != null)
+            if (function != null && function.getFunction() != null)
             {
-                base.AddFunction(function.getFunction());
+                AddFunction(function.getFunction());
             }
         }
     }

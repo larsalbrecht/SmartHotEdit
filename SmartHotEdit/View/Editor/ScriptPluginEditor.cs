@@ -1,40 +1,58 @@
-﻿using NLog;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Windows.Forms;
+using NLog;
 using NLog.Config;
+using NLog.Windows.Forms;
 using ScintillaNET;
 using SmartHotEdit.Controller;
 using SmartHotEditPluginHost;
-using SmartHotEditPluginHost.Model;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Windows.Forms;
 
 namespace SmartHotEdit.View.Editor
 {
     public partial class ScriptPluginEditor : Form
     {
         protected static Logger logger;
-
-        private String originalHeadertext;
-        private MainController mainController;
-        private IList<AScriptPluginController> scriptPluginController;
         private AScriptPluginController _currentPluginController;
 
-        private String _filepathToSave;
-        private Boolean _isSaved = true;
+        private string _filepathToSave;
+        private bool _isSaved = true;
+        private readonly MainController mainController;
 
-        private Boolean IsSaved
+
+        private int maxLineNumberCharLength;
+
+        private readonly string originalHeadertext;
+        private readonly IList<AScriptPluginController> scriptPluginController;
+
+        public ScriptPluginEditor(MainController mainController)
+        {
+            InitializeComponent();
+
+            this.originalHeadertext = this.Text;
+            this.mainController = mainController;
+            this.scriptPluginController =
+                this.mainController.PluginController.GetPluginControllerList(typeof(AScriptPluginController))
+                    .Cast<AScriptPluginController>()
+                    .ToList();
+            this.openScriptDialog.Filter = this.getFilterForDialog();
+            this.saveScriptDialog.Filter = this.getFilterForDialog();
+            var bindingSource = new BindingSource();
+            bindingSource.DataSource = this.scriptPluginController;
+            this.scriptTypeList.DataSource = bindingSource;
+            this.scriptTypeList.DisplayMember = "Type";
+        }
+
+        private bool IsSaved
         {
             get { return _isSaved; }
             set
             {
                 _isSaved = value;
-                var baseText = this.originalHeadertext + " -" + (_filepathToSave != null ? " [" + _filepathToSave + "]" : "");
+                var baseText = this.originalHeadertext + " -" +
+                               (_filepathToSave != null ? " [" + _filepathToSave + "]" : "");
                 if (_isSaved == false)
                 {
                     this.Text = baseText + " *";
@@ -46,7 +64,7 @@ namespace SmartHotEdit.View.Editor
             }
         }
 
-        private String FilepathToSave
+        private string FilepathToSave
         {
             get { return _filepathToSave; }
             set
@@ -56,34 +74,16 @@ namespace SmartHotEdit.View.Editor
             }
         }
 
-
-        private int maxLineNumberCharLength;
-
-        public ScriptPluginEditor(MainController mainController)
-        {
-            InitializeComponent();
-
-            this.originalHeadertext = this.Text;
-            this.mainController = mainController;
-            this.scriptPluginController = this.mainController.PluginController.GetPluginControllerList(typeof(AScriptPluginController)).Cast<AScriptPluginController>().ToList();
-            this.openScriptDialog.Filter = this.getFilterForDialog();
-            this.saveScriptDialog.Filter = this.getFilterForDialog();
-            var bindingSource = new BindingSource();
-            bindingSource.DataSource = this.scriptPluginController;
-            this.scriptTypeList.DataSource = bindingSource;
-            this.scriptTypeList.DisplayMember = "Type";
-        }
-
         private AScriptPluginController[] getItemsForScriptTypeBox()
         {
-            return this.scriptPluginController.ToArray<AScriptPluginController>();
+            return this.scriptPluginController.ToArray();
         }
 
-        private String getFilterForDialog()
+        private string getFilterForDialog()
         {
             var resultList = new List<string>();
             resultList.Add("All Files (*.*)|*.*");
-            foreach (AScriptPluginController pluginController in this.scriptPluginController)
+            foreach (var pluginController in this.scriptPluginController)
             {
                 resultList.Add(pluginController.Type + "|" + "*." + pluginController.TypeFileExt);
             }
@@ -94,12 +94,12 @@ namespace SmartHotEdit.View.Editor
         {
             this.openScriptDialog.DefaultExt = this._currentPluginController.TypeFileExt;
 
-            DialogResult result = this.openScriptDialog.ShowDialog();
+            var result = this.openScriptDialog.ShowDialog();
             if (result == DialogResult.OK)
             {
-                string scriptFile = this.openScriptDialog.FileName;
+                var scriptFile = this.openScriptDialog.FileName;
                 this.FilepathToSave = scriptFile;
-                foreach (AScriptPluginController pluginController in this.scriptPluginController)
+                foreach (var pluginController in this.scriptPluginController)
                 {
                     Console.WriteLine(Path.GetExtension(scriptFile));
                     if ("." + pluginController.TypeFileExt == Path.GetExtension(scriptFile))
@@ -118,7 +118,7 @@ namespace SmartHotEdit.View.Editor
                     logger.Error(ex.Message);
                 }
             }
-            for (int i = 0; i < this.scriptTypeList.Items.Count; i++)
+            for (var i = 0; i < this.scriptTypeList.Items.Count; i++)
             {
                 if (this.scriptTypeList.Items[i] == this._currentPluginController)
                 {
@@ -137,7 +137,7 @@ namespace SmartHotEdit.View.Editor
         {
             if (this.FilepathToSave == null)
             {
-                DialogResult result = this.saveScriptDialog.ShowDialog();
+                var result = this.saveScriptDialog.ShowDialog();
                 if (result == DialogResult.OK && saveScriptDialog.FileName != "")
                 {
                     this.FilepathToSave = saveScriptDialog.FileName;
@@ -187,15 +187,17 @@ namespace SmartHotEdit.View.Editor
             // Calculate the width required to display the last line number
             // and include some padding for good measure.
             const int padding = 2;
-            this.scintilla.Margins[0].Width = this.scintilla.TextWidth(Style.LineNumber, new string('9', maxLineNumberCharLength + 1)) + padding;
+            this.scintilla.Margins[0].Width =
+                this.scintilla.TextWidth(Style.LineNumber, new string('9', maxLineNumberCharLength + 1)) + padding;
             this.maxLineNumberCharLength = maxLineNumberCharLength;
         }
 
         private void scriptTypeList_SelectedValueChanged(object sender, EventArgs e)
         {
-            if (this.scriptTypeList.SelectedValue != null && this.scriptTypeList.SelectedValue is AScriptPluginController)
+            if (this.scriptTypeList.SelectedValue != null &&
+                this.scriptTypeList.SelectedValue is AScriptPluginController)
             {
-                this._currentPluginController = ((AScriptPluginController)this.scriptTypeList.SelectedValue);
+                this._currentPluginController = (AScriptPluginController) this.scriptTypeList.SelectedValue;
                 this.scintilla.StyleResetDefault();
                 this.scintilla.Styles[Style.Default].Font = "Consolas";
                 this.scintilla.Styles[Style.Default].Size = 10;
@@ -207,13 +209,12 @@ namespace SmartHotEdit.View.Editor
                 this.saveScriptDialog.DefaultExt = _currentPluginController.TypeFileExt;
 
                 // enable/disable button for loading templating
-                this.templateLoadMenuItem.Enabled = (this._currentPluginController.GetTemplate() != null);
+                this.templateLoadMenuItem.Enabled = this._currentPluginController.GetTemplate() != null;
 
                 if (logger != null)
                 {
-                    logger.Debug("Lexer changed: " + this.scintilla.Lexer.ToString());
+                    logger.Debug("Lexer changed: " + this.scintilla.Lexer);
                 }
-
             }
         }
 
@@ -222,14 +223,14 @@ namespace SmartHotEdit.View.Editor
             if (logger == null)
             {
                 var config = LogManager.Configuration;
-                var target = new NLog.Windows.Forms.RichTextBoxTarget();
+                var target = new RichTextBoxTarget();
                 target.Name = "control";
                 target.TargetRichTextBox = this.outputRichTextBox;
                 target.Layout = @"${longdate} - ${uppercase:${level}} - ${message}";
 
                 config.AddTarget("control", target);
 
-                var rule = new NLog.Config.LoggingRule("SmartHotEdit.View.Editor.*", LogLevel.Info, target);
+                var rule = new LoggingRule("SmartHotEdit.View.Editor.*", LogLevel.Info, target);
                 config.LoggingRules.Add(rule);
 
                 LogManager.Configuration = config;
@@ -248,7 +249,8 @@ namespace SmartHotEdit.View.Editor
             }
             else
             {
-                DialogResult dialogResult = MessageBox.Show("The current script is unsaved. Do you want to save?", "Unsaved changes", MessageBoxButtons.YesNoCancel);
+                var dialogResult = MessageBox.Show("The current script is unsaved. Do you want to save?",
+                    "Unsaved changes", MessageBoxButtons.YesNoCancel);
                 if (dialogResult != DialogResult.Cancel)
                 {
                     if ((dialogResult == DialogResult.OK && this.saveFile()) || dialogResult == DialogResult.No)
@@ -281,7 +283,9 @@ namespace SmartHotEdit.View.Editor
                 }
                 else
                 {
-                    MessageBox.Show("There is no template for this scriptplugin: " + this._currentPluginController.Type, "No template found", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show(
+                        "There is no template for this scriptplugin: " + this._currentPluginController.Type,
+                        "No template found", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }
         }
@@ -297,7 +301,8 @@ namespace SmartHotEdit.View.Editor
             }
             else
             {
-                DialogResult dialogResult = MessageBox.Show("The current script is unsaved. Do you want to save?", "Unsaved changes", MessageBoxButtons.YesNoCancel);
+                var dialogResult = MessageBox.Show("The current script is unsaved. Do you want to save?",
+                    "Unsaved changes", MessageBoxButtons.YesNoCancel);
                 if (dialogResult != DialogResult.Cancel)
                 {
                     if ((dialogResult == DialogResult.OK && this.saveFile()) || dialogResult == DialogResult.No)
@@ -325,7 +330,7 @@ namespace SmartHotEdit.View.Editor
             functionsListView.Clear();
             try
             {
-                APlugin plugin = this._currentPluginController.GetPluginForScript(this.scintilla.Text);
+                var plugin = this._currentPluginController.GetPluginForScript(this.scintilla.Text);
                 if (plugin != null)
                 {
                     logger.Info("Plugin found: " + plugin.Name);
@@ -333,14 +338,14 @@ namespace SmartHotEdit.View.Editor
                     var functions = plugin.GetFunctionsAsArray();
                     this.nameLabel.Text = plugin.Name;
 
-                    if(functions != null)
+                    if (functions != null)
                     {
                         functionsListView.Columns.Add("Name", -2, HorizontalAlignment.Left);
                         functionsListView.Columns.Add("Description", -2, HorizontalAlignment.Left);
 
                         this.functionLabel.Text = functions.Length.ToString();
 
-                        foreach(Function function in functions)
+                        foreach (var function in functions)
                         {
                             var tmpFunctionEntry = new ListViewItem();
                             tmpFunctionEntry.Tag = function;
@@ -348,14 +353,13 @@ namespace SmartHotEdit.View.Editor
                             tmpFunctionEntry.SubItems.Add(function.Description);
                             functionsListView.Items.Add(tmpFunctionEntry);
                         }
-                        
-
                     }
                 }
             }
             catch (Exception ex)
             {
-                logger.Error(String.Format("No valid plugin found. Exception during parsing by {0}", this._currentPluginController.Type));
+                logger.Error("No valid plugin found. Exception during parsing by {0}",
+                    this._currentPluginController.Type);
                 logger.Error(ex.Message);
             }
             finally
@@ -367,7 +371,6 @@ namespace SmartHotEdit.View.Editor
 
         private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
         }
     }
 }

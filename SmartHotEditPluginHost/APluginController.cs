@@ -1,30 +1,30 @@
-﻿using NLog;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using NLog;
 using SmartHotEditPluginHost.Helper;
 
 namespace SmartHotEditPluginHost
 {
     public abstract class APluginController
     {
-
         protected static Logger Logger = LogManager.GetCurrentClassLogger();
         // ReSharper disable once NotAccessedField.Local
         private IPluginController _pluginController;
-        public string Type { get; set; }
+        public IList<APlugin> DisabledPlugins = new List<APlugin>();
+        public IList<APlugin> EnabledPlugins = new List<APlugin>();
 
         public IList<APlugin> LoadedPlugins = new List<APlugin>();
-        public IList<APlugin> EnabledPlugins = new List<APlugin>();
-        public IList<APlugin> DisabledPlugins = new List<APlugin>();
-
-        protected abstract APlugin[] GetPlugins();
-
-        public abstract bool IsEnabled();
 
         protected APluginController(IPluginController pluginController)
         {
             this._pluginController = pluginController;
         }
+
+        public string Type { get; set; }
+
+        protected abstract APlugin[] GetPlugins();
+
+        public abstract bool IsEnabled();
 
         public bool IsFullyImplemented()
         {
@@ -46,16 +46,19 @@ namespace SmartHotEditPluginHost
             foreach (var plugin in this.LoadedPlugins)
             {
                 plugin.Type = this.Type;
-                Console.WriteLine("Property exists: " + plugin.GetPropertynameForEnablePlugin() + " | " + PropertyHelper.PropertiesHasKey(plugin.GetPropertynameForEnablePlugin()));
+                Console.WriteLine("Property exists: " + plugin.GetPropertynameForEnablePlugin() + " | " +
+                                  PropertyHelper.PropertiesHasKey(plugin.GetPropertynameForEnablePlugin()));
                 if (!PropertyHelper.PropertiesHasKey(plugin.GetPropertynameForEnablePlugin()))
                 {
                     PropertyHelper.CreateProperty(plugin.GetPropertynameForEnablePlugin(), true, typeof(bool));
                 }
-                plugin.Enabled = true; // TODO fix this (make dynamic) (bool)Properties.Settings.Default[plugin.getPropertynameForEnablePlugin()];
+                plugin.Enabled = true;
+                    // TODO fix this (make dynamic) (bool)Properties.Settings.Default[plugin.getPropertynameForEnablePlugin()];
                 if (plugin.Enabled)
-                {   
+                {
                     this.EnabledPlugins.Add(plugin);
-                } else
+                }
+                else
                 {
                     this.DisabledPlugins.Add(plugin);
                 }
@@ -65,5 +68,4 @@ namespace SmartHotEditPluginHost
             Logger.Debug(this.Type + " Plugins disabled: " + this.DisabledPlugins.Count);
         }
     }
-
 }

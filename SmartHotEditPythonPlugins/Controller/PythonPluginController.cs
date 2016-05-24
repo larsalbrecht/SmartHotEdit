@@ -1,39 +1,38 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using IronPython.Hosting;
-using SmartHotEditPluginHost;
-using NLog;
-using Microsoft.Scripting.Hosting;
-using System.IO;
-using SmartHotEditPluginHost.Model;
-using ScintillaNET;
-using System.Drawing;
-using SmartHotEditPythonPlugins.Model;
 using System.ComponentModel.Composition;
+using System.Drawing;
+using System.IO;
+using IronPython.Hosting;
+using Microsoft.Scripting;
+using Microsoft.Scripting.Hosting;
+using ScintillaNET;
+using SmartHotEditPluginHost;
+using SmartHotEditPluginHost.Model;
+using SmartHotEditPythonPlugins.Model;
+using SmartHotEditPythonPlugins.Properties;
 
 namespace SmartHotEditPythonPlugins.Controller
 {
-
-    [Export(typeof(SmartHotEditPluginHost.AScriptPluginController))]
-    class PythonPluginController : AScriptPluginController
+    [Export(typeof(AScriptPluginController))]
+    internal class PythonPluginController : AScriptPluginController
     {
-        private List<APlugin> plugins = new List<APlugin>();
-        private const String PLUGIN_PATH = @"Python\Plugins\";
+        private const string PLUGIN_PATH = @"Python\Plugins\";
 
         private ScriptEngine engine;
+        private readonly List<APlugin> plugins = new List<APlugin>();
         private ScriptScope scope;
 
         [ImportingConstructor]
-        public PythonPluginController([Import("IPluginController")]IPluginController pluginController) : base(pluginController)
+        public PythonPluginController([Import("IPluginController")] IPluginController pluginController)
+            : base(pluginController)
         {
             Logger.Trace("Construct JavascriptPluginController");
             this.Type = "Python";
             this.TypeFileExt = "py";
-            this.TypePluginPath = PythonPluginController.PLUGIN_PATH;
+            this.TypePluginPath = PLUGIN_PATH;
             this.TypeScintillaLexer = Lexer.Python;
-        }        
+        }
 
         public override void LoadPlugins()
         {
@@ -41,28 +40,29 @@ namespace SmartHotEditPythonPlugins.Controller
             this.engine = Python.CreateEngine();
             this.scope = engine.CreateScope();
 
-            ICollection<string> paths = engine.GetSearchPaths();
+            var paths = engine.GetSearchPaths();
             paths.Add(Path.GetFullPath(@"Python\Modules"));
             engine.SetSearchPaths(paths);
 
             // find plugins
-            string[] filePaths = this.FindScriptPlugins(PythonPluginController.PLUGIN_PATH, "*_plugin.py");
-            foreach (string path in filePaths)
+            var filePaths = this.FindScriptPlugins(PLUGIN_PATH, "*_plugin.py");
+            foreach (var path in filePaths)
             {
                 Logger.Trace("Script found at: " + path);
-                APlugin plugin = this.getPluginFromPython(path);
+                var plugin = this.getPluginFromPython(path);
                 if (plugin != null)
                 {
                     this.plugins.Add(plugin);
                     Logger.Debug("Plugin found: " + plugin.Name);
-                } else
+                }
+                else
                 {
                     Logger.Warn("Plugin not found in script: " + path);
                 }
             }
         }
 
-        private APlugin getPluginFromPython(String pythonPath)
+        private APlugin getPluginFromPython(string pythonPath)
         {
             Logger.Trace("Try to get plugin from python script");
             try
@@ -71,9 +71,11 @@ namespace SmartHotEditPythonPlugins.Controller
                 var plugin = scope.GetVariable("plugin");
 
                 return this.buildPythonPlugin(plugin);
-            } catch(Microsoft.Scripting.SyntaxErrorException e)
+            }
+            catch (SyntaxErrorException e)
             {
-                Logger.Error("Error occured on execute file: " + pythonPath + " > (Line Number: " + e.Line + ") [" + e.Message + "] {Errorline: '" + e.GetCodeLine() + "'}");
+                Logger.Error("Error occured on execute file: " + pythonPath + " > (Line Number: " + e.Line + ") [" +
+                             e.Message + "] {Errorline: '" + e.GetCodeLine() + "'}");
             }
             return null;
         }
@@ -82,26 +84,26 @@ namespace SmartHotEditPythonPlugins.Controller
         {
             Plugin pythonPlugin = null;
 
-            if(plugin != null)
+            if (plugin != null)
             {
                 pythonPlugin = new Plugin(plugin.name, plugin.description);
                 List<Argument> arguments = null;
                 if (plugin.get_functions().Count > 0)
                 {
-                    foreach (dynamic function in plugin.get_functions())
+                    foreach (var function in plugin.get_functions())
                     {
                         arguments = null;
                         if (function.arguments != null && function.arguments.Count > 0)
                         {
                             arguments = new List<Argument>();
-                            foreach(dynamic argument in function.arguments)
+                            foreach (var argument in function.arguments)
                             {
                                 arguments.Add(new Argument(argument.key, argument.description));
                             }
                         }
-                        pythonPlugin.addPythonFunction(new PythonFunction(function.name, function.description, function.called_function, arguments));
+                        pythonPlugin.addPythonFunction(new PythonFunction(function.name, function.description,
+                            function.called_function, arguments));
                     }
-
                 }
             }
             return pythonPlugin;
@@ -114,12 +116,12 @@ namespace SmartHotEditPythonPlugins.Controller
 
         public override bool IsEnabled()
         {
-            return true;// TODO fix (make dynamic) Properties.Settings.Default.EnablePythonPlugins;
+            return true; // TODO fix (make dynamic) Properties.Settings.Default.EnablePythonPlugins;
         }
 
         public override string GetTemplate()
         {
-            return SmartHotEditPythonPlugins.Properties.Resources.template_py;
+            return Resources.template_py;
         }
 
         public override void SetScintillaConfiguration(Scintilla scintilla)
@@ -135,7 +137,7 @@ namespace SmartHotEditPythonPlugins.Controller
             scintilla.Margins[2].Width = 20;
 
             // Reset folder markers
-            for (int i = Marker.FolderEnd; i <= Marker.FolderOpen; i++)
+            for (var i = Marker.FolderEnd; i <= Marker.FolderOpen; i++)
             {
                 scintilla.Markers[i].SetForeColor(SystemColors.ControlLightLight);
                 scintilla.Markers[i].SetBackColor(SystemColors.ControlDark);
@@ -153,7 +155,7 @@ namespace SmartHotEditPythonPlugins.Controller
             scintilla.Markers[Marker.FolderTail].Symbol = MarkerSymbol.LCorner;
 
             // Enable automatic folding
-            scintilla.AutomaticFold = (AutomaticFold.Show | AutomaticFold.Click | AutomaticFold.Change);
+            scintilla.AutomaticFold = AutomaticFold.Show | AutomaticFold.Click | AutomaticFold.Change;
 
             // Set the styles
             scintilla.Styles[Style.Python.Default].ForeColor = Color.FromArgb(0x80, 0x80, 0x80);
@@ -182,7 +184,8 @@ namespace SmartHotEditPythonPlugins.Controller
 
             // Important for Python
             scintilla.ViewWhitespace = WhitespaceMode.VisibleAlways;
-            var python2 = "and as assert break class continue def del elif else except exec finally for from global if import in is lambda not or pass print raise return try while with yield";
+            var python2 =
+                "and as assert break class continue def del elif else except exec finally for from global if import in is lambda not or pass print raise return try while with yield";
             var cython = "cdef cimport cpdef";
 
             scintilla.SetKeywords(0, python2 + " " + cython);

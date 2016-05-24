@@ -1,19 +1,17 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using ScintillaNET;
 
 namespace SmartHotEditPluginHost
 {
     public abstract class AScriptPluginController : APluginController
     {
+        protected AScriptPluginController(IPluginController pluginController) : base(pluginController)
+        {
+        }
 
         public string TypePluginPath { get; set; }
         public string TypeFileExt { get; set; }
         public Lexer TypeScintillaLexer { get; set; }
-
-        protected AScriptPluginController(IPluginController pluginController) : base(pluginController)
-        {
-        }
 
         // ReSharper disable once UnusedMember.Local
         private new bool IsFullyImplemented()
@@ -21,7 +19,7 @@ namespace SmartHotEditPluginHost
             return base.IsFullyImplemented() && this.TypeFileExt != null && this.TypePluginPath != null;
         }
 
-        protected string[] FindScriptPlugins(String pathStr, String searchPattern)
+        protected string[] FindScriptPlugins(string pathStr, string searchPattern)
         {
             Logger.Trace("Find plugins in path: " + pathStr + "; with search pattern: " + searchPattern);
             string[] result = null;

@@ -11,7 +11,5 @@ namespace SmartHotEditPluginHost
 
         string GetResultFromFunction(Function function, string value, List<Argument> arguments = null);
         Function[] GetFunctionsAsArray();
-
-
     }
 }

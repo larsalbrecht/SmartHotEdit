@@ -13,7 +13,6 @@ namespace SmartHotEdit.Model
 
         public HotKey()
         {
-
         }
 
         public HotKey(Keys hotkey, bool isShift, bool isControl, bool isAlt, bool isWin)

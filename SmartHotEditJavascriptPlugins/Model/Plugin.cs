@@ -1,20 +1,18 @@
 ﻿using SmartHotEditPluginHost;
 using SmartHotEditPluginHost.Model;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace SmartHotEditJavascriptPlugins.Model
 {
-    class Plugin : APlugin
+    internal class Plugin : APlugin
     {
-        public String name;
-        public String description;
+        public string description;
+        public string name;
 
-        public Plugin() { }
+        public Plugin()
+        {
+        }
 
-        public Plugin(String name, String description)
+        public Plugin(string name, string description)
         {
             this.name = name;
             this.description = description;
@@ -22,23 +20,17 @@ namespace SmartHotEditJavascriptPlugins.Model
 
         public override string Description
         {
-            get
-            {
-                return this.description;
-            }
+            get { return this.description; }
         }
 
         public override string Name
         {
-            get
-            {
-                return this.name;
-            }
+            get { return this.name; }
         }
 
-        public new void addFunction(Function function)
+        public void addFunction(Function function)
         {
-            base.AddFunction(function);
+            AddFunction(function);
         }
     }
 }

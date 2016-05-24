@@ -1,31 +1,31 @@
-﻿using System.Threading;
+﻿using System;
+using System.Diagnostics;
+using System.Threading;
 using System.Windows.Forms;
 using NLog;
-using System;
+using SmartHotEdit.Properties;
 
 namespace SmartHotEdit.Controller
 {
     public sealed class MainController : IDisposable
     {
-        public NotificationController NotificationController { get; set; }
-        public HotKeyController HotKeyController { get; set; }
-        public PluginController PluginController { get; set; }
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         public MainController()
         {
-            if(Properties.Settings.Default.EnableLogging == false)
+            if (Settings.Default.EnableLogging == false)
             {
-                System.Diagnostics.Debug.WriteLine("Disable logger");
+                Debug.WriteLine("Disable logger");
                 LogManager.DisableLogging();
-            } else
+            }
+            else
             {
                 LogManager.EnableLogging();
             }
             Logger.Info("Program started");
             bool isFirstInstance;
             // Please use a unique name for the mutex to prevent conflicts with other programs
-            using (Mutex mtx = new Mutex(true, "SmartHotEdit", out isFirstInstance))
+            using (var mtx = new Mutex(true, "SmartHotEdit", out isFirstInstance))
             {
                 if (isFirstInstance)
                 {
@@ -44,7 +44,6 @@ namespace SmartHotEdit.Controller
                     Application.Run();
                     Logger.Trace("Application.Run finished");
                     this.OnClose();
-
                 }
                 else
                 {
@@ -54,9 +53,22 @@ namespace SmartHotEdit.Controller
             } // releases the Mutex
         }
 
+        public NotificationController NotificationController { get; set; }
+        public HotKeyController HotKeyController { get; set; }
+        public PluginController PluginController { get; set; }
+
+
+        public void Dispose()
+        {
+            this.HotKeyController?.Dispose();
+            this.NotificationController?.Dispose();
+            GC.SuppressFinalize(this);
+        }
+
         private void OnApplicationInstanceAlreadyStarted()
         {
-            this.NotificationController.CreateBalloonTip(ToolTipIcon.Info, "Smart Hot Edit", "Smart Hot Edit already running", 10000);
+            this.NotificationController.CreateBalloonTip(ToolTipIcon.Info, "Smart Hot Edit",
+                "Smart Hot Edit already running", 10000);
         }
 
         public void OnUserWillClose()
@@ -68,17 +80,9 @@ namespace SmartHotEdit.Controller
 
         private void OnClose()
         {
-            Properties.Settings.Default.Save();
+            Settings.Default.Save();
             Logger.Trace("onClose");
             this.NotificationController.OnClose();
-        }
-
-
-        public void Dispose()
-        {
-            this.HotKeyController?.Dispose();
-            this.NotificationController?.Dispose();
-            GC.SuppressFinalize(this);
         }
     }
 }

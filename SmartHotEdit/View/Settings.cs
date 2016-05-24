@@ -1,20 +1,20 @@
-﻿using NLog;
-using SmartHotEdit.Controller;
-using SmartHotEdit.Model;
-using SmartHotEditPluginHost;
-using System;
-using System.Collections.Generic;
-using System.Configuration;
+﻿using System;
+using System.Diagnostics;
 using System.Windows.Forms;
 using Microsoft.Win32;
+using NLog;
+using SmartHotEdit.Controller;
+using SmartHotEdit.Model;
+using SmartHotEdit.Properties;
+using SmartHotEditPluginHost;
 
 namespace SmartHotEdit.View
 {
     public partial class SettingsView : Form
     {
-        private static Logger logger = LogManager.GetCurrentClassLogger();
+        private static readonly Logger logger = LogManager.GetCurrentClassLogger();
 
-        private MainController mainController;
+        private readonly MainController mainController;
 
         // TODO init hotkey in hotkey control to show the user the used key
         public SettingsView(MainController mainController)
@@ -31,14 +31,14 @@ namespace SmartHotEdit.View
 
         private void enableLoggingCheckBox_CheckStateChanged(object sender, EventArgs e)
         {
-            if (Properties.Settings.Default.EnableLogging == true)
+            if (Settings.Default.EnableLogging)
             {
-                System.Diagnostics.Debug.WriteLine("Enable logger now");
+                Debug.WriteLine("Enable logger now");
                 LogManager.EnableLogging();
                 foreach (var rule in LogManager.Configuration.LoggingRules)
                 {
                     // Iterate over all levels up to and including the target, (re)enabling them.
-                    for (int i = LogLevel.Trace.Ordinal; i <= 5; i++)
+                    for (var i = LogLevel.Trace.Ordinal; i <= 5; i++)
                     {
                         rule.EnableLoggingForLevel(LogLevel.FromOrdinal(i));
                     }
@@ -48,45 +48,48 @@ namespace SmartHotEdit.View
             else
             {
                 logger.Debug("Disable logger now");
-                System.Diagnostics.Debug.WriteLine("Disable logger now");
+                Debug.WriteLine("Disable logger now");
                 LogManager.DisableLogging();
             }
             LogManager.ReconfigExistingLoggers();
-            System.Diagnostics.Debug.WriteLine("Change logger state. Level?: " + LogManager.GlobalThreshold + "; Enabled?: " + LogManager.IsLoggingEnabled());
+            Debug.WriteLine("Change logger state. Level?: " + LogManager.GlobalThreshold + "; Enabled?: " +
+                            LogManager.IsLoggingEnabled());
         }
 
         private void changeHotKeyButton_Click(object sender, EventArgs e)
         {
+            var isShiftControl = this.hotKeyTextBox.Modifiers == (Keys.Shift | Keys.Control);
+            var isAltControl = this.hotKeyTextBox.Modifiers == (Keys.Alt | Keys.Control);
+            var isShiftAltControl = this.hotKeyTextBox.Modifiers == (Keys.Shift | Keys.Alt | Keys.Control);
+            var isShiftAlt = this.hotKeyTextBox.Modifiers == (Keys.Shift | Keys.Alt);
 
-            bool isShiftControl = this.hotKeyTextBox.Modifiers == (Keys.Shift | Keys.Control);
-            bool isAltControl = this.hotKeyTextBox.Modifiers == (Keys.Alt | Keys.Control);
-            bool isShiftAltControl = this.hotKeyTextBox.Modifiers == (Keys.Shift | Keys.Alt | Keys.Control);
-            bool isShiftAlt = this.hotKeyTextBox.Modifiers == (Keys.Shift | Keys.Alt);
+            var isShift = isShiftControl || isShiftAlt || isShiftAltControl ||
+                          this.hotKeyTextBox.Modifiers == Keys.Shift;
+            var isAlt = isAltControl || isShiftAlt || isShiftAltControl || this.hotKeyTextBox.Modifiers == Keys.Alt;
+            var isControl = isShiftControl || isAltControl || isShiftAltControl ||
+                            this.hotKeyTextBox.Modifiers == Keys.Control;
+            var isWin = this.hotKeyTextBox.WinModifier;
 
-            bool isShift = isShiftControl || isShiftAlt || isShiftAltControl || this.hotKeyTextBox.Modifiers == Keys.Shift;
-            bool isAlt = isAltControl || isShiftAlt || isShiftAltControl || this.hotKeyTextBox.Modifiers == Keys.Alt;
-            bool isControl = isShiftControl || isAltControl || isShiftAltControl || this.hotKeyTextBox.Modifiers == Keys.Control;
-            bool isWin = this.hotKeyTextBox.WinModifier;
-
-            if (this.mainController.HotKeyController.RegisterCustomHotKey(this.hotKeyTextBox.Hotkey, isShift, isControl, isAlt, isWin))
+            if (this.mainController.HotKeyController.RegisterCustomHotKey(this.hotKeyTextBox.Hotkey, isShift, isControl,
+                isAlt, isWin))
             {
-                HotKey hotKey = new HotKey(this.hotKeyTextBox.Hotkey, isShift, isControl, isAlt, isWin);
-                Properties.Settings.Default.HotKey = hotKey;
+                var hotKey = new HotKey(this.hotKeyTextBox.Hotkey, isShift, isControl, isAlt, isWin);
+                Settings.Default.HotKey = hotKey;
             }
         }
 
         private void SettingsView_FormClosing(object sender, FormClosingEventArgs e)
         {
-            Properties.Settings.Default.Save();
+            Settings.Default.Save();
         }
 
         private void SettingsView_Shown(object sender, EventArgs e)
         {
             this.enableDisablePluginListView.Items.Clear();
             this.enableDisablePluginListView.Groups.Clear();
-            foreach (APluginController concretePluginController in this.mainController.PluginController.GetPluginControllerList())
+            foreach (var concretePluginController in this.mainController.PluginController.GetPluginControllerList())
             {
-                var tempListViewGroup = new ListViewGroup(concretePluginController.Type, System.Windows.Forms.HorizontalAlignment.Left);
+                var tempListViewGroup = new ListViewGroup(concretePluginController.Type, HorizontalAlignment.Left);
                 tempListViewGroup.Header = concretePluginController.Type;
                 tempListViewGroup.Name = concretePluginController.Type + "Group";
                 tempListViewGroup.Tag = concretePluginController;
@@ -95,7 +98,7 @@ namespace SmartHotEdit.View
 
                 if (concretePluginController.LoadedPlugins.Count > 0)
                 {
-                    foreach (APlugin plugin in concretePluginController.LoadedPlugins)
+                    foreach (var plugin in concretePluginController.LoadedPlugins)
                     {
                         var tempListViewItem = new ListViewItem(plugin.Name);
                         tempListViewItem.Group = tempListViewGroup;
@@ -107,7 +110,7 @@ namespace SmartHotEdit.View
                 }
             }
 
-            RegistryKey rk = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
+            var rk = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
             this.startWithSystemCheckBox.Checked = rk.GetValue(Program.AppName) != null;
             logger.Debug("Start on system startup: " + this.startWithSystemCheckBox.Checked);
         }
@@ -116,14 +119,14 @@ namespace SmartHotEdit.View
         {
             if (this.enableDisablePluginListView.Focused)
             {
-                ListViewItem item = e.Item as ListViewItem;
-                APlugin plugin = (APlugin)item.Tag;
+                var item = e.Item;
+                var plugin = (APlugin) item.Tag;
                 plugin.Enabled = item.Checked;
 
-                logger.Debug("Plugin " + plugin.Name+ " changed state. Is it enabled? " + plugin.Enabled);
+                logger.Debug("Plugin " + plugin.Name + " changed state. Is it enabled? " + plugin.Enabled);
 
-                Properties.Settings.Default[plugin.GetPropertynameForEnablePlugin()] = plugin.Enabled;
-                Properties.Settings.Default.Save();
+                Settings.Default[plugin.GetPropertynameForEnablePlugin()] = plugin.Enabled;
+                Settings.Default.Save();
             }
         }
 
@@ -131,11 +134,11 @@ namespace SmartHotEdit.View
         {
             if (this.startWithSystemCheckBox.Focused)
             {
-                RegistryKey rk = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
+                var rk = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
 
                 if (this.startWithSystemCheckBox.Checked)
                 {
-                    rk.SetValue(Program.AppName, Application.ExecutablePath.ToString());
+                    rk.SetValue(Program.AppName, Application.ExecutablePath);
                     logger.Debug("Starts on system startup now");
                 }
                 else

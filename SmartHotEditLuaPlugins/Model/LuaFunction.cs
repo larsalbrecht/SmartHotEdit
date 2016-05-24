@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using MoonSharp.Interpreter;
 using SmartHotEditPluginHost.Model;
 
@@ -7,17 +6,17 @@ namespace SmartHotEditLuaPlugins.Model
 {
     public class LuaFunction
     {
+        private readonly Closure closureToCall;
 
-        private Function func;
-        Closure closureToCall;
+        private readonly Function func;
 
-        public LuaFunction(String name, String description, Closure closure, List<Argument> arguments)
+        public LuaFunction(string name, string description, Closure closure, List<Argument> arguments)
         {
             this.closureToCall = closure;
-            this.func = new Function(name, description, new Function.Transform(closureCall), arguments);
+            this.func = new Function(name, description, closureCall, arguments);
         }
 
-        private String closureCall(String input, List<Argument> arguments = null)
+        private string closureCall(string input, List<Argument> arguments = null)
         {
             return this.closureToCall.Call(null, input, arguments).String;
         }

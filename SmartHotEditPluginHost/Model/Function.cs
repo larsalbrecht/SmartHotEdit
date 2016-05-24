@@ -1,20 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace SmartHotEditPluginHost.Model
 {
     /// <summary>
-    /// Description of Function.
+    ///     Description of Function.
     /// </summary>
     public class Function
     {
-        public string Name;
-        public string Description;
+        public delegate string Transform(string s, List<Argument> arguments = null);
+
         public List<Argument> Arguments;
-        public delegate String Transform(String s, List<Argument> arguments = null);
+        public string Description;
+        public string Name;
         public Transform TransformFunction;
 
-        public Function(String name, String description, Transform transformFunction, List<Argument> arguments = null)
+        public Function(string name, string description, Transform transformFunction, List<Argument> arguments = null)
         {
             this.Name = name;
             this.Description = description;
@@ -32,5 +32,4 @@ namespace SmartHotEditPluginHost.Model
             return this.TransformFunction(value, arguments);
         }
     }
-
 }

@@ -28,6 +28,5 @@ namespace SmartHotEditPluginHost.Helper
             properties.Settings.Default.Properties.Add(property);
             properties.Settings.Default.Reload();*/
         }
-
     }
 }

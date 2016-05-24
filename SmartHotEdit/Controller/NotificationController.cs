@@ -1,18 +1,17 @@
 ﻿using System;
-using SmartHotEdit.View;
 using System.Windows.Forms;
 using NLog;
+using SmartHotEdit.View;
 
 namespace SmartHotEdit.Controller
 {
     public class NotificationController : IDisposable
     {
-
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-
-        private readonly NotificationIcon _notificationIcon;
         // ReSharper disable once PrivateFieldCanBeConvertedToLocalVariable
         private readonly MainController _mainController;
+
+        private readonly NotificationIcon _notificationIcon;
 
         public NotificationController(MainController mainController)
         {
@@ -21,6 +20,12 @@ namespace SmartHotEdit.Controller
             Logger.Trace("Create TrayIcon");
             this._notificationIcon = new NotificationIcon(this._mainController);
             this._notificationIcon.getNotifyIcon().Visible = true;
+        }
+
+        public void Dispose()
+        {
+            this.Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         public void CreateBalloonTip(ToolTipIcon toolTipIcon, string title, string text, int duration)
@@ -37,12 +42,6 @@ namespace SmartHotEdit.Controller
         {
             Logger.Trace("Dispose NotificationIcon");
             this._notificationIcon.getNotifyIcon().Dispose();
-        }
-
-        public void Dispose()
-        {
-            this.Dispose(true);
-            GC.SuppressFinalize(this);
         }
 
         ~NotificationController()

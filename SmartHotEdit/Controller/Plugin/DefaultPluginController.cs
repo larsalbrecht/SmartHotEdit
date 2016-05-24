@@ -1,12 +1,12 @@
 ﻿using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
+using SmartHotEdit.Properties;
 using SmartHotEditPluginHost;
 
 namespace SmartHotEdit.Controller.Plugin
 {
-    class DefaultPluginController : APluginController
+    internal class DefaultPluginController : APluginController
     {
-
         [ImportMany(typeof(APlugin))]
         // ReSharper disable once FieldCanBeMadeReadOnly.Local
         private APlugin[] _plugins = null;
@@ -33,7 +33,7 @@ namespace SmartHotEdit.Controller.Plugin
 
         public override bool IsEnabled()
         {
-            return Properties.Settings.Default.EnableDefaultPlugins;
+            return Settings.Default.EnableDefaultPlugins;
         }
     }
 }
