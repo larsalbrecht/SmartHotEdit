@@ -16,8 +16,8 @@ namespace SmartHotEditLuaPlugins.Controller
     [Export(typeof(AScriptPluginController))]
     internal class LuaPluginController : AScriptPluginController
     {
-        private const string PLUGIN_PATH = @"Lua\Plugins\";
-        private readonly List<APlugin> plugins = new List<APlugin>();
+        private const string PluginPath = @"Lua\Plugins\";
+        private readonly List<APlugin> _plugins = new List<APlugin>();
 
         [ImportingConstructor]
         public LuaPluginController([Import("IPluginController")] IPluginController pluginController)
@@ -26,7 +26,7 @@ namespace SmartHotEditLuaPlugins.Controller
             Logger.Trace("Construct LuaPluginController");
             this.Type = "Lua";
             this.TypeFileExt = "lua";
-            this.TypePluginPath = PLUGIN_PATH;
+            this.TypePluginPath = PluginPath;
             this.TypeScintillaLexer = Lexer.Lua;
         }
 
@@ -39,7 +39,7 @@ namespace SmartHotEditLuaPlugins.Controller
             script.Options.ScriptLoader = new ReplInterpreterScriptLoader();
             var originalModulePaths = ((ScriptLoaderBase) script.Options.ScriptLoader).ModulePaths;
             var customModulePaths = new[]
-            {"Lua/Modules/?", "Lua/Modules/?.lua", PLUGIN_PATH + "?", PLUGIN_PATH + "?.lua"};
+            {"Lua/Modules/?", "Lua/Modules/?.lua", PluginPath + "?", PluginPath + "?.lua"};
             Logger.Trace("Custom module paths added: " + string.Join("; ", customModulePaths));
             var mergedModulePaths = new string[customModulePaths.Length + originalModulePaths.Length];
             originalModulePaths.CopyTo(mergedModulePaths, 0);
@@ -60,7 +60,7 @@ namespace SmartHotEditLuaPlugins.Controller
 
         public override void LoadPlugins()
         {
-            this.plugins.Clear();
+            this._plugins.Clear();
             var script = this.getConfiguredScript();
 
             Logger.Trace("Register UserData types");
@@ -70,14 +70,14 @@ namespace SmartHotEditLuaPlugins.Controller
             UserData.RegisterType<List<Argument>>();
 
             // find plugins
-            var filePaths = this.FindScriptPlugins(PLUGIN_PATH, "*_plugin.lua");
+            var filePaths = FindScriptPlugins(PluginPath, "*_plugin.lua");
             foreach (var path in filePaths)
             {
                 Logger.Trace("Script found at: " + path);
-                var plugin = this.getPluginFromScript(script, path);
+                var plugin = this.GetPluginFromScript(script, path);
                 if (plugin != null)
                 {
-                    this.plugins.Add(plugin);
+                    this._plugins.Add(plugin);
                     Logger.Debug("Plugin found: " + plugin.Name);
                 }
                 else
@@ -87,7 +87,7 @@ namespace SmartHotEditLuaPlugins.Controller
             }
         }
 
-        private APlugin getPluginFromScript(Script script, string scriptPath)
+        private APlugin GetPluginFromScript(Script script, string scriptPath)
         {
             Logger.Trace("Try to get plugin from script");
             try
@@ -95,7 +95,7 @@ namespace SmartHotEditLuaPlugins.Controller
                 script.DoFile(scriptPath);
                 var res = script.Globals.Get("plugin");
 
-                return this.buildLuaPlugin(res);
+                return this.BuildLuaPlugin(res);
             }
             catch (Exception)
             {
@@ -104,35 +104,32 @@ namespace SmartHotEditLuaPlugins.Controller
             return null;
         }
 
-        private APlugin buildLuaPlugin(DynValue dynValue)
+        private APlugin BuildLuaPlugin(DynValue dynValue)
         {
-            Plugin luaPlugin = null;
+            if (dynValue.Type != DataType.Table) return null;
 
-            if (dynValue.Type == DataType.Table)
+            var luaPlugin = new Plugin();
+            foreach (var dynMembers in dynValue.Table.Keys)
             {
-                luaPlugin = new Plugin();
-                foreach (var dynMembers in dynValue.Table.Keys)
+                // parse functions if available
+                if (dynValue.Table.Get(dynMembers).Type == DataType.Table)
                 {
-                    // parse functions if available
-                    if (dynValue.Table.Get(dynMembers).Type == DataType.Table)
+                    foreach (var dynFunction in dynValue.Table.Get(dynMembers).Table.Keys)
                     {
-                        foreach (var dynFunction in dynValue.Table.Get(dynMembers).Table.Keys)
-                        {
-                            var luaFunction = buildLuaFunction(dynValue.Table.Get(dynMembers).Table.Get(dynFunction));
-                            luaPlugin.addLuaFunction(luaFunction);
-                        }
+                        var luaFunction = BuildLuaFunction(dynValue.Table.Get(dynMembers).Table.Get(dynFunction));
+                        luaPlugin.AddLuaFunction(luaFunction);
                     }
-                    // parse members if available
-                    else if (dynValue.Table.Get(dynMembers).Type == DataType.String)
+                }
+                // parse members if available
+                else if (dynValue.Table.Get(dynMembers).Type == DataType.String)
+                {
+                    if (dynMembers.String == "name")
                     {
-                        if (dynMembers.String == "name")
-                        {
-                            luaPlugin.name = dynValue.Table.Get(dynMembers).String;
-                        }
-                        else if (dynMembers.String == "description")
-                        {
-                            luaPlugin.description = dynValue.Table.Get(dynMembers).String;
-                        }
+                        luaPlugin.name = dynValue.Table.Get(dynMembers).String;
+                    }
+                    else if (dynMembers.String == "description")
+                    {
+                        luaPlugin.description = dynValue.Table.Get(dynMembers).String;
                     }
                 }
             }
@@ -140,7 +137,7 @@ namespace SmartHotEditLuaPlugins.Controller
             return luaPlugin;
         }
 
-        private LuaFunction buildLuaFunction(DynValue dynValue)
+        private LuaFunction BuildLuaFunction(DynValue dynValue)
         {
             LuaFunction func = null;
             if (dynValue.Type == DataType.Table)
@@ -213,12 +210,7 @@ namespace SmartHotEditLuaPlugins.Controller
 
         protected override APlugin[] GetPlugins()
         {
-            return this.plugins.ToArray();
-        }
-
-        public override bool IsEnabled()
-        {
-            return true; // TODO fix this (make dynamic) Properties.Settings.Default.EnableLuaPlugins;
+            return this._plugins.ToArray();
         }
 
         public override string GetTemplate()
@@ -229,11 +221,11 @@ namespace SmartHotEditLuaPlugins.Controller
         public override void SetScintillaConfiguration(Scintilla scintilla)
         {
             // Obtained from SciLexer.h
-            const int SCE_LUA_DEFAULT = 0;
-            const int SCE_LUA_COMMENT = 1;
+            const int sceLuaDefault = 0;
+            const int sceLuaComment = 1;
 
-            scintilla.Styles[SCE_LUA_DEFAULT].ForeColor = Color.Black;
-            scintilla.Styles[SCE_LUA_COMMENT].ForeColor = Color.Green;
+            scintilla.Styles[sceLuaDefault].ForeColor = Color.Black;
+            scintilla.Styles[sceLuaComment].ForeColor = Color.Green;
 
             scintilla.SetKeywords(0,
                 "and break do else elseif end false for function if in local nil not or repeat return then true until while");

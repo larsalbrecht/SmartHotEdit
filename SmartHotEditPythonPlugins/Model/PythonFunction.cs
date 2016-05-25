@@ -6,35 +6,33 @@ namespace SmartHotEditPythonPlugins.Model
 {
     public class PythonFunction
     {
-        private readonly Function func;
-        private readonly dynamic pythonFuncToCall;
+        private readonly Function _func;
+        private readonly dynamic _pythonFuncToCall;
 
         public PythonFunction(string name, string description, IronPython.Runtime.PythonFunction pythonFuncToCall,
             List<Argument> arguments)
         {
-            this.pythonFuncToCall = pythonFuncToCall;
-            this.func = new Function(name, description, closureCall, arguments);
+            this._pythonFuncToCall = pythonFuncToCall;
+            this._func = new Function(name, description, ClosureCall, arguments);
         }
 
-        private string closureCall(string input, List<Argument> arguments = null)
+        private string ClosureCall(string input, List<Argument> arguments = null)
         {
-            PythonDictionary pythonArgs = null;
-            if (arguments != null)
+            if (arguments == null) return this._pythonFuncToCall(input, (PythonDictionary) null);
+
+            var pythonArgs = new PythonDictionary();
+            foreach (var arg in arguments)
             {
-                pythonArgs = new PythonDictionary();
-                foreach (var arg in arguments)
-                {
-                    pythonArgs.Add(arg.Key, arg.Value);
-                }
+                pythonArgs.Add(arg.Key, arg.Value);
             }
 
 
-            return this.pythonFuncToCall(input, pythonArgs);
+            return this._pythonFuncToCall(input, pythonArgs);
         }
 
-        public Function getFunction()
+        public Function GetFunction()
         {
-            return this.func;
+            return this._func;
         }
     }
 }

@@ -11,6 +11,8 @@ namespace SmartHotEdit.Controller
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
+        private bool _disposed;
+
         public MainController()
         {
             if (Settings.Default.EnableLogging == false)
@@ -25,12 +27,11 @@ namespace SmartHotEdit.Controller
             Logger.Info("Program started");
             bool isFirstInstance;
             // Please use a unique name for the mutex to prevent conflicts with other programs
+            // ReSharper disable once UnusedVariable
             using (var mtx = new Mutex(true, "SmartHotEdit", out isFirstInstance))
             {
                 if (isFirstInstance)
                 {
-                    Logger.Trace("Is first instance");
-
                     Logger.Trace("Init first instance");
 
                     Logger.Trace("Init PluginController now");
@@ -53,16 +54,30 @@ namespace SmartHotEdit.Controller
             } // releases the Mutex
         }
 
-        public NotificationController NotificationController { get; set; }
-        public HotKeyController HotKeyController { get; set; }
-        public PluginController PluginController { get; set; }
-
+        public NotificationController NotificationController { get; }
+        public HotKeyController HotKeyController { get; }
+        public PluginController PluginController { get; }
 
         public void Dispose()
         {
             this.HotKeyController?.Dispose();
             this.NotificationController?.Dispose();
             GC.SuppressFinalize(this);
+        }
+
+        private void Dispose(bool disposing)
+        {
+            if (_disposed) return;
+            if (disposing)
+            {
+            }
+
+            _disposed = true;
+        }
+
+        ~MainController() // the finalizer
+        {
+            Dispose(false);
         }
 
         private void OnApplicationInstanceAlreadyStarted()

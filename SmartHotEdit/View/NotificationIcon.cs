@@ -3,67 +3,56 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 using SmartHotEdit.Controller;
+using SmartHotEdit.Properties;
 using SmartHotEdit.View.Editor;
 
 namespace SmartHotEdit.View
 {
     public sealed class NotificationIcon : IDisposable
     {
-        private readonly MainController mainController;
-        private readonly ContextMenu notificationMenu;
-        private readonly NotifyIcon notifyIcon;
-        private ScriptPluginEditor scriptPluginEditor;
-        private SettingsView settingsView;
+        private readonly MainController _mainController;
+        private readonly ContextMenu _notificationMenu;
+        private readonly NotifyIcon _notifyIcon;
+        private ScriptPluginEditor _scriptPluginEditor;
+        private SettingsView _settingsView;
 
         public void Dispose()
         {
-            if (this.settingsView != null)
-            {
-                this.settingsView.Dispose();
-            }
-            if (this.scriptPluginEditor != null)
-            {
-                this.scriptPluginEditor.Dispose();
-            }
-            if (notifyIcon != null)
-            {
-                notifyIcon.Dispose();
-            }
-            if (notificationMenu != null)
-            {
-                notificationMenu.Dispose();
-            }
+            this._settingsView?.Dispose();
+            this._scriptPluginEditor?.Dispose();
+            this._notifyIcon?.Dispose();
+            this._notificationMenu?.Dispose();
         }
 
-        public NotifyIcon getNotifyIcon()
+        public NotifyIcon GetNotifyIcon()
         {
-            return this.notifyIcon;
+            return this._notifyIcon;
         }
 
         #region Initialize icon and menu
 
         public NotificationIcon(MainController mainController)
         {
-            this.mainController = mainController;
+            this._mainController = mainController;
 
-            notifyIcon = new NotifyIcon();
-            notificationMenu = new ContextMenu(InitializeMenu());
+            _notifyIcon = new NotifyIcon();
+            _notificationMenu = new ContextMenu(InitializeMenu());
 
-            notifyIcon.DoubleClick += IconDoubleClick;
+            _notifyIcon.DoubleClick += IconDoubleClick;
             var resources = new ComponentResourceManager(typeof(NotificationIcon));
-            notifyIcon.Icon = (Icon) resources.GetObject("$this.Icon");
-            notifyIcon.ContextMenu = notificationMenu;
+            _notifyIcon.Icon = (Icon) resources.GetObject("$this.Icon");
+            _notifyIcon.ContextMenu = _notificationMenu;
         }
 
         private MenuItem[] InitializeMenu()
         {
             MenuItem[] menu =
             {
-                new MenuItem("Settings", menuSettingsClick),
-                new MenuItem("Script Plugin Editor", menuOpenScriptPluginEditorClick),
+                new MenuItem("Settings", MenuSettingsClick),
+                new MenuItem("Script Plugin Editor", MenuOpenScriptPluginEditorClick),
                 new MenuItem("-"),
-                new MenuItem("About", menuAboutClick),
-                new MenuItem("Exit", menuExitClick)
+                new MenuItem("About", MenuAboutClick),
+                new MenuItem("Exit", MenuExitClick)
             };
             return menu;
         }
@@ -72,37 +61,37 @@ namespace SmartHotEdit.View
 
         #region Event Handlers
 
-        private void menuOpenScriptPluginEditorClick(object sender, EventArgs e)
+        private void MenuOpenScriptPluginEditorClick(object sender, EventArgs e)
         {
-            this.scriptPluginEditor = new ScriptPluginEditor(this.mainController);
-            this.scriptPluginEditor.Show();
+            this._scriptPluginEditor = new ScriptPluginEditor(this._mainController);
+            this._scriptPluginEditor.Show();
         }
 
-        private void menuSettingsClick(object sender, EventArgs e)
+        private void MenuSettingsClick(object sender, EventArgs e)
         {
-            if (settingsView == null)
+            if (_settingsView == null)
             {
-                settingsView = new SettingsView(this.mainController);
+                _settingsView = new SettingsView(this._mainController);
             }
-            if (settingsView.Visible == false)
+            if (_settingsView.Visible == false)
             {
-                settingsView.ShowDialog();
+                _settingsView.ShowDialog();
             }
         }
 
-        private void menuAboutClick(object sender, EventArgs e)
+        private void MenuAboutClick(object sender, EventArgs e)
         {
-            MessageBox.Show("(c) 2016 Lars Albrecht");
+            MessageBox.Show(Resources.NotificationIcon_MenuAboutClick__c__2016_Lars_Albrecht);
         }
 
-        private void menuExitClick(object sender, EventArgs e)
+        private void MenuExitClick(object sender, EventArgs e)
         {
-            mainController.OnUserWillClose();
+            _mainController.OnUserWillClose();
         }
 
         private void IconDoubleClick(object sender, EventArgs e)
         {
-            this.menuSettingsClick(sender, e);
+            this.MenuSettingsClick(sender, e);
         }
 
         #endregion

@@ -117,4 +117,8 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="NotificationIcon_MenuAboutClick__c__2016_Lars_Albrecht" xml:space="preserve">
+    <value>(c) 2016 Lars Albrecht</value>
+    <comment>Copyright for about box</comment>
+  </data>
 </root>

@@ -4,8 +4,10 @@ namespace SmartHotEditPythonPlugins.Model
 {
     internal class Plugin : APlugin
     {
-        public string description;
-        public string name;
+
+        public override string Description { get; }
+        public override string Name { get; }
+
 
         public Plugin()
         {
@@ -13,25 +15,15 @@ namespace SmartHotEditPythonPlugins.Model
 
         public Plugin(string name, string description)
         {
-            this.name = name;
-            this.description = description;
+            this.Name = name;
+            this.Description = description;
         }
 
-        public override string Description
+        public void AddPythonFunction(PythonFunction function)
         {
-            get { return this.description; }
-        }
-
-        public override string Name
-        {
-            get { return this.name; }
-        }
-
-        public void addPythonFunction(PythonFunction function)
-        {
-            if (function != null && function.getFunction() != null)
+            if (function?.GetFunction() != null)
             {
-                AddFunction(function.getFunction());
+                AddFunction(function.GetFunction());
             }
         }
     }

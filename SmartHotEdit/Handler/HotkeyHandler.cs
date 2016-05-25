@@ -16,44 +16,44 @@ namespace SmartHotEdit.Handler
         [DllImport("user32.dll", SetLastError = true)]
         internal static extern int UnregisterHotKey(IntPtr hWnd, int id);
 
-        internal const uint WM_HOTKEY = 0x312;
+        internal const uint WmHotkey = 0x312;
 
-        internal const uint MOD_ALT = 0x1;
-        internal const uint MOD_CONTROL = 0x2;
-        internal const uint MOD_SHIFT = 0x4;
-        internal const uint MOD_WIN = 0x8;
+        internal const uint ModAlt = 0x1;
+        internal const uint ModControl = 0x2;
+        internal const uint ModShift = 0x4;
+        internal const uint ModWin = 0x8;
 
-        internal const uint ERROR_HOTKEY_ALREADY_REGISTERED = 1409;
+        internal const uint ErrorHotkeyAlreadyRegistered = 1409;
 
         #endregion
     }
 
     public class HotkeyHandler : IMessageFilter
     {
-        private const int maximumID = 0xBFFF;
+        private const int MaximumId = 0xBFFF;
 
-        private static int currentID;
-        private bool alt;
-        private bool control;
+        private static int _currentId;
+        private bool _alt;
+        private bool _control;
 
-        [XmlIgnore] private int id;
+        [XmlIgnore] private int _id;
 
-        private Keys keyCode;
+        private Keys _keyCode;
 
-        [XmlIgnore] private bool registered;
+        [XmlIgnore] private bool _registered;
 
-        private bool shift;
+        private bool _shift;
 
-        [XmlIgnore] private Control windowControl;
+        [XmlIgnore] private Control _windowControl;
 
-        private bool windows;
+        private bool _windows;
 
         public HotkeyHandler() : this(Keys.None, false, false, false, false)
         {
             // No work done here!
         }
 
-        public HotkeyHandler(Keys keyCode, bool shift, bool control, bool alt, bool windows)
+        private HotkeyHandler(Keys keyCode, bool shift, bool control, bool alt, bool windows)
         {
             // Assign properties
             this.KeyCode = keyCode;
@@ -66,67 +66,60 @@ namespace SmartHotEdit.Handler
             Application.AddMessageFilter(this);
         }
 
-        public bool Empty
-        {
-            get { return this.keyCode == Keys.None; }
-        }
+        private bool Empty => this._keyCode == Keys.None;
 
-        public bool Registered
-        {
-            get { return this.registered; }
-        }
+        public bool Registered => this._registered;
 
         public Keys KeyCode
         {
-            get { return this.keyCode; }
             set
             {
                 // Save and reregister
-                this.keyCode = value;
+                this._keyCode = value;
                 this.Reregister();
             }
         }
 
         public bool Shift
         {
-            get { return this.shift; }
+            private get { return this._shift; }
             set
             {
                 // Save and reregister
-                this.shift = value;
+                this._shift = value;
                 this.Reregister();
             }
         }
 
         public bool Control
         {
-            get { return this.control; }
+            private get { return this._control; }
             set
             {
                 // Save and reregister
-                this.control = value;
+                this._control = value;
                 this.Reregister();
             }
         }
 
         public bool Alt
         {
-            get { return this.alt; }
+            private get { return this._alt; }
             set
             {
                 // Save and reregister
-                this.alt = value;
+                this._alt = value;
                 this.Reregister();
             }
         }
 
         public bool Windows
         {
-            get { return this.windows; }
+            private get { return this._windows; }
             set
             {
                 // Save and reregister
-                this.windows = value;
+                this._windows = value;
                 this.Reregister();
             }
         }
@@ -134,13 +127,13 @@ namespace SmartHotEdit.Handler
         public bool PreFilterMessage(ref Message message)
         {
             // Only process WM_HOTKEY messages
-            if (message.Msg != NativeMethods.WM_HOTKEY)
+            if (message.Msg != NativeMethods.WmHotkey)
             {
                 return false;
             }
 
             // Check that the ID is our key and we are registerd
-            if (this.registered && (message.WParam.ToInt32() == this.id))
+            if (this._registered && (message.WParam.ToInt32() == this._id))
             {
                 // Fire the event and pass on the event if our handlers didn't handle it
                 return this.OnPressed();
@@ -159,10 +152,11 @@ namespace SmartHotEdit.Handler
             }
         }
 
+        // ReSharper disable once UnusedMember.Global
         public HotkeyHandler Clone()
         {
             // Clone the whole object
-            return new HotkeyHandler(this.keyCode, this.shift, this.control, this.alt, this.windows);
+            return new HotkeyHandler(this._keyCode, this._shift, this._control, this._alt, this._windows);
         }
 
         public bool GetCanRegister(Control windowControl)
@@ -193,7 +187,7 @@ namespace SmartHotEdit.Handler
         public bool Register(Control windowControl)
         {
             // Check that we have not registered
-            if (this.registered)
+            if (this._registered)
             {
                 throw new NotSupportedException("You cannot register a hotkey that is already registered");
             }
@@ -205,18 +199,18 @@ namespace SmartHotEdit.Handler
             }
 
             // Get an ID for the hotkey and increase current ID
-            this.id = currentID;
-            currentID = currentID + 1%maximumID;
+            this._id = _currentId;
+            _currentId = _currentId + 1%MaximumId;
 
             // Translate modifier keys into unmanaged version
-            var modifiers = (this.Alt ? NativeMethods.MOD_ALT : 0) | (this.Control ? NativeMethods.MOD_CONTROL : 0) |
-                            (this.Shift ? NativeMethods.MOD_SHIFT : 0) | (this.Windows ? NativeMethods.MOD_WIN : 0);
+            var modifiers = (this.Alt ? NativeMethods.ModAlt : 0) | (this.Control ? NativeMethods.ModControl : 0) |
+                            (this.Shift ? NativeMethods.ModShift : 0) | (this.Windows ? NativeMethods.ModWin : 0);
 
             // Register the hotkey
-            if (NativeMethods.RegisterHotKey(windowControl.Handle, this.id, modifiers, keyCode) == 0)
+            if (NativeMethods.RegisterHotKey(windowControl.Handle, this._id, modifiers, _keyCode) == 0)
             {
                 // Is the error that the hotkey is registered?
-                if (Marshal.GetLastWin32Error() == NativeMethods.ERROR_HOTKEY_ALREADY_REGISTERED)
+                if (Marshal.GetLastWin32Error() == NativeMethods.ErrorHotkeyAlreadyRegistered)
                 {
                     return false;
                 }
@@ -224,8 +218,8 @@ namespace SmartHotEdit.Handler
             }
 
             // Save the control reference and register state
-            this.registered = true;
-            this.windowControl = windowControl;
+            this._registered = true;
+            this._windowControl = windowControl;
 
             // We successfully registered
             return true;
@@ -234,36 +228,36 @@ namespace SmartHotEdit.Handler
         public void Unregister()
         {
             // Check that we have registered
-            if (!this.registered)
+            if (!this._registered)
             {
                 throw new NotSupportedException("You cannot unregister a hotkey that is not registered");
             }
 
             // It's possible that the control itself has died: in that case, no need to unregister!
-            if (!this.windowControl.IsDisposed)
+            if (!this._windowControl.IsDisposed)
             {
                 // Clean up after ourselves
-                if (NativeMethods.UnregisterHotKey(this.windowControl.Handle, this.id) == 0)
+                if (NativeMethods.UnregisterHotKey(this._windowControl.Handle, this._id) == 0)
                 {
                     throw new Win32Exception();
                 }
             }
 
             // Clear the control reference and register state
-            this.registered = false;
-            this.windowControl = null;
+            this._registered = false;
+            this._windowControl = null;
         }
 
         private void Reregister()
         {
             // Only do something if the key is already registered
-            if (!this.registered)
+            if (!this._registered)
             {
                 return;
             }
 
             // Save control reference
-            var windowControl = this.windowControl;
+            var windowControl = this._windowControl;
 
             // Unregister and then reregister again
             this.Unregister();
@@ -274,10 +268,7 @@ namespace SmartHotEdit.Handler
         {
             // Fire the event if we can
             var handledEventArgs = new HandledEventArgs(false);
-            if (this.Pressed != null)
-            {
-                this.Pressed(this, handledEventArgs);
-            }
+            this.Pressed?.Invoke(this, handledEventArgs);
 
             // Return whether we handled the event or not
             return handledEventArgs.Handled;
@@ -292,43 +283,35 @@ namespace SmartHotEdit.Handler
             }
 
             // Build key name
-            var keyName = Enum.GetName(typeof(Keys), this.keyCode);
-            ;
-            switch (this.keyCode)
+            var keyName = Enum.GetName(typeof(Keys), this._keyCode);
+            if (this._keyCode == Keys.D0 || this._keyCode == Keys.D1 || this._keyCode == Keys.D2 ||
+                this._keyCode == Keys.D3 || this._keyCode == Keys.D4 || this._keyCode == Keys.D5 ||
+                this._keyCode == Keys.D6 || this._keyCode == Keys.D7 || this._keyCode == Keys.D8 ||
+                this._keyCode == Keys.D9)
             {
-                case Keys.D0:
-                case Keys.D1:
-                case Keys.D2:
-                case Keys.D3:
-                case Keys.D4:
-                case Keys.D5:
-                case Keys.D6:
-                case Keys.D7:
-                case Keys.D8:
-                case Keys.D9:
-                    // Strip the first character
-                    keyName = keyName.Substring(1);
-                    break;
-                default:
-                    // Leave everything alone
-                    break;
+                // Strip the first character
+                keyName = keyName?.Substring(1);
+            }
+            else
+            {
+                // Leave everything alone
             }
 
             // Build modifiers
             var modifiers = "";
-            if (this.shift)
+            if (this._shift)
             {
                 modifiers += "Shift+";
             }
-            if (this.control)
+            if (this._control)
             {
                 modifiers += "Control+";
             }
-            if (this.alt)
+            if (this._alt)
             {
                 modifiers += "Alt+";
             }
-            if (this.windows)
+            if (this._windows)
             {
                 modifiers += "Windows+";
             }

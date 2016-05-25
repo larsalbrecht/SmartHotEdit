@@ -6,24 +6,24 @@ namespace SmartHotEditLuaPlugins.Model
 {
     public class LuaFunction
     {
-        private readonly Closure closureToCall;
+        private readonly Closure _closureToCall;
 
-        private readonly Function func;
+        private readonly Function _func;
 
         public LuaFunction(string name, string description, Closure closure, List<Argument> arguments)
         {
-            this.closureToCall = closure;
-            this.func = new Function(name, description, closureCall, arguments);
+            this._closureToCall = closure;
+            this._func = new Function(name, description, ClosureCall, arguments);
         }
 
-        private string closureCall(string input, List<Argument> arguments = null)
+        private string ClosureCall(string input, List<Argument> arguments = null)
         {
-            return this.closureToCall.Call(null, input, arguments).String;
+            return this._closureToCall.Call(null, input, arguments).String;
         }
 
-        public Function getFunction()
+        public Function GetFunction()
         {
-            return this.func;
+            return this._func;
         }
     }
 }

@@ -67,7 +67,7 @@ namespace SmartHotEditJavascriptPlugins.Properties {
         ///        super(&quot;&lt;Pluginname&gt;&quot;, &quot;&lt;Description&gt;&quot;);
         ///
         ///        var funcName = new Function(&apos;&lt;Function-Name&gt;&apos;, &apos;&lt;Function-Description&gt;&apos;, this.myFunction);
-        ///        this.addFunction(funcName);
+        ///        this.AddFunction(funcName);
         ///    }
         ///
         ///    myFunction(value, argumentList) {

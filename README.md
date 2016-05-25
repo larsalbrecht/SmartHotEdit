@@ -1,7 +1,7 @@
 # SmartHotEdit
 Edit text from clipboard with smart functions. You can extend the functionality with plugins, made with C# (compiled *.dll-files).
 
-You also can use (or write your own) ScriptPluginHost. There are three ScriptPluginHosts available for:
+You also can use (or write your own) ScriptPluginHost (Script Type). There are three ScriptPluginHosts available for:
 * Lua ([Moonsharp](//www.moonsharp.org))
 * Python ([IronPython](//ironpython.net) / uses Python 2.7)
 * JavaScript ([NiL.JS](https://github.com/nilproject/NiL.JS)).
@@ -29,7 +29,25 @@ The settings will be saved in the directory (Win):
 ``C:\Users\<username>\AppData\Local\SmartHotEdit``
 
 ### Script Plugin Editor
-> coming soon
+There is an editor to create, update or test your script plugins.
+
+#### Basics
+You can find the editor in the system tray, by right clicking on the icon and choose "Script Plugin Editor".
+
+In the window you see a list of Plugin Hosts (Script Types) like Javascript, Lua and Python. On the right side, there is the editor and below the editor, there is a debug output.
+
+#### Create a new plugin
+You can create a new plugin on 3 types:
+* Simply write the code in the editor
+* Copy the code from another editor
+* Modify the integrated template
+
+Every "Script Type" can has a template, that you can load. In the menu you find the menu items "Template" -> "Load" (or press ``[CTRL]`` + ``[ALT]`` + ``[L]``).
+All necessary functions and consturcts are in the template. You can change the template inside the editor and save it as your own one.
+
+#### Test
+You can test your plugin by choosing "Run" -> "Test" (or press ``[F5]``).
+If your plugin is valid, you will see an information in the debug output, that the plugin is found. On the left side, you can see "Plugin Information". There you can see the name of the plugin, the count of functions and a list of your functions.
 
 ### HotKey
 #### Default

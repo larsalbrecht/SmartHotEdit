@@ -4,34 +4,20 @@ namespace SmartHotEditLuaPlugins.Model
 {
     internal class Plugin : APlugin
     {
+        // ReSharper disable once InconsistentNaming
         public string description;
+        // ReSharper disable once InconsistentNaming
         public string name;
 
-        public Plugin()
-        {
-        }
+        public override string Description => this.description;
 
-        public Plugin(string name, string description)
-        {
-            this.name = name;
-            this.description = description;
-        }
+        public override string Name => this.name;
 
-        public override string Description
+        public void AddLuaFunction(LuaFunction function)
         {
-            get { return this.description; }
-        }
-
-        public override string Name
-        {
-            get { return this.name; }
-        }
-
-        public void addLuaFunction(LuaFunction function)
-        {
-            if (function != null && function.getFunction() != null)
+            if (function?.GetFunction() != null)
             {
-                AddFunction(function.getFunction());
+                AddFunction(function.GetFunction());
             }
         }
     }

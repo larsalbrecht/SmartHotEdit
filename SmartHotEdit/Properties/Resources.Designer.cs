@@ -59,5 +59,14 @@ namespace SmartHotEdit.Properties {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die (c) 2016 Lars Albrecht ähnelt.
+        /// </summary>
+        internal static string NotificationIcon_MenuAboutClick__c__2016_Lars_Albrecht {
+            get {
+                return ResourceManager.GetString("NotificationIcon_MenuAboutClick__c__2016_Lars_Albrecht", resourceCulture);
+            }
+        }
     }
 }

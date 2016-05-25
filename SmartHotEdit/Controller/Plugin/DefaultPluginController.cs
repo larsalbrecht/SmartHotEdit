@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
-using SmartHotEdit.Properties;
 using SmartHotEditPluginHost;
 
 namespace SmartHotEdit.Controller.Plugin
@@ -29,11 +28,6 @@ namespace SmartHotEdit.Controller.Plugin
         protected override APlugin[] GetPlugins()
         {
             return this._plugins;
-        }
-
-        public override bool IsEnabled()
-        {
-            return Settings.Default.EnableDefaultPlugins;
         }
     }
 }

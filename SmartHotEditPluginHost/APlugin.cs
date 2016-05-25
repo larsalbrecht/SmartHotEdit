@@ -1,19 +1,38 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using SmartHotEditPluginHost.Helper;
 using SmartHotEditPluginHost.Model;
+using SmartHotEditPluginHost.Properties;
 
 namespace SmartHotEditPluginHost
 {
     public abstract class APlugin : IPlugin
     {
-        public bool Enabled = true;
+        public bool Enabled
+        {
+            get
+            {
+                return (bool)Settings.Default[this.GetPropertynameForEnablePlugin()];
+            }
+            set
+            {
+                Settings.Default[this.GetPropertynameForEnablePlugin()] = value;
+                Settings.Default.Save();
+            }
+        }
 
-        protected List<Function> FunctionList = new List<Function>();
+        private readonly List<Function> _functionList = new List<Function>();
         public string Type = null;
+        public APluginController PluginController { get; set; }
 
         public abstract string Name { get; }
 
         public abstract string Description { get; }
+
+        public void Init()
+        {
+            PropertyHelper.CreateProperty(this.GetPropertynameForEnablePlugin(), true, typeof(bool));
+        }
 
         public string GetResultFromFunction(Function function, string value, List<Argument> arguments = null)
         {
@@ -28,12 +47,12 @@ namespace SmartHotEditPluginHost
 
         public Function[] GetFunctionsAsArray()
         {
-            return this.FunctionList.Cast<Function>().ToArray();
+            return this._functionList.Cast<Function>().ToArray();
         }
 
         protected void AddFunction(Function function)
         {
-            this.FunctionList.Add(function);
+            this._functionList.Add(function);
         }
 
         public string GetPropertynameForEnablePlugin()

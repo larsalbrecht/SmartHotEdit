@@ -17,11 +17,11 @@ namespace SmartHotEditPythonPlugins.Controller
     [Export(typeof(AScriptPluginController))]
     internal class PythonPluginController : AScriptPluginController
     {
-        private const string PLUGIN_PATH = @"Python\Plugins\";
+        private const string PluginPath = @"Python\Plugins\";
 
-        private ScriptEngine engine;
-        private readonly List<APlugin> plugins = new List<APlugin>();
-        private ScriptScope scope;
+        private ScriptEngine _engine;
+        private readonly List<APlugin> _plugins = new List<APlugin>();
+        private ScriptScope _scope;
 
         [ImportingConstructor]
         public PythonPluginController([Import("IPluginController")] IPluginController pluginController)
@@ -30,29 +30,29 @@ namespace SmartHotEditPythonPlugins.Controller
             Logger.Trace("Construct JavascriptPluginController");
             this.Type = "Python";
             this.TypeFileExt = "py";
-            this.TypePluginPath = PLUGIN_PATH;
+            this.TypePluginPath = PluginPath;
             this.TypeScintillaLexer = Lexer.Python;
         }
 
         public override void LoadPlugins()
         {
-            this.plugins.Clear();
-            this.engine = Python.CreateEngine();
-            this.scope = engine.CreateScope();
+            this._plugins.Clear();
+            this._engine = Python.CreateEngine();
+            this._scope = _engine.CreateScope();
 
-            var paths = engine.GetSearchPaths();
+            var paths = _engine.GetSearchPaths();
             paths.Add(Path.GetFullPath(@"Python\Modules"));
-            engine.SetSearchPaths(paths);
+            _engine.SetSearchPaths(paths);
 
             // find plugins
-            var filePaths = this.FindScriptPlugins(PLUGIN_PATH, "*_plugin.py");
+            var filePaths = FindScriptPlugins(PluginPath, "*_plugin.py");
             foreach (var path in filePaths)
             {
                 Logger.Trace("Script found at: " + path);
-                var plugin = this.getPluginFromPython(path);
+                var plugin = this.GetPluginFromPython(path);
                 if (plugin != null)
                 {
-                    this.plugins.Add(plugin);
+                    this._plugins.Add(plugin);
                     Logger.Debug("Plugin found: " + plugin.Name);
                 }
                 else
@@ -62,13 +62,13 @@ namespace SmartHotEditPythonPlugins.Controller
             }
         }
 
-        private APlugin getPluginFromPython(string pythonPath)
+        private APlugin GetPluginFromPython(string pythonPath)
         {
             Logger.Trace("Try to get plugin from python script");
             try
             {
-                this.scope = this.engine.ExecuteFile(pythonPath);
-                var plugin = scope.GetVariable("plugin");
+                this._scope = this._engine.ExecuteFile(pythonPath);
+                var plugin = _scope.GetVariable("plugin");
 
                 return this.buildPythonPlugin(plugin);
             }
@@ -82,41 +82,31 @@ namespace SmartHotEditPythonPlugins.Controller
 
         private APlugin buildPythonPlugin(dynamic plugin)
         {
-            Plugin pythonPlugin = null;
+            if (plugin == null) return null;
 
-            if (plugin != null)
+            var pythonPlugin = new Plugin(plugin.name, plugin.description);
+            if (plugin.get_functions().Count <= 0) return pythonPlugin;
+
+            foreach (var function in plugin.get_functions())
             {
-                pythonPlugin = new Plugin(plugin.name, plugin.description);
                 List<Argument> arguments = null;
-                if (plugin.get_functions().Count > 0)
+                if (function.arguments != null && function.arguments.Count > 0)
                 {
-                    foreach (var function in plugin.get_functions())
+                    arguments = new List<Argument>();
+                    foreach (var argument in function.arguments)
                     {
-                        arguments = null;
-                        if (function.arguments != null && function.arguments.Count > 0)
-                        {
-                            arguments = new List<Argument>();
-                            foreach (var argument in function.arguments)
-                            {
-                                arguments.Add(new Argument(argument.key, argument.description));
-                            }
-                        }
-                        pythonPlugin.addPythonFunction(new PythonFunction(function.name, function.description,
-                            function.called_function, arguments));
+                        arguments.Add(new Argument(argument.key, argument.description));
                     }
                 }
+                pythonPlugin.AddPythonFunction(new PythonFunction(function.name, function.description,
+                    function.called_function, arguments));
             }
             return pythonPlugin;
         }
 
         protected override APlugin[] GetPlugins()
         {
-            return this.plugins.ToArray();
-        }
-
-        public override bool IsEnabled()
-        {
-            return true; // TODO fix (make dynamic) Properties.Settings.Default.EnablePythonPlugins;
+            return this._plugins.ToArray();
         }
 
         public override string GetTemplate()

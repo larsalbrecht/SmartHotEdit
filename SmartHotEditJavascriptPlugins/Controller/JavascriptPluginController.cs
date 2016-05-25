@@ -19,8 +19,8 @@ namespace SmartHotEditJavascriptPlugins.Controller
     [Export(typeof(AScriptPluginController))]
     internal class JavascriptPluginController : AScriptPluginController
     {
-        private const string PLUGIN_PATH = @"Javascript\Plugins\";
-        private readonly List<APlugin> plugins = new List<APlugin>();
+        private const string PluginPath = @"Javascript\Plugins\";
+        private readonly List<APlugin> _plugins = new List<APlugin>();
 
         [ImportingConstructor]
         public JavascriptPluginController([Import("IPluginController")] IPluginController pluginController)
@@ -29,30 +29,28 @@ namespace SmartHotEditJavascriptPlugins.Controller
             Logger.Trace("Construct JavascriptPluginController");
             this.Type = "Javascript";
             this.TypeFileExt = "js";
-            this.TypePluginPath = PLUGIN_PATH;
+            this.TypePluginPath = PluginPath;
             this.TypeScintillaLexer = Lexer.Cpp;
         }
 
-        private APlugin getPluginFromScript(string script)
+        private APlugin GetPluginFromScript(string script)
         {
             APlugin resultPlugin = null;
-            Module module = null;
 
             var modulePath = Path.GetFullPath(@"Javascript\Modules\pluginbase.js");
 
             // find plugins
-            if (File.Exists(modulePath) && script != null && script != "")
-            {
-                var moduleContent = File.ReadAllText(modulePath);
-                var finalScript = moduleContent + Environment.NewLine + script;
-                module = new Module(finalScript);
-                module.Run();
+            if (!File.Exists(modulePath) || string.IsNullOrEmpty(script)) return null;
 
-                var jsPlugin = module.Context.GetVariable("plugin");
-                if (this.isValidPlugin(jsPlugin))
-                {
-                    resultPlugin = this.buildJavascriptPlugin(jsPlugin);
-                }
+            var moduleContent = File.ReadAllText(modulePath);
+            var finalScript = moduleContent + Environment.NewLine + script;
+            var module = new Module(finalScript);
+            module.Run();
+
+            var jsPlugin = module.Context.GetVariable("plugin");
+            if (this.isValidPlugin(jsPlugin))
+            {
+                resultPlugin = this.BuildJavascriptPlugin(jsPlugin);
             }
 
             return resultPlugin;
@@ -60,18 +58,18 @@ namespace SmartHotEditJavascriptPlugins.Controller
 
         public override void LoadPlugins()
         {
-            this.plugins.Clear();
+            this._plugins.Clear();
             try
             {
-                var filePaths = this.FindScriptPlugins(PLUGIN_PATH, "*_plugin.js");
+                var filePaths = FindScriptPlugins(PluginPath, "*_plugin.js");
                 foreach (var pluginPath in filePaths)
                 {
                     var fileContent = File.ReadAllText(pluginPath);
 
-                    var plugin = this.getPluginFromScript(fileContent);
+                    var plugin = this.GetPluginFromScript(fileContent);
                     if (plugin != null)
                     {
-                        this.plugins.Add(plugin);
+                        this._plugins.Add(plugin);
                         Logger.Debug("Plugin found: " + plugin.Name);
                     }
                     else
@@ -85,11 +83,11 @@ namespace SmartHotEditJavascriptPlugins.Controller
                 var syntaxError = e.Error.Value as SyntaxError;
                 if (syntaxError != null)
                 {
-                    Console.WriteLine(syntaxError.ToString());
+                    Logger.Error(syntaxError.ToString());
                 }
                 else
                 {
-                    Console.WriteLine("Unknown error: " + e);
+                    Logger.Error("Unknown error: " + e);
                 }
             }
         }
@@ -109,64 +107,59 @@ namespace SmartHotEditJavascriptPlugins.Controller
             return result;
         }
 
-        private APlugin buildJavascriptPlugin(JSValue jsPlugin)
+        private APlugin BuildJavascriptPlugin(JSValue jsPlugin)
         {
             var name = (string) jsPlugin["name"].Value;
             var description = (string) jsPlugin["description"].Value;
-            Plugin plugin = plugin = new Plugin(name, description);
+            Plugin plugin = new Plugin(name, description);
 
             var getFunctionsFunction = jsPlugin["getFunctions"].As<NiL.JS.BaseLibrary.Function>();
-            if (getFunctionsFunction != null)
+
+            if (getFunctionsFunction == null) return plugin;
+
+            var functions = getFunctionsFunction.Call(jsPlugin, null);
+            foreach (var keyValue in functions)
             {
-                var functions = getFunctionsFunction.Call(jsPlugin, null);
-                foreach (var keyValue in functions)
+                var tempFunction = BuildJavascriptFunction(jsPlugin, keyValue.Value);
+                if (tempFunction != null)
                 {
-                    var tempFunction = this.buildJavascriptFunction(jsPlugin, keyValue.Value);
-                    if (tempFunction != null)
-                    {
-                        plugin.addFunction(tempFunction);
-                    }
+                    plugin.AddFunction(tempFunction);
                 }
             }
 
             return plugin;
         }
 
-        private Function buildJavascriptFunction(JSValue jsPlugin, JSValue value)
+        private static Function BuildJavascriptFunction(JSValue jsPlugin, JSValue value)
         {
-            Function function = null;
+            if (jsPlugin == null) throw new ArgumentNullException(nameof(jsPlugin));
+
             var name = (string) value["name"].Value;
             var description = (string) value["description"].Value;
             var calledFunction = value["calledFuction"].As<NiL.JS.BaseLibrary.Function>();
 
-            if (name != null && description != null && calledFunction != null)
+            if (name == null || description == null || calledFunction == null) return null;
+
+            List<Argument> arguments = null;
+            var calledFunctionDelegate =
+                (Func<string, List<Argument>, string>)
+                    calledFunction.MakeDelegate(typeof(Func<string, List<Argument>, string>));
+            if (value["argumentList"] != null)
             {
-                List<Argument> arguments = null;
-                var calledFunctionDelegate =
-                    (Func<string, List<Argument>, string>)
-                        calledFunction.MakeDelegate(typeof(Func<string, List<Argument>, string>));
-                if (value["argumentList"] != null)
+                arguments = new List<Argument>();
+                foreach (var keyValue in value["argumentList"])
                 {
-                    arguments = new List<Argument>();
-                    foreach (var keyValue in value["argumentList"])
-                    {
-                        arguments.Add(new Argument((string) keyValue.Value["key"].Value,
-                            (string) keyValue.Value["description"].Value));
-                    }
+                    arguments.Add(new Argument((string) keyValue.Value["key"].Value,
+                        (string) keyValue.Value["description"].Value));
                 }
-                function = new Function(name, description, new Function.Transform(calledFunctionDelegate), arguments);
             }
+            var function = new Function(name, description, new Function.Transform(calledFunctionDelegate), arguments);
             return function;
         }
 
         protected override APlugin[] GetPlugins()
         {
-            return this.plugins.ToArray();
-        }
-
-        public override bool IsEnabled()
-        {
-            return true; // Fix this (make dynamic) Properties.Settings.Default.EnablePythonPlugins;
+            return this._plugins.ToArray();
         }
 
         public override string GetTemplate()
@@ -198,7 +191,7 @@ namespace SmartHotEditJavascriptPlugins.Controller
 
         public override APlugin GetPluginForScript(string text)
         {
-            return this.getPluginFromScript(text);
+            return this.GetPluginFromScript(text);
         }
     }
 }

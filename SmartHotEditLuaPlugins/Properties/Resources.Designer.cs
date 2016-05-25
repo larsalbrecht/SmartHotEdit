@@ -59,30 +59,14 @@ namespace SmartHotEditLuaPlugins.Properties {
                 resourceCulture = value;
             }
         }
-        
+
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die local pluginhelper = require &quot;pluginhelper&quot;
-        ///require &quot;class&quot;
-        ///require &quot;baseplugin&quot;
-        ///
-        ///
-        ///MyPlugin = class(APlugin, function(base)
-        ///         APlugin.init(base, &apos;&lt;Pluginname&gt;&apos;, &apos;&lt;Description&gt;&apos;)
-        ///         funcName = Function(&apos;&lt;Function-Name&gt;&apos;, &apos;&lt;Function-Description&gt;&apos;, base.myFunction)
-        ///         
-        ///         base:addFunction(funcName)
-        ///      end)
-        ///      
-        ///function MyPlugin:myFunction(input, arguments)
-        ///  return input
-        ///end
-        ///
-        ///
-        ///plugin = MyPlugin()
-        ///return plugin ähnelt.
+        ///   Sucht eine lokalisierte Ressource vom Typ System.Byte[].
         /// </summary>
-        internal static string template_lua {
-            get {
+        internal static string template_lua
+        {
+            get
+            {
                 return ResourceManager.GetString("template_lua", resourceCulture);
             }
         }
