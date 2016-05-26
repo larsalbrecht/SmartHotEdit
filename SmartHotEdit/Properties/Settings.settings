@@ -7,9 +7,6 @@
     <Setting Name="EnableDefaultPlugins" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
-    <Setting Name="EnableLuaPlugins" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
-    </Setting>
     <Setting Name="EnablePlugins" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
@@ -19,11 +16,8 @@
     <Setting Name="HotKey" Type="SmartHotEdit.Model.HotKey" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="EnablePythonPlugins" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
-    </Setting>
-    <Setting Name="EnableJavascriptPlugins" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
+    <Setting Name="ScriptPluginEditorSize" Type="System.Drawing.Size" Scope="User">
+      <Value Profile="(Default)">800, 450</Value>
     </Setting>
   </Settings>
 </SettingsFile>

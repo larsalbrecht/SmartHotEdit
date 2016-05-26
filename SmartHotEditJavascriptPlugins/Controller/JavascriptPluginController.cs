@@ -48,7 +48,7 @@ namespace SmartHotEditJavascriptPlugins.Controller
             module.Run();
 
             var jsPlugin = module.Context.GetVariable("plugin");
-            if (this.isValidPlugin(jsPlugin))
+            if (this.IsValidPlugin(jsPlugin))
             {
                 resultPlugin = this.BuildJavascriptPlugin(jsPlugin);
             }
@@ -92,7 +92,7 @@ namespace SmartHotEditJavascriptPlugins.Controller
             }
         }
 
-        private bool isValidPlugin(JSValue jsPlugin)
+        private bool IsValidPlugin(JSValue jsPlugin)
         {
             var result = false;
 
@@ -111,7 +111,7 @@ namespace SmartHotEditJavascriptPlugins.Controller
         {
             var name = (string) jsPlugin["name"].Value;
             var description = (string) jsPlugin["description"].Value;
-            Plugin plugin = new Plugin(name, description);
+            var plugin = new Plugin(name, description);
 
             var getFunctionsFunction = jsPlugin["getFunctions"].As<NiL.JS.BaseLibrary.Function>();
 

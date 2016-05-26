@@ -14,13 +14,18 @@ namespace SmartHotEdit.NLogger.LayoutRenderer
     [ThreadAgnostic]
     internal class NLogBuildTypeLayoutRenderer : NLog.LayoutRenderers.LayoutRenderer
     {
-        private string asmver;
+        private string _asmver;
+
+        public NLogBuildTypeLayoutRenderer(string assemblyName)
+        {
+            AssemblyName = assemblyName;
+        }
 
         /// <summary>
         ///     Specifies the assembly name for which the type will be displayed.
         ///     By default the calling assembly is used.
         /// </summary>
-        public string AssemblyName { get; set; }
+        private string AssemblyName { get; }
 
         private string GetAssemblyBuildType()
         {
@@ -31,15 +36,15 @@ namespace SmartHotEdit.NLogger.LayoutRenderer
                 return Convert.ToBoolean(AppDomain.CurrentDomain.GetAssemblies()
                     .Where(
                         a => string.Equals(a.GetName().Name, AssemblyName, StringComparison.InvariantCultureIgnoreCase))
-                    .Select(a => this.IsAssemblyDebugBuild(a)).FirstOrDefault())
+                    .Select(this.IsAssemblyDebugBuild).FirstOrDefault())
                     ? "Debug"
                     : "Release";
             }
             // get entry assembly
             var entry = Assembly.GetEntryAssembly();
 
-            asmver = this.IsAssemblyDebugBuild(entry) ? "Debug" : "Release";
-            return asmver;
+            _asmver = this.IsAssemblyDebugBuild(entry) ? "Debug" : "Release";
+            return _asmver;
         }
 
         private bool IsAssemblyDebugBuild(Assembly assembly)

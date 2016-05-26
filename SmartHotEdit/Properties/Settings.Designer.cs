@@ -38,18 +38,6 @@ namespace SmartHotEdit.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool EnableLuaPlugins {
-            get {
-                return ((bool)(this["EnableLuaPlugins"]));
-            }
-            set {
-                this["EnableLuaPlugins"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool EnablePlugins {
             get {
                 return ((bool)(this["EnablePlugins"]));
@@ -84,25 +72,13 @@ namespace SmartHotEdit.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool EnablePythonPlugins {
+        [global::System.Configuration.DefaultSettingValueAttribute("800, 450")]
+        public global::System.Drawing.Size ScriptPluginEditorSize {
             get {
-                return ((bool)(this["EnablePythonPlugins"]));
+                return ((global::System.Drawing.Size)(this["ScriptPluginEditorSize"]));
             }
             set {
-                this["EnablePythonPlugins"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool EnableJavascriptPlugins {
-            get {
-                return ((bool)(this["EnableJavascriptPlugins"]));
-            }
-            set {
-                this["EnableJavascriptPlugins"] = value;
+                this["ScriptPluginEditorSize"] = value;
             }
         }
     }

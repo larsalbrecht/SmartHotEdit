@@ -15,17 +15,17 @@ namespace SmartHotEdit.Controller
     public class PluginController : IPluginController
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        private readonly List<APlugin> _disabledPlugins = new List<APlugin>();
+        private readonly List<APlugin> _loadedPlugins = new List<APlugin>();
 
         private readonly IList<APluginController> _pluginControllerList;
+        public readonly List<APlugin> EnabledPlugins = new List<APlugin>();
 
         [ImportMany(typeof(AScriptPluginController))]
         // ReSharper disable once FieldCanBeMadeReadOnly.Local
         private AScriptPluginController[] _scriptPluginControllerList = null;
 
         private IList<FileSystemWatcher> _watcherList;
-        private readonly List<APlugin> _disabledPlugins = new List<APlugin>();
-        public readonly List<APlugin> EnabledPlugins = new List<APlugin>();
-        private readonly List<APlugin> _loadedPlugins = new List<APlugin>();
 
         public PluginController()
         {
@@ -40,9 +40,12 @@ namespace SmartHotEdit.Controller
 
             this._pluginControllerList = new List<APluginController> {new DefaultPluginController(this)};
 
-            foreach (var scriptPluginController in this._scriptPluginControllerList)
+            if (this._scriptPluginControllerList != null)
             {
-                this._pluginControllerList.Add(scriptPluginController);
+                foreach (var scriptPluginController in this._scriptPluginControllerList)
+                {
+                    this._pluginControllerList.Add(scriptPluginController);
+                }
             }
 
             this.LoadPlugins();
@@ -69,13 +72,16 @@ namespace SmartHotEdit.Controller
                     {
                         Logger.Trace(concretePluginController.Type + " is fully implemented");
                         concretePluginController.Init();
+
+                        concretePluginController.PreLoadPlugins();
+                        concretePluginController.LoadPlugins();
+                        concretePluginController.PostLoadPlugins();
+
                         if (concretePluginController.Enabled)
                         {
                             Logger.Trace(concretePluginController.Type + " is enabled");
-                            concretePluginController.PreLoadPlugins();
-                            concretePluginController.LoadPlugins();
-                            concretePluginController.PostLoadPlugins();
 
+                            // TODO move this to a function. Add function call to an event by adding or removing items from loaded lists.
                             if (concretePluginController is AScriptPluginController)
                             {
                                 if (this._watcherList == null)
@@ -169,6 +175,5 @@ namespace SmartHotEdit.Controller
                         pluginController.GetType() == pluginControllerType
                     ).ToList();
         }
-
     }
 }

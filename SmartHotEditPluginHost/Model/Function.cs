@@ -9,16 +9,17 @@ namespace SmartHotEditPluginHost.Model
     {
         public delegate string Transform(string s, List<Argument> arguments = null);
 
-        public List<Argument> Arguments;
-        public string Description;
-        public string Name;
-        public Transform TransformFunction;
+        private readonly Transform _transformFunction;
+
+        public readonly List<Argument> Arguments;
+        public readonly string Description;
+        public readonly string Name;
 
         public Function(string name, string description, Transform transformFunction, List<Argument> arguments = null)
         {
             this.Name = name;
             this.Description = description;
-            this.TransformFunction = transformFunction;
+            this._transformFunction = transformFunction;
             this.Arguments = arguments;
         }
 
@@ -29,7 +30,7 @@ namespace SmartHotEditPluginHost.Model
 
         public string ProcessFunction(string value, List<Argument> arguments)
         {
-            return this.TransformFunction(value, arguments);
+            return this._transformFunction(value, arguments);
         }
     }
 }

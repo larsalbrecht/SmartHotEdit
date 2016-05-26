@@ -32,6 +32,8 @@ namespace SmartHotEditBasePlugins
 
             this.AddFunction(new Function("LowerCase", "Converts a text to lower case", ToLowerCase));
             this.AddFunction(new Function("UpperCase", "Converts a text to upper case", ToUpperCase));
+
+            this.AddFunction(new Function("LCFirst", "Converts the first character of a text to lower case", Lcfirst));
         }
 
         public override string Name => "Case";
@@ -104,17 +106,17 @@ namespace SmartHotEditBasePlugins
             return input.ToUpper();
         }
 
-        public static string Lcfirst(string str)
+        private static string Lcfirst(string input, List<Argument> arguments = null)
         {
-            if (string.IsNullOrWhiteSpace(str) || char.IsLower(str, 0))
+            if (string.IsNullOrWhiteSpace(input) || char.IsLower(input, 0))
             {
-                return str;
+                return input;
             }
-            if (str.Length == 1)
+            if (input.Length == 1)
             {
-                return str.ToLower();
+                return input.ToLower();
             }
-            return char.ToLower(str[0]) + str.Substring(1);
+            return char.ToLower(input[0]) + input.Substring(1);
         }
     }
 }

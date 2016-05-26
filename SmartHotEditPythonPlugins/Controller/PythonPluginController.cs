@@ -18,9 +18,9 @@ namespace SmartHotEditPythonPlugins.Controller
     internal class PythonPluginController : AScriptPluginController
     {
         private const string PluginPath = @"Python\Plugins\";
+        private readonly List<APlugin> _plugins = new List<APlugin>();
 
         private ScriptEngine _engine;
-        private readonly List<APlugin> _plugins = new List<APlugin>();
         private ScriptScope _scope;
 
         [ImportingConstructor]
@@ -70,7 +70,7 @@ namespace SmartHotEditPythonPlugins.Controller
                 this._scope = this._engine.ExecuteFile(pythonPath);
                 var plugin = _scope.GetVariable("plugin");
 
-                return this.buildPythonPlugin(plugin);
+                return BuildPythonPlugin(plugin);
             }
             catch (SyntaxErrorException e)
             {
@@ -80,7 +80,7 @@ namespace SmartHotEditPythonPlugins.Controller
             return null;
         }
 
-        private APlugin buildPythonPlugin(dynamic plugin)
+        private static APlugin BuildPythonPlugin(dynamic plugin)
         {
             if (plugin == null) return null;
 

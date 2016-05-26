@@ -1,13 +1,10 @@
-﻿using MoonSharp.Interpreter;
-
-namespace SmartHotEditPluginHost.Model
+﻿namespace SmartHotEditPluginHost.Model
 {
-    [MoonSharpUserData]
     public class Argument
     {
-        public string Description;
+        public readonly string Description;
 
-        public string Key;
+        public readonly string Key;
 
         public string Value;
 

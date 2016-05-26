@@ -11,7 +11,6 @@ namespace SmartHotEdit.View.Controls
 
         public string LabelText
         {
-            get { return this.argumentNameLabel.Text; }
             set { this.argumentNameLabel.Text = value; }
         }
 

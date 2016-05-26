@@ -1,6 +1,8 @@
 ﻿using System.ComponentModel;
 using System.Configuration;
 
+// ReSharper disable All
+
 namespace SmartHotEdit.Properties
 {
     // Diese Klasse ermöglicht die Behandlung bestimmter Ereignisse der Einstellungsklasse:

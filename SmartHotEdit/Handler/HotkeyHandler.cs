@@ -292,10 +292,6 @@ namespace SmartHotEdit.Handler
                 // Strip the first character
                 keyName = keyName?.Substring(1);
             }
-            else
-            {
-                // Leave everything alone
-            }
 
             // Build modifiers
             var modifiers = "";

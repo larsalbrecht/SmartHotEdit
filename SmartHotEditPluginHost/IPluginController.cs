@@ -1,6 +1,4 @@
-﻿using System.Configuration;
-
-namespace SmartHotEditPluginHost
+﻿namespace SmartHotEditPluginHost
 {
     public interface IPluginController
     {

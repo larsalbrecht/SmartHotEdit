@@ -12,12 +12,14 @@ namespace SmartHotEdit.Controller
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
+        private readonly HotKeyDummyControl _hkc = new HotKeyDummyControl();
+
         private readonly MainController _mainController;
+
+        private bool _disposed;
         private EditForm _ef;
 
         private HotkeyHandler _hk;
-
-        private readonly HotKeyDummyControl _hkc = new HotKeyDummyControl();
 
         public HotKeyController(MainController mainController)
         {
@@ -31,6 +33,21 @@ namespace SmartHotEdit.Controller
             this._hkc?.Dispose();
             this._ef?.Dispose();
             GC.SuppressFinalize(this);
+        }
+
+        ~HotKeyController() // the finalizer
+        {
+            Dispose(false);
+        }
+
+        private void Dispose(bool disposing)
+        {
+            if (_disposed) return;
+            if (disposing)
+            {
+            }
+
+            _disposed = true;
         }
 
         private void Init()
@@ -50,28 +67,24 @@ namespace SmartHotEdit.Controller
             {
                 hotkeyToRegister = defaultHotKey;
             }
-            if (!this.RegisterCustomHotKey(hotkeyToRegister))
+            if (this.RegisterCustomHotKey(hotkeyToRegister)) return;
+            if (hotKeyDefault) return;
+            Logger.Warn("Try to register default hotkey");
+            if (this.RegisterCustomHotKey(hotkeyToRegister))
             {
-                if (!hotKeyDefault)
-                {
-                    Logger.Warn("Try to register default hotkey");
-                    if (this.RegisterCustomHotKey(hotkeyToRegister))
-                    {
-                        this._mainController.NotificationController.CreateBalloonTip(ToolTipIcon.Warning, "Hot Key",
-                            "You tried to register a custom hotkey, but it fails. We registered the default again.",
-                            1000);
-                    }
-                    else
-                    {
-                        Logger.Fatal("Custom hotkey could not registered and default could not registered again");
-                        this._mainController.NotificationController.CreateBalloonTip(ToolTipIcon.Error, "Hot Key",
-                            "You tried to register a custom hotkey, but it fails. We tried to register the default again, but this also failed!",
-                            1000);
-                    }
-                }
-                // TODO check if this is the default, and if not, then register default.
-                //logger.Warn("");
+                this._mainController.NotificationController.CreateBalloonTip(ToolTipIcon.Warning, "Hot Key",
+                    "You tried to register a custom hotkey, but it fails. We registered the default again.",
+                    1000);
             }
+            else
+            {
+                Logger.Fatal("Custom hotkey could not registered and default could not registered again");
+                this._mainController.NotificationController.CreateBalloonTip(ToolTipIcon.Error, "Hot Key",
+                    "You tried to register a custom hotkey, but it fails. We tried to register the default again, but this also failed!",
+                    1000);
+            }
+            // TODO check if this is the default, and if not, then register default.
+            //logger.Warn("");
         }
 
         private void OnHotKeyPressed()

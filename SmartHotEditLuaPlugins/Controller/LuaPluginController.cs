@@ -30,7 +30,7 @@ namespace SmartHotEditLuaPlugins.Controller
             this.TypeScintillaLexer = Lexer.Lua;
         }
 
-        private Script getConfiguredScript()
+        private static Script GetConfiguredScript()
         {
             var script = new Script();
 
@@ -61,7 +61,7 @@ namespace SmartHotEditLuaPlugins.Controller
         public override void LoadPlugins()
         {
             this._plugins.Clear();
-            var script = this.getConfiguredScript();
+            var script = GetConfiguredScript();
 
             Logger.Trace("Register UserData types");
             // register types
@@ -162,7 +162,7 @@ namespace SmartHotEditLuaPlugins.Controller
                     }
                     else if (dyn.String == "arguments")
                     {
-                        arguments = this.buildArguments(dynValue.Table.Get(dyn));
+                        arguments = BuildArguments(dynValue.Table.Get(dyn));
                     }
                 }
                 if (name != null && description != null && closure != null)
@@ -174,34 +174,32 @@ namespace SmartHotEditLuaPlugins.Controller
             return func;
         }
 
-        private List<Argument> buildArguments(DynValue dynValue)
+        private static List<Argument> BuildArguments(DynValue dynValue)
         {
             List<Argument> arguments = null;
-            if (dynValue.Type == DataType.Table)
+            if (dynValue.Type != DataType.Table) return null;
+            foreach (var dynArgument in dynValue.Table.Keys)
             {
-                foreach (var dynArgument in dynValue.Table.Keys)
+                string key = null;
+                string description = null;
+                foreach (var dyn in dynValue.Table.Get(dynArgument).Table.Keys)
                 {
-                    string key = null;
-                    string description = null;
-                    foreach (var dyn in dynValue.Table.Get(dynArgument).Table.Keys)
+                    if (dyn.String == "key")
                     {
-                        if (dyn.String == "key")
-                        {
-                            key = dynValue.Table.Get(dynArgument).Table.Get(dyn).String;
-                        }
-                        else if (dyn.String == "description")
-                        {
-                            description = dynValue.Table.Get(dynArgument).Table.Get(dyn).String;
-                        }
+                        key = dynValue.Table.Get(dynArgument).Table.Get(dyn).String;
                     }
-                    if (key != null && description != null)
+                    else if (dyn.String == "description")
                     {
-                        if (arguments == null)
-                        {
-                            arguments = new List<Argument>();
-                        }
-                        arguments.Add(new Argument(key, description));
+                        description = dynValue.Table.Get(dynArgument).Table.Get(dyn).String;
                     }
+                }
+                if (key != null && description != null)
+                {
+                    if (arguments == null)
+                    {
+                        arguments = new List<Argument>();
+                    }
+                    arguments.Add(new Argument(key, description));
                 }
             }
 

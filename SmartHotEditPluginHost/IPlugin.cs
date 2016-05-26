@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using SmartHotEditPluginHost.Model;
 
+// ReSharper disable All
+
 namespace SmartHotEditPluginHost
 {
     public interface IPlugin

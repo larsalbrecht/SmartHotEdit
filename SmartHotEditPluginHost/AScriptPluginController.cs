@@ -6,7 +6,6 @@ namespace SmartHotEditPluginHost
 {
     public abstract class AScriptPluginController : APluginController
     {
-
         protected AScriptPluginController(IPluginController pluginController) : base(pluginController)
         {
         }
@@ -16,7 +15,8 @@ namespace SmartHotEditPluginHost
         public Lexer TypeScintillaLexer { get; protected set; }
 
         // ReSharper disable once UnusedMember.Local
-        private new bool IsFullyImplemented => base.IsFullyImplemented && this.TypeFileExt != null && this.TypePluginPath != null;
+        private new bool IsFullyImplemented
+            => base.IsFullyImplemented && this.TypeFileExt != null && this.TypePluginPath != null;
 
         protected static IEnumerable<string> FindScriptPlugins(string pathStr, string searchPattern)
         {

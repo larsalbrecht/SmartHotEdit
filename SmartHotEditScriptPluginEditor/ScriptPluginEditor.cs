@@ -8,26 +8,25 @@ using NLog.Config;
 using NLog.Windows.Forms;
 using ScintillaNET;
 using SmartHotEdit.Controller;
-using SmartHotEdit.Properties;
 using SmartHotEditPluginHost;
 
-namespace SmartHotEdit.View.Editor
+namespace SmartHotEditScriptPluginEditor
 {
     public partial class ScriptPluginEditor : Form
     {
         private static Logger _logger;
-        // ReSharper disable once PrivateFieldCanBeConvertedToLocalVariable
-        private readonly MainController _mainController;
-
-        private readonly string _originalHeadertext;
-        private readonly IList<AScriptPluginController> _scriptPluginController;
         private AScriptPluginController _currentPluginController;
 
         private string _filepathToSave;
         private bool _isSaved = true;
+        // ReSharper disable once PrivateFieldCanBeConvertedToLocalVariable
+        private readonly MainController _mainController;
 
 
         private int _maxLineNumberCharLength;
+
+        private readonly string _originalHeadertext;
+        private readonly IList<AScriptPluginController> _scriptPluginController;
 
         public ScriptPluginEditor(MainController mainController)
         {
@@ -119,9 +118,11 @@ namespace SmartHotEdit.View.Editor
             }
             for (var i = 0; i < this.scriptTypeList.Items.Count; i++)
             {
-                if (this.scriptTypeList.Items[i] != this._currentPluginController) continue;
-                this.scriptTypeList.SelectedIndex = i;
-                break;
+                if (this.scriptTypeList.Items[i] == this._currentPluginController)
+                {
+                    this.scriptTypeList.SelectedIndex = i;
+                    break;
+                }
             }
         }
 
@@ -163,7 +164,7 @@ namespace SmartHotEdit.View.Editor
         private static bool WriteFile(string filePath, string text)
         {
             File.WriteAllText(filePath, text);
-            _logger.Info("File write to: " + filePath);
+            _logger.Debug("Filecontents write to: " + filePath);
             return true;
         }
 
@@ -207,7 +208,24 @@ namespace SmartHotEdit.View.Editor
 
         private void ScriptPluginEditor_Load(object sender, EventArgs e)
         {
-            this.InitScriptPluginLogger();
+            if (_logger != null) return;
+            var config = LogManager.Configuration;
+            var target = new RichTextBoxTarget
+            {
+                Name = "control",
+                TargetRichTextBox = this.outputRichTextBox,
+                Layout = @"${longdate} - ${uppercase:${level}} - ${message}"
+            };
+
+            config.AddTarget("control", target);
+
+            var rule = new LoggingRule("SmartHotEdit.View.Editor.*", LogLevel.Info, target);
+            config.LoggingRules.Add(rule);
+
+            LogManager.Configuration = config;
+
+            _logger = LogManager.GetCurrentClassLogger();
+            _logger.Info("Logger initialized");
         }
 
         private void closeMenuItem_Click(object sender, EventArgs e)
@@ -341,39 +359,14 @@ namespace SmartHotEdit.View.Editor
         }
 
         /// <summary>
-        ///     Saves the current size of the scriptPluginEditor after rezize to the Properties.Settings.
+        /// Saves the current size of the scriptPluginEditor after rezize to the Properties.Settings.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void ScriptPluginEditor_ResizeEnd(object sender, EventArgs e)
         {
-            Settings.Default.ScriptPluginEditorSize = this.Size;
-            Settings.Default.Save();
-        }
-
-        /// <summary>
-        ///     Initilize the ScriptPluginLogger to log the output to "outputRichTextBox".
-        /// </summary>
-        private void InitScriptPluginLogger()
-        {
-            if (_logger != null) return;
-            var config = LogManager.Configuration;
-            var target = new RichTextBoxTarget
-            {
-                Name = "control",
-                TargetRichTextBox = this.outputRichTextBox,
-                Layout = @"${longdate} - ${uppercase:${level}} - ${message}"
-            };
-
-            config.AddTarget("control", target);
-
-            var rule = new LoggingRule("SmartHotEdit.View.Editor.*", LogLevel.Info, target);
-            config.LoggingRules.Add(rule);
-
-            LogManager.Configuration = config;
-
-            _logger = LogManager.GetCurrentClassLogger();
-            _logger.Info("Logger initialized");
+            Properties.Settings.Default.ScriptPluginEditorSize = this.Size;
+            Properties.Settings.Default.Save();
         }
     }
 }

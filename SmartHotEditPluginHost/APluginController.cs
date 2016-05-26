@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using NLog;
 using SmartHotEditPluginHost.Helper;
 using SmartHotEditPluginHost.Properties;
@@ -9,10 +8,10 @@ namespace SmartHotEditPluginHost
     public abstract class APluginController
     {
         protected static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-        // ReSharper disable once NotAccessedField.Local
-        private IPluginController _pluginController;
         public readonly IList<APlugin> DisabledPlugins = new List<APlugin>();
         public readonly IList<APlugin> EnabledPlugins = new List<APlugin>();
+        // ReSharper disable once NotAccessedField.Local
+        private IPluginController _pluginController;
 
         public IList<APlugin> LoadedPlugins = new List<APlugin>();
 
@@ -23,14 +22,10 @@ namespace SmartHotEditPluginHost
 
         public string Type { get; protected set; }
 
-        protected abstract APlugin[] GetPlugins();
-
         public bool Enabled
         {
-            get
-            {
-                return (bool)Settings.Default[this.GetPropertynameForEnablePluginController()];
-            }
+            get { return (bool) Settings.Default[this.GetPropertynameForEnablePluginController()]; }
+            // ReSharper disable once UnusedMember.Global
             set
             {
                 Logger.Trace($"Setting {this.GetPropertynameForEnablePluginController()} changed to {value}");
@@ -39,12 +34,14 @@ namespace SmartHotEditPluginHost
             }
         }
 
+        public bool IsFullyImplemented => this.Type != null;
+
+        protected abstract APlugin[] GetPlugins();
+
         public void Init()
         {
             PropertyHelper.CreateProperty(this.GetPropertynameForEnablePluginController(), true, typeof(bool));
         }
-
-        public bool IsFullyImplemented => this.Type != null;
 
         public void PreLoadPlugins()
         {
@@ -60,7 +57,6 @@ namespace SmartHotEditPluginHost
             this.DisabledPlugins.Clear();
             foreach (var plugin in this.LoadedPlugins)
             {
-                plugin.PluginController = this;
                 plugin.Type = this.Type;
                 plugin.Init();
 

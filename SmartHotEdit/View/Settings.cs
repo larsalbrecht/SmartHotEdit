@@ -17,7 +17,6 @@ namespace SmartHotEdit.View
 
         private readonly MainController _mainController;
 
-        // TODO init hotkey in hotkey control to show the user the used key
         public SettingsView(MainController mainController)
         {
             InitializeComponent();
@@ -59,6 +58,7 @@ namespace SmartHotEdit.View
 
         private void changeHotKeyButton_Click(object sender, EventArgs e)
         {
+            // TODO init hotkey in hotkey control to show the user the used key
             var isShiftControl = this.hotKeyTextBox.Modifiers == (Keys.Shift | Keys.Control);
             var isAltControl = this.hotKeyTextBox.Modifiers == (Keys.Alt | Keys.Control);
             var isShiftAltControl = this.hotKeyTextBox.Modifiers == (Keys.Shift | Keys.Alt | Keys.Control);
@@ -86,36 +86,8 @@ namespace SmartHotEdit.View
 
         private void SettingsView_Shown(object sender, EventArgs e)
         {
-            this.enableDisablePluginListView.Items.Clear();
-            this.enableDisablePluginListView.Groups.Clear();
-            foreach (var concretePluginController in this._mainController.PluginController.GetPluginControllerList())
-            {
-                var tempListViewGroup = new ListViewGroup(concretePluginController.Type, HorizontalAlignment.Left)
-                {
-                    Header = concretePluginController.Type,
-                    Name = concretePluginController.Type + "Group",
-                    Tag = concretePluginController
-                };
-
-                this.enableDisablePluginListView.Groups.Add(tempListViewGroup);
-
-                // TODO if plugin is disabled at startup, no entry will be created!
-                foreach (var plugin in concretePluginController.LoadedPlugins)
-                {
-                    var tempListViewItem = new ListViewItem(plugin.Name)
-                    {
-                        Group = tempListViewGroup,
-                        StateImageIndex = 0,
-                        Tag = plugin,
-                        Checked = plugin.Enabled,
-                    };
-                    this.enableDisablePluginListView.Items.Add(tempListViewItem);
-                }
-            }
-
-            var rk = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
-            if (rk != null) this.startWithSystemCheckBox.Checked = rk.GetValue(Program.AppName) != null;
-            Logger.Debug("Start on system startup: " + this.startWithSystemCheckBox.Checked);
+            this.InitEnableDisablePluginListView();
+            this.InitStartWithSystemCheckBox();
         }
 
         private void enableDisablePluginListView_ItemChecked(object sender, ItemCheckedEventArgs e)
@@ -141,7 +113,7 @@ namespace SmartHotEdit.View
             }
             if (this.startWithSystemCheckBox.Checked)
             {
-                rk.SetValue(Program.AppName, Application.ExecutablePath);
+                rk.SetValue(Program.AppName, $"\"{Application.ExecutablePath}\"");
                 Logger.Debug("Starts on system startup now");
             }
             else
@@ -153,32 +125,7 @@ namespace SmartHotEdit.View
 
         private void SettingsView_Load(object sender, EventArgs e)
         {
-            var scriptPlugins =
-                this._mainController.PluginController.GetPluginControllerList(typeof(AScriptPluginController));
-            var tabIndex = 12;
-            var location = new System.Drawing.Point(6, 19);
-            foreach (var aPluginController in scriptPlugins)
-            {
-                var pluginController = (AScriptPluginController) aPluginController;
-                var tempCheckBox = new CheckBox();
-                this.scriptPluginsGroupBox.Controls.Add(tempCheckBox);
-
-                tempCheckBox.AutoSize = true;
-                tempCheckBox.Checked = pluginController.Enabled;
-                tempCheckBox.CheckState = CheckState.Checked;
-                tempCheckBox.Tag = pluginController;
-
-                tempCheckBox.DataBindings.Add(new Binding("Checked", pluginController, "Enabled",
-                    true, DataSourceUpdateMode.OnPropertyChanged));
-                tempCheckBox.Location = location;
-                location.Y = location.Y + 23;
-                tempCheckBox.Size = new System.Drawing.Size(117, 17);
-                tempCheckBox.TabIndex = ++tabIndex;
-                tempCheckBox.Text = $"Enable {pluginController.Type} Plugins";
-                tempCheckBox.UseVisualStyleBackColor = true;
-
-                tempCheckBox.CheckStateChanged += new System.EventHandler(this.OnPluginCheckboxStateChange);
-            }
+            this.InitScriptPluginsGroupBox();
         }
 
         private void OnPluginCheckboxStateChange(object sender, EventArgs e)
@@ -204,6 +151,91 @@ namespace SmartHotEdit.View
         private void scriptPluginsGroupBox_ControlRemoved(object sender, ControlEventArgs e)
         {
             this.scriptPluginsGroupBox.Visible = !(this.scriptPluginsGroupBox.Controls.Count <= 0);
+        }
+
+
+        /// <summary>
+        ///     Initilize the "enableDisablePluginListView".
+        ///     First it will be cleared and then all pluginController will be
+        ///     read to get the Type (create group with this) and read out all
+        ///     plugins of each pluginController (create items with this).
+        /// </summary>
+        private void InitEnableDisablePluginListView()
+        {
+            this.enableDisablePluginListView.Items.Clear();
+            this.enableDisablePluginListView.Groups.Clear();
+            foreach (var concretePluginController in this._mainController.PluginController.GetPluginControllerList())
+            {
+                var tempListViewGroup = new ListViewGroup(concretePluginController.Type, HorizontalAlignment.Left)
+                {
+                    Header = concretePluginController.Type,
+                    Name = concretePluginController.Type + "Group",
+                    Tag = concretePluginController
+                };
+
+                this.enableDisablePluginListView.Groups.Add(tempListViewGroup);
+
+                foreach (var plugin in concretePluginController.LoadedPlugins)
+                {
+                    var tempListViewItem = new ListViewItem(plugin.Name)
+                    {
+                        Group = tempListViewGroup,
+                        StateImageIndex = 0,
+                        Tag = plugin,
+                        Checked = plugin.Enabled
+                    };
+                    this.enableDisablePluginListView.Items.Add(tempListViewItem);
+                }
+            }
+        }
+
+
+        /// <summary>
+        ///     Initilize the "startWithSystemCheckBox".
+        ///     Reads out the windows registry value (checks if it exists)
+        ///     and set the checkBox to Checked, or not.
+        /// </summary>
+        private void InitStartWithSystemCheckBox()
+        {
+            var rk = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
+            if (rk != null) this.startWithSystemCheckBox.Checked = rk.GetValue(Program.AppName) != null;
+            Logger.Debug("Start on system startup: " + this.startWithSystemCheckBox.Checked);
+        }
+
+        /// <summary>
+        ///     Initilize the "scriptPluginsGroupBox".
+        ///     Reads out all pluginController and create a checkBox.
+        ///     If a check-state change, it will be saved as Property.Settings to save
+        ///     the state.
+        /// </summary>
+        private void InitScriptPluginsGroupBox()
+        {
+            var scriptPlugins =
+                this._mainController.PluginController.GetPluginControllerList(typeof(AScriptPluginController));
+            var tabIndex = 12;
+            var location = new Point(6, 19);
+            foreach (var aPluginController in scriptPlugins)
+            {
+                var pluginController = (AScriptPluginController) aPluginController;
+                var tempCheckBox = new CheckBox();
+                this.scriptPluginsGroupBox.Controls.Add(tempCheckBox);
+
+                tempCheckBox.AutoSize = true;
+                tempCheckBox.Checked = pluginController.Enabled;
+                tempCheckBox.CheckState = CheckState.Checked;
+                tempCheckBox.Tag = pluginController;
+
+                tempCheckBox.DataBindings.Add(new Binding("Checked", pluginController, "Enabled",
+                    true, DataSourceUpdateMode.OnPropertyChanged));
+                tempCheckBox.Location = location;
+                location.Y = location.Y + 23;
+                tempCheckBox.Size = new Size(117, 17);
+                tempCheckBox.TabIndex = ++tabIndex;
+                tempCheckBox.Text = $"Enable {pluginController.Type} Plugins";
+                tempCheckBox.UseVisualStyleBackColor = true;
+
+                tempCheckBox.CheckStateChanged += this.OnPluginCheckboxStateChange;
+            }
         }
     }
 }

@@ -4,10 +4,10 @@ class MyPlugin extends APlugin {
     constructor() {
         super("<Pluginname>", "<Description>");
 
-        var funcName = new Function("<Function-Name>", "<Function-Description>", this.myFunction);
+        const funcName = new Function("<Function-Name>", "<Function-Description>", this.myFunction);
         this.addFunction(funcName);
     }
-    myFunction(value, argumentList) {
+    myFunction(value) {
         return value;
     }
 };

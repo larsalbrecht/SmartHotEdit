@@ -8,12 +8,12 @@ namespace SmartHotEditPluginHost
 {
     public abstract class APlugin : IPlugin
     {
+        private readonly List<Function> _functionList = new List<Function>();
+        public string Type = null;
+
         public bool Enabled
         {
-            get
-            {
-                return (bool)Settings.Default[this.GetPropertynameForEnablePlugin()];
-            }
+            get { return (bool) Settings.Default[this.GetPropertynameForEnablePlugin()]; }
             set
             {
                 Settings.Default[this.GetPropertynameForEnablePlugin()] = value;
@@ -21,18 +21,9 @@ namespace SmartHotEditPluginHost
             }
         }
 
-        private readonly List<Function> _functionList = new List<Function>();
-        public string Type = null;
-        public APluginController PluginController { get; set; }
-
         public abstract string Name { get; }
 
         public abstract string Description { get; }
-
-        public void Init()
-        {
-            PropertyHelper.CreateProperty(this.GetPropertynameForEnablePlugin(), true, typeof(bool));
-        }
 
         public string GetResultFromFunction(Function function, string value, List<Argument> arguments = null)
         {
@@ -50,12 +41,17 @@ namespace SmartHotEditPluginHost
             return this._functionList.Cast<Function>().ToArray();
         }
 
+        public void Init()
+        {
+            PropertyHelper.CreateProperty(this.GetPropertynameForEnablePlugin(), true, typeof(bool));
+        }
+
         protected void AddFunction(Function function)
         {
             this._functionList.Add(function);
         }
 
-        public string GetPropertynameForEnablePlugin()
+        private string GetPropertynameForEnablePlugin()
         {
             return "Plugin" + this.Type + this.Name + "Enabled";
         }

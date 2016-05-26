@@ -4,7 +4,7 @@ class StringPlugin extends APlugin {
     constructor() {
         super("JSString", "Some functions to modify a string");
 
-        var replaceStringFunc = new Function("Replace",
+        const replaceStringFunc = new Function("Replace",
             "Replaces a string in a string",
             this.replaceString,
             [new Argument("oldString", "old string"), new Argument("newString", "new string")]);

@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Configuration;
 using System.Linq;
+using SmartHotEditPluginHost.Properties;
 
 namespace SmartHotEditPluginHost.Helper
 {
     public static class PropertyHelper
     {
-        public static bool PropertiesHasKey(string key)
+        private static bool PropertiesHasKey(string key)
         {
-            return Properties.Settings.Default.Properties.Cast<SettingsProperty>().Any(sp => sp.Name == key);
+            return Settings.Default.Properties.Cast<SettingsProperty>().Any(sp => sp.Name == key);
         }
 
         public static void CreateProperty(string propertyKey, object defaultValue, Type propertyType)
@@ -19,14 +20,14 @@ namespace SmartHotEditPluginHost.Helper
             {
                 DefaultValue = defaultValue,
                 PropertyType = propertyType,
-                Provider = Properties.Settings.Default.Providers["LocalFileSettingsProvider"],
-                IsReadOnly = false,
+                Provider = Settings.Default.Providers["LocalFileSettingsProvider"],
+                IsReadOnly = false
             };
             property.Attributes.Add(typeof(UserScopedSettingAttribute), new UserScopedSettingAttribute());
-            Properties.Settings.Default.Properties.Add(property);
-            
+            Settings.Default.Properties.Add(property);
+
             //Properties.Settings.Default.Save();
-            Properties.Settings.Default.Reload();
+            Settings.Default.Reload();
         }
     }
 }
